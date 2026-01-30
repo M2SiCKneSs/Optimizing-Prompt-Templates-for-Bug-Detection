@@ -116,20 +116,20 @@ The modular pipeline consists of five core components:
 
 **Java Projects:**
 
-| Project | Precision | Recall | F1-Score | Accuracy |
-|---------|-----------|--------|----------|----------|
-| Time | 0.1750 | 0.4865 | 0.2265 | 0.9882 |
-| Math | 0.2488 | 0.7128 | 0.3392 | 0.9588 |
-| Lang | 0.2882 | 0.6554 | 0.3243 | 0.9003 |
-| Chart | 0.2500 | 0.5699 | 0.3026 | 0.9005 |
+| Project | Precision | Recall | F1-Score | 
+|---------|-----------|--------|----------|
+| Time | 0.1750 | 0.4865 | 0.2265 | 
+| Math | 0.2488 | 0.7128 | 0.3392 | 
+| Lang | 0.2882 | 0.6554 | 0.3243 | 
+| Chart | 0.2500 | 0.5699 | 0.3026 |
 
 **Python Projects:**
 
-| Project | Precision | Recall | F1-Score | Accuracy |
-|---------|-----------|--------|----------|----------|
-| black | 0.0143 | 0.0714 | 0.0238 | 0.9597 |
-| thefuck | 0.1667 | 0.0936 | 0.0468 | 0.8168 |
-| tqdm | 0.0571 | 0.2857 | 0.0952 | 0.9376 |
+| Project | Precision | Recall | F1-Score |
+|---------|-----------|--------|----------|
+| black | 0.0143 | 0.0714 | 0.0238 |
+| thefuck | 0.1667 | 0.0936 | 0.0468 |
+| tqdm | 0.0571 | 0.2857 | 0.0952 |
 
 ### Statistical Significance (Wilcoxon Signed-Rank Test, α=0.05)
 
