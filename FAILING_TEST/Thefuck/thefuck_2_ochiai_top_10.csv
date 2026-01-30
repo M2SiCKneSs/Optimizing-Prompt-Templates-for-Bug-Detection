@@ -1,0 +1,11 @@
+Method,Ochiai_Score
+"thefuck.utils##_safe(fn,fallback)",0.30151134457776363
+thefuck.types$Rule#__repr__(),0.026555952586407233
+thefuck.types$Rule#from_path(path),0.026555952586407233
+thefuck.types$Rule#is_enabled(),0.026555952586407233
+thefuck.types$Command#stderr(),0.026555952586407233
+thefuck.types$Rule#is_match(command),0.026555952586407233
+thefuck.types$Command#script_parts(),0.026555952586407233
+thefuck.types$Rule#get_corrected_commands(command),0.026555952586407233
+"thefuck.types$CorrectedCommand#__init__(script,side_effect,priority)",0.026555952586407233
+thefuck.types$CorrectedCommand#__eq__(other),0.026555952586407233

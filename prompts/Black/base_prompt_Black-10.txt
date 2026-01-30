@@ -1,0 +1,66 @@
+### TOP_METHODS (Ochiai)
+1. black##get_imports_from_children(children) | score=0.1386750490563073
+2. black$FileMode#from_configuration() | score=0.10540925533894598
+3. black##read_pyproject_toml(ctx,param,value) | score=0.10540925533894598
+4. black##main(ctx,line_length,check,diff,fast,pyi,py36,skip_string_normalization,skip_numeric_underscore_normalization,quiet,verbose,include,exclude,src,config) | score=0.10540925533894598
+5. black##reformat_one(src,line_length,fast,write_back,mode,report) | score=0.10540925533894598
+
+
+### CODE_SNIPPETS
+
+
+
+---
+Rank: 1
+Method: black##get_imports_from_children(children)
+Ochiai_Score: 0.1386750490563073
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: #get_imports_from_children
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in black.py)
+
+
+---
+Rank: 2
+Method: black$FileMode#from_configuration()
+Ochiai_Score: 0.10540925533894598
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: class FileMode.from_configuration
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in black.py)
+
+
+---
+Rank: 3
+Method: black##read_pyproject_toml(ctx,param,value)
+Ochiai_Score: 0.10540925533894598
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: #read_pyproject_toml
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in black.py)
+
+
+---
+Rank: 4
+Method: black##main(ctx,line_length,check,diff,fast,pyi,py36,skip_string_normalization,skip_numeric_underscore_normalization,quiet,verbose,include,exclude,src,config)
+Ochiai_Score: 0.10540925533894598
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: #main
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in black.py)
+
+
+---
+Rank: 5
+Method: black##reformat_one(src,line_length,fast,write_back,mode,report)
+Ochiai_Score: 0.10540925533894598
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: #reformat_one
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in black.py)
+

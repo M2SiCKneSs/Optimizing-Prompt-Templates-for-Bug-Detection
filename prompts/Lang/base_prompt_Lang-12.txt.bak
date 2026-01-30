@@ -1,0 +1,117 @@
+### BUG_REPORT
+Title: RandomStringUtils.random(count, 0, 0, false, false, universe, random) always throws java.lang.ArrayIndexOutOfBoundsException
+
+Description:
+In commons-lang 2.6 line 250 :
+
+ch = chars[random.nextInt(gap) + start];
+
+This line of code takes a random int to fetch a char in the chars array regardless of its size.
+(Besides start is useless here)
+Fixed version would be :
+
+//ch = chars[random.nextInt(gap)%chars.length];
+
+When user pass 0 as end or when the array is not null but empty this line ends up with an exception
+
+
+### FAILING_TEST
+org.apache.commons.lang3.RandomStringUtils.random(int,int,int,boolean,boolean,char[],Random)
+org.apache.commons.lang3.RandomStringUtils.random(int,char)
+org.apache.commons.lang3.RandomStringUtils.random(int,int,int,boolean,boolean,char)
+org.apache.commons.lang3.RandomStringUtils.random(int,String)
+org.apache.commons.lang3.RandomStringUtils.random(int)
+org.apache.commons.lang3.RandomStringUtils.random(int,int,int,boolean,boolean,char[],Random)
+org.apache.commons.lang3.RandomStringUtils.random(int,char)
+org.apache.commons.lang3.RandomStringUtils.random(int)
+org.apache.commons.lang3.RandomStringUtils.random(int,boolean,boolean)
+org.apache.commons.lang3.RandomStringUtils.random(int,int,int,boolean,boolean)
+
+### CODE_SNIPPETS
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.RandomStringUtils.random(int,int,int,boolean,boolean,char[],Random)
+------------------------------------------------------------------------------------------
+public static String random(final int count) {
+        return random(count, false, false);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.RandomStringUtils.random(int,char)
+------------------------------------------------------------------------------------------
+public static String random(final int count) {
+        return random(count, false, false);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.RandomStringUtils.random(int,int,int,boolean,boolean,char)
+------------------------------------------------------------------------------------------
+public static String random(final int count) {
+        return random(count, false, false);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.RandomStringUtils.random(int,String)
+------------------------------------------------------------------------------------------
+public static String random(final int count) {
+        return random(count, false, false);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.RandomStringUtils.random(int)
+------------------------------------------------------------------------------------------
+public static String random(final int count) {
+        return random(count, false, false);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.RandomStringUtils.random(int,int,int,boolean,boolean,char[],Random)
+------------------------------------------------------------------------------------------
+public static String random(final int count) {
+        return random(count, false, false);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.RandomStringUtils.random(int,char)
+------------------------------------------------------------------------------------------
+public static String random(final int count) {
+        return random(count, false, false);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.RandomStringUtils.random(int)
+------------------------------------------------------------------------------------------
+public static String random(final int count) {
+        return random(count, false, false);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.RandomStringUtils.random(int,boolean,boolean)
+------------------------------------------------------------------------------------------
+public static String random(final int count) {
+        return random(count, false, false);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.RandomStringUtils.random(int,int,int,boolean,boolean)
+------------------------------------------------------------------------------------------
+public static String random(final int count) {
+        return random(count, false, false);
+    }
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.apache.commons.lang3.RandomStringUtilsTest#testExceptions
+Runtime: 1649609
+------------------------------------------------------------------------------------------
+java.lang.ArrayIndexOutOfBoundsException: Index 1774610454 out of bounds for length 0 at org.apache.commons.lang3.RandomStringUtils.random(RandomStringUtils.java:248) at org.apache.commons.lang3.RandomStringUtils.random(RandomStringUtils.java:321) at org.apache.commons.lang3.RandomStringUtilsTest.testExceptions(RandomStringUtilsTest.java:148) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #2
+Test: org.apache.commons.lang3.RandomStringUtilsTest#testLANG805
+Runtime: 744058
+------------------------------------------------------------------------------------------
+java.lang.ArrayIndexOutOfBoundsException: Index 1809556794 out of bounds for length 1 at org.apache.commons.lang3.RandomStringUtils.random(RandomStringUtils.java:248) at org.apache.commons.lang3.RandomStringUtilsTest.testLANG805(RandomStringUtilsTest.java:130) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

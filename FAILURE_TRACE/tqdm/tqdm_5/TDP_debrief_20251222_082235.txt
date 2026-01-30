@@ -1,0 +1,3108 @@
+================================================================================
+TDP (Test, Diagnose, Plan) - Execution Report
+================================================================================
+Start Time: 2025-12-22 08:22:35
+Total tests available: 46
+Total components: 93
+
+--- INITIAL TEST SELECTION ---
+Initial observed tests: [44, 3, 6, 10, 24, 34, 33, 37, 11, 19]
+Number of initial tests: 10
+Failed tests in initial set: 1
+Passed tests in initial set: 9
+  Test #44: FAILED - Components: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+  Test #3: PASSED - Components: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+  Test #6: PASSED - Components: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+  Test #10: PASSED - Components: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+  Test #24: PASSED - Components: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+  Test #34: PASSED - Components: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+  Test #33: PASSED - Components: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+  Test #37: PASSED - Components: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+  Test #11: PASSED - Components: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+  Test #19: PASSED - Components: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+
+Convergence threshold: 0.9
+
+================================================================================
+ITERATION 1
+================================================================================
+
+Tests used so far: 10 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.017
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.022
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.092270570
+  Rank 2: ['c2']  | Entropy Contribution=0.092270570
+  Rank 3: ['c3']  | Entropy Contribution=0.092270570
+  Rank 4: ['c4']  | Entropy Contribution=0.092270570
+  Rank 5: ['c5']  | Entropy Contribution=0.092270570
+  Rank 6: ['c6']  | Entropy Contribution=0.092270570
+  Rank 7: ['c7']  | Entropy Contribution=0.092270570
+  Rank 8: ['c8']  | Entropy Contribution=0.092270570
+  Rank 9: ['c9']  | Entropy Contribution=0.092270570
+  Rank 10: ['c10']  | Entropy Contribution=0.092270570
+  Rank 11: ['c11']  | Entropy Contribution=0.092270570
+  Rank 12: ['c12']  | Entropy Contribution=0.092270570
+  Rank 13: ['c13']  | Entropy Contribution=0.092270570
+  Rank 14: ['c14']  | Entropy Contribution=0.092270570
+  Rank 15: ['c15']  | Entropy Contribution=0.092270570
+  Rank 16: ['c16']  | Entropy Contribution=0.092270570
+  Rank 17: ['c17']  | Entropy Contribution=0.092270570
+  Rank 18: ['c20']  | Entropy Contribution=0.092270570
+  Rank 19: ['c21']  | Entropy Contribution=0.092270570
+  Rank 20: ['c22']  | Entropy Contribution=0.092270570
+  Rank 21: ['c23']  | Entropy Contribution=0.092270570
+  Rank 22: ['c24']  | Entropy Contribution=0.092270570
+  Rank 23: ['c25']  | Entropy Contribution=0.092270570
+  Rank 24: ['c26']  | Entropy Contribution=0.092270570
+  Rank 25: ['c27']  | Entropy Contribution=0.092270570
+  Rank 26: ['c28']  | Entropy Contribution=0.092270570
+  Rank 27: ['c32']  | Entropy Contribution=0.092270570
+  Rank 28: ['c33']  | Entropy Contribution=0.092270570
+  Rank 29: ['c34']  | Entropy Contribution=0.092270570
+  Rank 30: ['c35']  | Entropy Contribution=0.092270570
+  Rank 31: ['c36']  | Entropy Contribution=0.092270570
+  Rank 32: ['c37']  | Entropy Contribution=0.092270570
+  Rank 33: ['c38']  | Entropy Contribution=0.092270570
+  Rank 34: ['c39']  | Entropy Contribution=0.092270570
+  Rank 35: ['c40']  | Entropy Contribution=0.092270570
+  Rank 36: ['c41']  | Entropy Contribution=0.092270570
+  Rank 37: ['c42']  | Entropy Contribution=0.092270570
+  Rank 38: ['c44']  | Entropy Contribution=0.092270570
+  Rank 39: ['c45']  | Entropy Contribution=0.092270570
+  Rank 40: ['c46']  | Entropy Contribution=0.092270570
+  Rank 41: ['c47']  | Entropy Contribution=0.092270570
+  Rank 42: ['c48']  | Entropy Contribution=0.092270570
+  Rank 43: ['c49']  | Entropy Contribution=0.092270570
+  Rank 44: ['c50']  | Entropy Contribution=0.092270570
+  Rank 45: ['c51']  | Entropy Contribution=0.092270570
+  Rank 46: ['c52']  | Entropy Contribution=0.092270570
+  Rank 47: ['c67']  | Entropy Contribution=0.092270570
+  Rank 48: ['c79']  | Entropy Contribution=0.092270570
+  Rank 49: ['c80']  | Entropy Contribution=0.092270570
+  Rank 50: ['c81']  | Entropy Contribution=0.092270570
+  Rank 51: ['c82']  | Entropy Contribution=0.092270570
+  Rank 52: ['c83']  | Entropy Contribution=0.092270570
+  Rank 53: ['c84']  | Entropy Contribution=0.092270570
+  Rank 54: ['c85']  | Entropy Contribution=0.092270570
+  Rank 55: ['c86']  | Entropy Contribution=0.092270570
+  Rank 56: ['c87']  | Entropy Contribution=0.092270570
+  Rank 57: ['c88']  | Entropy Contribution=0.092270570
+  Rank 58: ['c89']  | Entropy Contribution=0.092270570
+  Rank 59: ['c90']  | Entropy Contribution=0.092270570
+  Rank 60: ['c91']  | Entropy Contribution=0.092270570
+  Rank 61: ['c92']  | Entropy Contribution=0.092270570
+  Rank 62: ['c93']  | Entropy Contribution=0.092270570
+  Rank 63: ['c18']  | Entropy Contribution=0.100390452
+  Rank 64: ['c19']  | Entropy Contribution=0.100390452
+  Rank 65: ['c43']  | Entropy Contribution=0.100390452
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #0
+  Info Gain: 0.006
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 2
+================================================================================
+
+Tests used so far: 11 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.019
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.021
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.091892823
+  Rank 2: ['c2']  | Entropy Contribution=0.091892823
+  Rank 3: ['c3']  | Entropy Contribution=0.091892823
+  Rank 4: ['c4']  | Entropy Contribution=0.091892823
+  Rank 5: ['c5']  | Entropy Contribution=0.091892823
+  Rank 6: ['c6']  | Entropy Contribution=0.091892823
+  Rank 7: ['c7']  | Entropy Contribution=0.091892823
+  Rank 8: ['c8']  | Entropy Contribution=0.091892823
+  Rank 9: ['c9']  | Entropy Contribution=0.091892823
+  Rank 10: ['c10']  | Entropy Contribution=0.091892823
+  Rank 11: ['c11']  | Entropy Contribution=0.091892823
+  Rank 12: ['c12']  | Entropy Contribution=0.091892823
+  Rank 13: ['c13']  | Entropy Contribution=0.091892823
+  Rank 14: ['c14']  | Entropy Contribution=0.091892823
+  Rank 15: ['c15']  | Entropy Contribution=0.091892823
+  Rank 16: ['c16']  | Entropy Contribution=0.091892823
+  Rank 17: ['c17']  | Entropy Contribution=0.091892823
+  Rank 18: ['c20']  | Entropy Contribution=0.091892823
+  Rank 19: ['c21']  | Entropy Contribution=0.091892823
+  Rank 20: ['c22']  | Entropy Contribution=0.091892823
+  Rank 21: ['c23']  | Entropy Contribution=0.091892823
+  Rank 22: ['c24']  | Entropy Contribution=0.091892823
+  Rank 23: ['c25']  | Entropy Contribution=0.091892823
+  Rank 24: ['c26']  | Entropy Contribution=0.091892823
+  Rank 25: ['c27']  | Entropy Contribution=0.091892823
+  Rank 26: ['c28']  | Entropy Contribution=0.091892823
+  Rank 27: ['c32']  | Entropy Contribution=0.091892823
+  Rank 28: ['c33']  | Entropy Contribution=0.091892823
+  Rank 29: ['c34']  | Entropy Contribution=0.091892823
+  Rank 30: ['c35']  | Entropy Contribution=0.091892823
+  Rank 31: ['c36']  | Entropy Contribution=0.091892823
+  Rank 32: ['c37']  | Entropy Contribution=0.091892823
+  Rank 33: ['c38']  | Entropy Contribution=0.091892823
+  Rank 34: ['c39']  | Entropy Contribution=0.091892823
+  Rank 35: ['c40']  | Entropy Contribution=0.091892823
+  Rank 36: ['c41']  | Entropy Contribution=0.091892823
+  Rank 37: ['c42']  | Entropy Contribution=0.091892823
+  Rank 38: ['c44']  | Entropy Contribution=0.091892823
+  Rank 39: ['c45']  | Entropy Contribution=0.091892823
+  Rank 40: ['c46']  | Entropy Contribution=0.091892823
+  Rank 41: ['c47']  | Entropy Contribution=0.091892823
+  Rank 42: ['c48']  | Entropy Contribution=0.091892823
+  Rank 43: ['c49']  | Entropy Contribution=0.091892823
+  Rank 44: ['c50']  | Entropy Contribution=0.091892823
+  Rank 45: ['c51']  | Entropy Contribution=0.091892823
+  Rank 46: ['c52']  | Entropy Contribution=0.091892823
+  Rank 47: ['c67']  | Entropy Contribution=0.091892823
+  Rank 48: ['c79']  | Entropy Contribution=0.091892823
+  Rank 49: ['c80']  | Entropy Contribution=0.091892823
+  Rank 50: ['c81']  | Entropy Contribution=0.091892823
+  Rank 51: ['c82']  | Entropy Contribution=0.091892823
+  Rank 52: ['c83']  | Entropy Contribution=0.091892823
+  Rank 53: ['c84']  | Entropy Contribution=0.091892823
+  Rank 54: ['c85']  | Entropy Contribution=0.091892823
+  Rank 55: ['c86']  | Entropy Contribution=0.091892823
+  Rank 56: ['c87']  | Entropy Contribution=0.091892823
+  Rank 57: ['c88']  | Entropy Contribution=0.091892823
+  Rank 58: ['c89']  | Entropy Contribution=0.091892823
+  Rank 59: ['c90']  | Entropy Contribution=0.091892823
+  Rank 60: ['c91']  | Entropy Contribution=0.091892823
+  Rank 61: ['c92']  | Entropy Contribution=0.091892823
+  Rank 62: ['c93']  | Entropy Contribution=0.091892823
+  Rank 63: ['c18']  | Entropy Contribution=0.107799415
+  Rank 64: ['c19']  | Entropy Contribution=0.107799415
+  Rank 65: ['c43']  | Entropy Contribution=0.107799415
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #1
+  Info Gain: 0.006
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 3
+================================================================================
+
+Tests used so far: 12 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.020
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.019
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.091518512
+  Rank 2: ['c2']  | Entropy Contribution=0.091518512
+  Rank 3: ['c3']  | Entropy Contribution=0.091518512
+  Rank 4: ['c4']  | Entropy Contribution=0.091518512
+  Rank 5: ['c5']  | Entropy Contribution=0.091518512
+  Rank 6: ['c6']  | Entropy Contribution=0.091518512
+  Rank 7: ['c7']  | Entropy Contribution=0.091518512
+  Rank 8: ['c8']  | Entropy Contribution=0.091518512
+  Rank 9: ['c9']  | Entropy Contribution=0.091518512
+  Rank 10: ['c10']  | Entropy Contribution=0.091518512
+  Rank 11: ['c11']  | Entropy Contribution=0.091518512
+  Rank 12: ['c12']  | Entropy Contribution=0.091518512
+  Rank 13: ['c13']  | Entropy Contribution=0.091518512
+  Rank 14: ['c14']  | Entropy Contribution=0.091518512
+  Rank 15: ['c15']  | Entropy Contribution=0.091518512
+  Rank 16: ['c16']  | Entropy Contribution=0.091518512
+  Rank 17: ['c17']  | Entropy Contribution=0.091518512
+  Rank 18: ['c20']  | Entropy Contribution=0.091518512
+  Rank 19: ['c21']  | Entropy Contribution=0.091518512
+  Rank 20: ['c22']  | Entropy Contribution=0.091518512
+  Rank 21: ['c23']  | Entropy Contribution=0.091518512
+  Rank 22: ['c24']  | Entropy Contribution=0.091518512
+  Rank 23: ['c25']  | Entropy Contribution=0.091518512
+  Rank 24: ['c26']  | Entropy Contribution=0.091518512
+  Rank 25: ['c27']  | Entropy Contribution=0.091518512
+  Rank 26: ['c28']  | Entropy Contribution=0.091518512
+  Rank 27: ['c32']  | Entropy Contribution=0.091518512
+  Rank 28: ['c33']  | Entropy Contribution=0.091518512
+  Rank 29: ['c34']  | Entropy Contribution=0.091518512
+  Rank 30: ['c35']  | Entropy Contribution=0.091518512
+  Rank 31: ['c36']  | Entropy Contribution=0.091518512
+  Rank 32: ['c37']  | Entropy Contribution=0.091518512
+  Rank 33: ['c38']  | Entropy Contribution=0.091518512
+  Rank 34: ['c39']  | Entropy Contribution=0.091518512
+  Rank 35: ['c40']  | Entropy Contribution=0.091518512
+  Rank 36: ['c41']  | Entropy Contribution=0.091518512
+  Rank 37: ['c42']  | Entropy Contribution=0.091518512
+  Rank 38: ['c44']  | Entropy Contribution=0.091518512
+  Rank 39: ['c45']  | Entropy Contribution=0.091518512
+  Rank 40: ['c46']  | Entropy Contribution=0.091518512
+  Rank 41: ['c47']  | Entropy Contribution=0.091518512
+  Rank 42: ['c48']  | Entropy Contribution=0.091518512
+  Rank 43: ['c49']  | Entropy Contribution=0.091518512
+  Rank 44: ['c50']  | Entropy Contribution=0.091518512
+  Rank 45: ['c51']  | Entropy Contribution=0.091518512
+  Rank 46: ['c52']  | Entropy Contribution=0.091518512
+  Rank 47: ['c67']  | Entropy Contribution=0.091518512
+  Rank 48: ['c79']  | Entropy Contribution=0.091518512
+  Rank 49: ['c80']  | Entropy Contribution=0.091518512
+  Rank 50: ['c81']  | Entropy Contribution=0.091518512
+  Rank 51: ['c82']  | Entropy Contribution=0.091518512
+  Rank 52: ['c83']  | Entropy Contribution=0.091518512
+  Rank 53: ['c84']  | Entropy Contribution=0.091518512
+  Rank 54: ['c85']  | Entropy Contribution=0.091518512
+  Rank 55: ['c86']  | Entropy Contribution=0.091518512
+  Rank 56: ['c87']  | Entropy Contribution=0.091518512
+  Rank 57: ['c88']  | Entropy Contribution=0.091518512
+  Rank 58: ['c89']  | Entropy Contribution=0.091518512
+  Rank 59: ['c90']  | Entropy Contribution=0.091518512
+  Rank 60: ['c91']  | Entropy Contribution=0.091518512
+  Rank 61: ['c92']  | Entropy Contribution=0.091518512
+  Rank 62: ['c93']  | Entropy Contribution=0.091518512
+  Rank 63: ['c18']  | Entropy Contribution=0.114909991
+  Rank 64: ['c19']  | Entropy Contribution=0.114909991
+  Rank 65: ['c43']  | Entropy Contribution=0.114909991
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #2
+  Info Gain: 0.005
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 4
+================================================================================
+
+Tests used so far: 13 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.022
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.016
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.091147583
+  Rank 2: ['c2']  | Entropy Contribution=0.091147583
+  Rank 3: ['c3']  | Entropy Contribution=0.091147583
+  Rank 4: ['c4']  | Entropy Contribution=0.091147583
+  Rank 5: ['c5']  | Entropy Contribution=0.091147583
+  Rank 6: ['c6']  | Entropy Contribution=0.091147583
+  Rank 7: ['c7']  | Entropy Contribution=0.091147583
+  Rank 8: ['c8']  | Entropy Contribution=0.091147583
+  Rank 9: ['c9']  | Entropy Contribution=0.091147583
+  Rank 10: ['c10']  | Entropy Contribution=0.091147583
+  Rank 11: ['c11']  | Entropy Contribution=0.091147583
+  Rank 12: ['c12']  | Entropy Contribution=0.091147583
+  Rank 13: ['c13']  | Entropy Contribution=0.091147583
+  Rank 14: ['c14']  | Entropy Contribution=0.091147583
+  Rank 15: ['c15']  | Entropy Contribution=0.091147583
+  Rank 16: ['c16']  | Entropy Contribution=0.091147583
+  Rank 17: ['c17']  | Entropy Contribution=0.091147583
+  Rank 18: ['c20']  | Entropy Contribution=0.091147583
+  Rank 19: ['c21']  | Entropy Contribution=0.091147583
+  Rank 20: ['c22']  | Entropy Contribution=0.091147583
+  Rank 21: ['c23']  | Entropy Contribution=0.091147583
+  Rank 22: ['c24']  | Entropy Contribution=0.091147583
+  Rank 23: ['c25']  | Entropy Contribution=0.091147583
+  Rank 24: ['c26']  | Entropy Contribution=0.091147583
+  Rank 25: ['c27']  | Entropy Contribution=0.091147583
+  Rank 26: ['c28']  | Entropy Contribution=0.091147583
+  Rank 27: ['c32']  | Entropy Contribution=0.091147583
+  Rank 28: ['c33']  | Entropy Contribution=0.091147583
+  Rank 29: ['c34']  | Entropy Contribution=0.091147583
+  Rank 30: ['c35']  | Entropy Contribution=0.091147583
+  Rank 31: ['c36']  | Entropy Contribution=0.091147583
+  Rank 32: ['c37']  | Entropy Contribution=0.091147583
+  Rank 33: ['c38']  | Entropy Contribution=0.091147583
+  Rank 34: ['c39']  | Entropy Contribution=0.091147583
+  Rank 35: ['c40']  | Entropy Contribution=0.091147583
+  Rank 36: ['c41']  | Entropy Contribution=0.091147583
+  Rank 37: ['c42']  | Entropy Contribution=0.091147583
+  Rank 38: ['c44']  | Entropy Contribution=0.091147583
+  Rank 39: ['c45']  | Entropy Contribution=0.091147583
+  Rank 40: ['c46']  | Entropy Contribution=0.091147583
+  Rank 41: ['c47']  | Entropy Contribution=0.091147583
+  Rank 42: ['c48']  | Entropy Contribution=0.091147583
+  Rank 43: ['c49']  | Entropy Contribution=0.091147583
+  Rank 44: ['c50']  | Entropy Contribution=0.091147583
+  Rank 45: ['c51']  | Entropy Contribution=0.091147583
+  Rank 46: ['c52']  | Entropy Contribution=0.091147583
+  Rank 47: ['c67']  | Entropy Contribution=0.091147583
+  Rank 48: ['c79']  | Entropy Contribution=0.091147583
+  Rank 49: ['c80']  | Entropy Contribution=0.091147583
+  Rank 50: ['c81']  | Entropy Contribution=0.091147583
+  Rank 51: ['c82']  | Entropy Contribution=0.091147583
+  Rank 52: ['c83']  | Entropy Contribution=0.091147583
+  Rank 53: ['c84']  | Entropy Contribution=0.091147583
+  Rank 54: ['c85']  | Entropy Contribution=0.091147583
+  Rank 55: ['c86']  | Entropy Contribution=0.091147583
+  Rank 56: ['c87']  | Entropy Contribution=0.091147583
+  Rank 57: ['c88']  | Entropy Contribution=0.091147583
+  Rank 58: ['c89']  | Entropy Contribution=0.091147583
+  Rank 59: ['c90']  | Entropy Contribution=0.091147583
+  Rank 60: ['c91']  | Entropy Contribution=0.091147583
+  Rank 61: ['c92']  | Entropy Contribution=0.091147583
+  Rank 62: ['c93']  | Entropy Contribution=0.091147583
+  Rank 63: ['c18']  | Entropy Contribution=0.121748205
+  Rank 64: ['c19']  | Entropy Contribution=0.121748205
+  Rank 65: ['c43']  | Entropy Contribution=0.121748205
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #15
+  Info Gain: 0.004
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 5
+================================================================================
+
+Tests used so far: 14 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.024
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.013
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.090779983
+  Rank 2: ['c2']  | Entropy Contribution=0.090779983
+  Rank 3: ['c3']  | Entropy Contribution=0.090779983
+  Rank 4: ['c4']  | Entropy Contribution=0.090779983
+  Rank 5: ['c5']  | Entropy Contribution=0.090779983
+  Rank 6: ['c6']  | Entropy Contribution=0.090779983
+  Rank 7: ['c7']  | Entropy Contribution=0.090779983
+  Rank 8: ['c8']  | Entropy Contribution=0.090779983
+  Rank 9: ['c9']  | Entropy Contribution=0.090779983
+  Rank 10: ['c10']  | Entropy Contribution=0.090779983
+  Rank 11: ['c11']  | Entropy Contribution=0.090779983
+  Rank 12: ['c12']  | Entropy Contribution=0.090779983
+  Rank 13: ['c13']  | Entropy Contribution=0.090779983
+  Rank 14: ['c14']  | Entropy Contribution=0.090779983
+  Rank 15: ['c15']  | Entropy Contribution=0.090779983
+  Rank 16: ['c16']  | Entropy Contribution=0.090779983
+  Rank 17: ['c17']  | Entropy Contribution=0.090779983
+  Rank 18: ['c20']  | Entropy Contribution=0.090779983
+  Rank 19: ['c21']  | Entropy Contribution=0.090779983
+  Rank 20: ['c22']  | Entropy Contribution=0.090779983
+  Rank 21: ['c23']  | Entropy Contribution=0.090779983
+  Rank 22: ['c24']  | Entropy Contribution=0.090779983
+  Rank 23: ['c25']  | Entropy Contribution=0.090779983
+  Rank 24: ['c26']  | Entropy Contribution=0.090779983
+  Rank 25: ['c27']  | Entropy Contribution=0.090779983
+  Rank 26: ['c28']  | Entropy Contribution=0.090779983
+  Rank 27: ['c32']  | Entropy Contribution=0.090779983
+  Rank 28: ['c33']  | Entropy Contribution=0.090779983
+  Rank 29: ['c34']  | Entropy Contribution=0.090779983
+  Rank 30: ['c35']  | Entropy Contribution=0.090779983
+  Rank 31: ['c36']  | Entropy Contribution=0.090779983
+  Rank 32: ['c37']  | Entropy Contribution=0.090779983
+  Rank 33: ['c38']  | Entropy Contribution=0.090779983
+  Rank 34: ['c39']  | Entropy Contribution=0.090779983
+  Rank 35: ['c40']  | Entropy Contribution=0.090779983
+  Rank 36: ['c41']  | Entropy Contribution=0.090779983
+  Rank 37: ['c42']  | Entropy Contribution=0.090779983
+  Rank 38: ['c44']  | Entropy Contribution=0.090779983
+  Rank 39: ['c45']  | Entropy Contribution=0.090779983
+  Rank 40: ['c46']  | Entropy Contribution=0.090779983
+  Rank 41: ['c47']  | Entropy Contribution=0.090779983
+  Rank 42: ['c48']  | Entropy Contribution=0.090779983
+  Rank 43: ['c49']  | Entropy Contribution=0.090779983
+  Rank 44: ['c50']  | Entropy Contribution=0.090779983
+  Rank 45: ['c51']  | Entropy Contribution=0.090779983
+  Rank 46: ['c52']  | Entropy Contribution=0.090779983
+  Rank 47: ['c67']  | Entropy Contribution=0.090779983
+  Rank 48: ['c79']  | Entropy Contribution=0.090779983
+  Rank 49: ['c80']  | Entropy Contribution=0.090779983
+  Rank 50: ['c81']  | Entropy Contribution=0.090779983
+  Rank 51: ['c82']  | Entropy Contribution=0.090779983
+  Rank 52: ['c83']  | Entropy Contribution=0.090779983
+  Rank 53: ['c84']  | Entropy Contribution=0.090779983
+  Rank 54: ['c85']  | Entropy Contribution=0.090779983
+  Rank 55: ['c86']  | Entropy Contribution=0.090779983
+  Rank 56: ['c87']  | Entropy Contribution=0.090779983
+  Rank 57: ['c88']  | Entropy Contribution=0.090779983
+  Rank 58: ['c89']  | Entropy Contribution=0.090779983
+  Rank 59: ['c90']  | Entropy Contribution=0.090779983
+  Rank 60: ['c91']  | Entropy Contribution=0.090779983
+  Rank 61: ['c92']  | Entropy Contribution=0.090779983
+  Rank 62: ['c93']  | Entropy Contribution=0.090779983
+  Rank 63: ['c18']  | Entropy Contribution=0.128336070
+  Rank 64: ['c19']  | Entropy Contribution=0.128336070
+  Rank 65: ['c43']  | Entropy Contribution=0.128336070
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #21
+  Info Gain: 0.004
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 6
+================================================================================
+
+Tests used so far: 15 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.025
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.010
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.090415662
+  Rank 2: ['c2']  | Entropy Contribution=0.090415662
+  Rank 3: ['c3']  | Entropy Contribution=0.090415662
+  Rank 4: ['c4']  | Entropy Contribution=0.090415662
+  Rank 5: ['c5']  | Entropy Contribution=0.090415662
+  Rank 6: ['c6']  | Entropy Contribution=0.090415662
+  Rank 7: ['c7']  | Entropy Contribution=0.090415662
+  Rank 8: ['c8']  | Entropy Contribution=0.090415662
+  Rank 9: ['c9']  | Entropy Contribution=0.090415662
+  Rank 10: ['c10']  | Entropy Contribution=0.090415662
+  Rank 11: ['c11']  | Entropy Contribution=0.090415662
+  Rank 12: ['c12']  | Entropy Contribution=0.090415662
+  Rank 13: ['c13']  | Entropy Contribution=0.090415662
+  Rank 14: ['c14']  | Entropy Contribution=0.090415662
+  Rank 15: ['c15']  | Entropy Contribution=0.090415662
+  Rank 16: ['c16']  | Entropy Contribution=0.090415662
+  Rank 17: ['c17']  | Entropy Contribution=0.090415662
+  Rank 18: ['c20']  | Entropy Contribution=0.090415662
+  Rank 19: ['c21']  | Entropy Contribution=0.090415662
+  Rank 20: ['c22']  | Entropy Contribution=0.090415662
+  Rank 21: ['c23']  | Entropy Contribution=0.090415662
+  Rank 22: ['c24']  | Entropy Contribution=0.090415662
+  Rank 23: ['c25']  | Entropy Contribution=0.090415662
+  Rank 24: ['c26']  | Entropy Contribution=0.090415662
+  Rank 25: ['c27']  | Entropy Contribution=0.090415662
+  Rank 26: ['c28']  | Entropy Contribution=0.090415662
+  Rank 27: ['c32']  | Entropy Contribution=0.090415662
+  Rank 28: ['c33']  | Entropy Contribution=0.090415662
+  Rank 29: ['c34']  | Entropy Contribution=0.090415662
+  Rank 30: ['c35']  | Entropy Contribution=0.090415662
+  Rank 31: ['c36']  | Entropy Contribution=0.090415662
+  Rank 32: ['c37']  | Entropy Contribution=0.090415662
+  Rank 33: ['c38']  | Entropy Contribution=0.090415662
+  Rank 34: ['c39']  | Entropy Contribution=0.090415662
+  Rank 35: ['c40']  | Entropy Contribution=0.090415662
+  Rank 36: ['c41']  | Entropy Contribution=0.090415662
+  Rank 37: ['c42']  | Entropy Contribution=0.090415662
+  Rank 38: ['c44']  | Entropy Contribution=0.090415662
+  Rank 39: ['c45']  | Entropy Contribution=0.090415662
+  Rank 40: ['c46']  | Entropy Contribution=0.090415662
+  Rank 41: ['c47']  | Entropy Contribution=0.090415662
+  Rank 42: ['c48']  | Entropy Contribution=0.090415662
+  Rank 43: ['c49']  | Entropy Contribution=0.090415662
+  Rank 44: ['c50']  | Entropy Contribution=0.090415662
+  Rank 45: ['c51']  | Entropy Contribution=0.090415662
+  Rank 46: ['c52']  | Entropy Contribution=0.090415662
+  Rank 47: ['c67']  | Entropy Contribution=0.090415662
+  Rank 48: ['c79']  | Entropy Contribution=0.090415662
+  Rank 49: ['c80']  | Entropy Contribution=0.090415662
+  Rank 50: ['c81']  | Entropy Contribution=0.090415662
+  Rank 51: ['c82']  | Entropy Contribution=0.090415662
+  Rank 52: ['c83']  | Entropy Contribution=0.090415662
+  Rank 53: ['c84']  | Entropy Contribution=0.090415662
+  Rank 54: ['c85']  | Entropy Contribution=0.090415662
+  Rank 55: ['c86']  | Entropy Contribution=0.090415662
+  Rank 56: ['c87']  | Entropy Contribution=0.090415662
+  Rank 57: ['c88']  | Entropy Contribution=0.090415662
+  Rank 58: ['c89']  | Entropy Contribution=0.090415662
+  Rank 59: ['c90']  | Entropy Contribution=0.090415662
+  Rank 60: ['c91']  | Entropy Contribution=0.090415662
+  Rank 61: ['c92']  | Entropy Contribution=0.090415662
+  Rank 62: ['c93']  | Entropy Contribution=0.090415662
+  Rank 63: ['c18']  | Entropy Contribution=0.134692475
+  Rank 64: ['c19']  | Entropy Contribution=0.134692475
+  Rank 65: ['c43']  | Entropy Contribution=0.134692475
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #30
+  Info Gain: 0.003
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 7
+================================================================================
+
+Tests used so far: 16 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.027
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.006
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.090054574
+  Rank 2: ['c2']  | Entropy Contribution=0.090054574
+  Rank 3: ['c3']  | Entropy Contribution=0.090054574
+  Rank 4: ['c4']  | Entropy Contribution=0.090054574
+  Rank 5: ['c5']  | Entropy Contribution=0.090054574
+  Rank 6: ['c6']  | Entropy Contribution=0.090054574
+  Rank 7: ['c7']  | Entropy Contribution=0.090054574
+  Rank 8: ['c8']  | Entropy Contribution=0.090054574
+  Rank 9: ['c9']  | Entropy Contribution=0.090054574
+  Rank 10: ['c10']  | Entropy Contribution=0.090054574
+  Rank 11: ['c11']  | Entropy Contribution=0.090054574
+  Rank 12: ['c12']  | Entropy Contribution=0.090054574
+  Rank 13: ['c13']  | Entropy Contribution=0.090054574
+  Rank 14: ['c14']  | Entropy Contribution=0.090054574
+  Rank 15: ['c15']  | Entropy Contribution=0.090054574
+  Rank 16: ['c16']  | Entropy Contribution=0.090054574
+  Rank 17: ['c17']  | Entropy Contribution=0.090054574
+  Rank 18: ['c20']  | Entropy Contribution=0.090054574
+  Rank 19: ['c21']  | Entropy Contribution=0.090054574
+  Rank 20: ['c22']  | Entropy Contribution=0.090054574
+  Rank 21: ['c23']  | Entropy Contribution=0.090054574
+  Rank 22: ['c24']  | Entropy Contribution=0.090054574
+  Rank 23: ['c25']  | Entropy Contribution=0.090054574
+  Rank 24: ['c26']  | Entropy Contribution=0.090054574
+  Rank 25: ['c27']  | Entropy Contribution=0.090054574
+  Rank 26: ['c28']  | Entropy Contribution=0.090054574
+  Rank 27: ['c32']  | Entropy Contribution=0.090054574
+  Rank 28: ['c33']  | Entropy Contribution=0.090054574
+  Rank 29: ['c34']  | Entropy Contribution=0.090054574
+  Rank 30: ['c35']  | Entropy Contribution=0.090054574
+  Rank 31: ['c36']  | Entropy Contribution=0.090054574
+  Rank 32: ['c37']  | Entropy Contribution=0.090054574
+  Rank 33: ['c38']  | Entropy Contribution=0.090054574
+  Rank 34: ['c39']  | Entropy Contribution=0.090054574
+  Rank 35: ['c40']  | Entropy Contribution=0.090054574
+  Rank 36: ['c41']  | Entropy Contribution=0.090054574
+  Rank 37: ['c42']  | Entropy Contribution=0.090054574
+  Rank 38: ['c44']  | Entropy Contribution=0.090054574
+  Rank 39: ['c45']  | Entropy Contribution=0.090054574
+  Rank 40: ['c46']  | Entropy Contribution=0.090054574
+  Rank 41: ['c47']  | Entropy Contribution=0.090054574
+  Rank 42: ['c48']  | Entropy Contribution=0.090054574
+  Rank 43: ['c49']  | Entropy Contribution=0.090054574
+  Rank 44: ['c50']  | Entropy Contribution=0.090054574
+  Rank 45: ['c51']  | Entropy Contribution=0.090054574
+  Rank 46: ['c52']  | Entropy Contribution=0.090054574
+  Rank 47: ['c67']  | Entropy Contribution=0.090054574
+  Rank 48: ['c79']  | Entropy Contribution=0.090054574
+  Rank 49: ['c80']  | Entropy Contribution=0.090054574
+  Rank 50: ['c81']  | Entropy Contribution=0.090054574
+  Rank 51: ['c82']  | Entropy Contribution=0.090054574
+  Rank 52: ['c83']  | Entropy Contribution=0.090054574
+  Rank 53: ['c84']  | Entropy Contribution=0.090054574
+  Rank 54: ['c85']  | Entropy Contribution=0.090054574
+  Rank 55: ['c86']  | Entropy Contribution=0.090054574
+  Rank 56: ['c87']  | Entropy Contribution=0.090054574
+  Rank 57: ['c88']  | Entropy Contribution=0.090054574
+  Rank 58: ['c89']  | Entropy Contribution=0.090054574
+  Rank 59: ['c90']  | Entropy Contribution=0.090054574
+  Rank 60: ['c91']  | Entropy Contribution=0.090054574
+  Rank 61: ['c92']  | Entropy Contribution=0.090054574
+  Rank 62: ['c93']  | Entropy Contribution=0.090054574
+  Rank 63: ['c18']  | Entropy Contribution=0.140833818
+  Rank 64: ['c19']  | Entropy Contribution=0.140833818
+  Rank 65: ['c43']  | Entropy Contribution=0.140833818
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #4
+  Info Gain: 0.004
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 8
+================================================================================
+
+Tests used so far: 17 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.026
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.009
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.090320739
+  Rank 2: ['c2']  | Entropy Contribution=0.090320739
+  Rank 3: ['c3']  | Entropy Contribution=0.090320739
+  Rank 4: ['c4']  | Entropy Contribution=0.090320739
+  Rank 5: ['c5']  | Entropy Contribution=0.090320739
+  Rank 6: ['c6']  | Entropy Contribution=0.090320739
+  Rank 7: ['c7']  | Entropy Contribution=0.090320739
+  Rank 8: ['c8']  | Entropy Contribution=0.090320739
+  Rank 9: ['c9']  | Entropy Contribution=0.090320739
+  Rank 10: ['c10']  | Entropy Contribution=0.090320739
+  Rank 11: ['c11']  | Entropy Contribution=0.090320739
+  Rank 12: ['c12']  | Entropy Contribution=0.090320739
+  Rank 13: ['c13']  | Entropy Contribution=0.090320739
+  Rank 14: ['c14']  | Entropy Contribution=0.090320739
+  Rank 15: ['c15']  | Entropy Contribution=0.090320739
+  Rank 16: ['c16']  | Entropy Contribution=0.090320739
+  Rank 17: ['c17']  | Entropy Contribution=0.090320739
+  Rank 18: ['c20']  | Entropy Contribution=0.090320739
+  Rank 19: ['c21']  | Entropy Contribution=0.090320739
+  Rank 20: ['c22']  | Entropy Contribution=0.090320739
+  Rank 21: ['c23']  | Entropy Contribution=0.090320739
+  Rank 22: ['c24']  | Entropy Contribution=0.090320739
+  Rank 23: ['c25']  | Entropy Contribution=0.090320739
+  Rank 24: ['c26']  | Entropy Contribution=0.090320739
+  Rank 25: ['c27']  | Entropy Contribution=0.090320739
+  Rank 26: ['c28']  | Entropy Contribution=0.090320739
+  Rank 27: ['c32']  | Entropy Contribution=0.090320739
+  Rank 28: ['c33']  | Entropy Contribution=0.090320739
+  Rank 29: ['c34']  | Entropy Contribution=0.090320739
+  Rank 30: ['c35']  | Entropy Contribution=0.090320739
+  Rank 31: ['c36']  | Entropy Contribution=0.090320739
+  Rank 32: ['c37']  | Entropy Contribution=0.090320739
+  Rank 33: ['c38']  | Entropy Contribution=0.090320739
+  Rank 34: ['c39']  | Entropy Contribution=0.090320739
+  Rank 35: ['c40']  | Entropy Contribution=0.090320739
+  Rank 36: ['c41']  | Entropy Contribution=0.090320739
+  Rank 37: ['c42']  | Entropy Contribution=0.090320739
+  Rank 38: ['c44']  | Entropy Contribution=0.090320739
+  Rank 39: ['c45']  | Entropy Contribution=0.090320739
+  Rank 40: ['c46']  | Entropy Contribution=0.090320739
+  Rank 41: ['c47']  | Entropy Contribution=0.090320739
+  Rank 42: ['c48']  | Entropy Contribution=0.090320739
+  Rank 43: ['c49']  | Entropy Contribution=0.090320739
+  Rank 44: ['c50']  | Entropy Contribution=0.090320739
+  Rank 45: ['c51']  | Entropy Contribution=0.090320739
+  Rank 46: ['c52']  | Entropy Contribution=0.090320739
+  Rank 47: ['c67']  | Entropy Contribution=0.090320739
+  Rank 48: ['c79']  | Entropy Contribution=0.090320739
+  Rank 49: ['c80']  | Entropy Contribution=0.090320739
+  Rank 50: ['c81']  | Entropy Contribution=0.090320739
+  Rank 51: ['c82']  | Entropy Contribution=0.090320739
+  Rank 52: ['c83']  | Entropy Contribution=0.090320739
+  Rank 53: ['c84']  | Entropy Contribution=0.090320739
+  Rank 54: ['c85']  | Entropy Contribution=0.090320739
+  Rank 55: ['c86']  | Entropy Contribution=0.090320739
+  Rank 56: ['c87']  | Entropy Contribution=0.090320739
+  Rank 57: ['c88']  | Entropy Contribution=0.090320739
+  Rank 58: ['c89']  | Entropy Contribution=0.090320739
+  Rank 59: ['c90']  | Entropy Contribution=0.090320739
+  Rank 60: ['c91']  | Entropy Contribution=0.090320739
+  Rank 61: ['c92']  | Entropy Contribution=0.090320739
+  Rank 62: ['c93']  | Entropy Contribution=0.090320739
+  Rank 63: ['c18']  | Entropy Contribution=0.136321807
+  Rank 64: ['c19']  | Entropy Contribution=0.136321807
+  Rank 65: ['c43']  | Entropy Contribution=0.136321807
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #5
+  Info Gain: 0.003
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 9
+================================================================================
+
+Tests used so far: 18 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.025
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.011
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.090537398
+  Rank 2: ['c2']  | Entropy Contribution=0.090537398
+  Rank 3: ['c3']  | Entropy Contribution=0.090537398
+  Rank 4: ['c4']  | Entropy Contribution=0.090537398
+  Rank 5: ['c5']  | Entropy Contribution=0.090537398
+  Rank 6: ['c6']  | Entropy Contribution=0.090537398
+  Rank 7: ['c7']  | Entropy Contribution=0.090537398
+  Rank 8: ['c8']  | Entropy Contribution=0.090537398
+  Rank 9: ['c9']  | Entropy Contribution=0.090537398
+  Rank 10: ['c10']  | Entropy Contribution=0.090537398
+  Rank 11: ['c11']  | Entropy Contribution=0.090537398
+  Rank 12: ['c12']  | Entropy Contribution=0.090537398
+  Rank 13: ['c13']  | Entropy Contribution=0.090537398
+  Rank 14: ['c14']  | Entropy Contribution=0.090537398
+  Rank 15: ['c15']  | Entropy Contribution=0.090537398
+  Rank 16: ['c16']  | Entropy Contribution=0.090537398
+  Rank 17: ['c17']  | Entropy Contribution=0.090537398
+  Rank 18: ['c20']  | Entropy Contribution=0.090537398
+  Rank 19: ['c21']  | Entropy Contribution=0.090537398
+  Rank 20: ['c22']  | Entropy Contribution=0.090537398
+  Rank 21: ['c23']  | Entropy Contribution=0.090537398
+  Rank 22: ['c24']  | Entropy Contribution=0.090537398
+  Rank 23: ['c25']  | Entropy Contribution=0.090537398
+  Rank 24: ['c26']  | Entropy Contribution=0.090537398
+  Rank 25: ['c27']  | Entropy Contribution=0.090537398
+  Rank 26: ['c28']  | Entropy Contribution=0.090537398
+  Rank 27: ['c32']  | Entropy Contribution=0.090537398
+  Rank 28: ['c33']  | Entropy Contribution=0.090537398
+  Rank 29: ['c34']  | Entropy Contribution=0.090537398
+  Rank 30: ['c35']  | Entropy Contribution=0.090537398
+  Rank 31: ['c36']  | Entropy Contribution=0.090537398
+  Rank 32: ['c37']  | Entropy Contribution=0.090537398
+  Rank 33: ['c38']  | Entropy Contribution=0.090537398
+  Rank 34: ['c39']  | Entropy Contribution=0.090537398
+  Rank 35: ['c40']  | Entropy Contribution=0.090537398
+  Rank 36: ['c41']  | Entropy Contribution=0.090537398
+  Rank 37: ['c42']  | Entropy Contribution=0.090537398
+  Rank 38: ['c44']  | Entropy Contribution=0.090537398
+  Rank 39: ['c45']  | Entropy Contribution=0.090537398
+  Rank 40: ['c46']  | Entropy Contribution=0.090537398
+  Rank 41: ['c47']  | Entropy Contribution=0.090537398
+  Rank 42: ['c48']  | Entropy Contribution=0.090537398
+  Rank 43: ['c49']  | Entropy Contribution=0.090537398
+  Rank 44: ['c50']  | Entropy Contribution=0.090537398
+  Rank 45: ['c51']  | Entropy Contribution=0.090537398
+  Rank 46: ['c52']  | Entropy Contribution=0.090537398
+  Rank 47: ['c67']  | Entropy Contribution=0.090537398
+  Rank 48: ['c79']  | Entropy Contribution=0.090537398
+  Rank 49: ['c80']  | Entropy Contribution=0.090537398
+  Rank 50: ['c81']  | Entropy Contribution=0.090537398
+  Rank 51: ['c82']  | Entropy Contribution=0.090537398
+  Rank 52: ['c83']  | Entropy Contribution=0.090537398
+  Rank 53: ['c84']  | Entropy Contribution=0.090537398
+  Rank 54: ['c85']  | Entropy Contribution=0.090537398
+  Rank 55: ['c86']  | Entropy Contribution=0.090537398
+  Rank 56: ['c87']  | Entropy Contribution=0.090537398
+  Rank 57: ['c88']  | Entropy Contribution=0.090537398
+  Rank 58: ['c89']  | Entropy Contribution=0.090537398
+  Rank 59: ['c90']  | Entropy Contribution=0.090537398
+  Rank 60: ['c91']  | Entropy Contribution=0.090537398
+  Rank 61: ['c92']  | Entropy Contribution=0.090537398
+  Rank 62: ['c93']  | Entropy Contribution=0.090537398
+  Rank 63: ['c18']  | Entropy Contribution=0.132586924
+  Rank 64: ['c19']  | Entropy Contribution=0.132586924
+  Rank 65: ['c43']  | Entropy Contribution=0.132586924
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #32
+  Info Gain: 0.003
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 10
+================================================================================
+
+Tests used so far: 19 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.026
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.008
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.090244046
+  Rank 2: ['c2']  | Entropy Contribution=0.090244046
+  Rank 3: ['c3']  | Entropy Contribution=0.090244046
+  Rank 4: ['c4']  | Entropy Contribution=0.090244046
+  Rank 5: ['c5']  | Entropy Contribution=0.090244046
+  Rank 6: ['c6']  | Entropy Contribution=0.090244046
+  Rank 7: ['c7']  | Entropy Contribution=0.090244046
+  Rank 8: ['c8']  | Entropy Contribution=0.090244046
+  Rank 9: ['c9']  | Entropy Contribution=0.090244046
+  Rank 10: ['c10']  | Entropy Contribution=0.090244046
+  Rank 11: ['c11']  | Entropy Contribution=0.090244046
+  Rank 12: ['c12']  | Entropy Contribution=0.090244046
+  Rank 13: ['c13']  | Entropy Contribution=0.090244046
+  Rank 14: ['c14']  | Entropy Contribution=0.090244046
+  Rank 15: ['c15']  | Entropy Contribution=0.090244046
+  Rank 16: ['c16']  | Entropy Contribution=0.090244046
+  Rank 17: ['c17']  | Entropy Contribution=0.090244046
+  Rank 18: ['c20']  | Entropy Contribution=0.090244046
+  Rank 19: ['c21']  | Entropy Contribution=0.090244046
+  Rank 20: ['c22']  | Entropy Contribution=0.090244046
+  Rank 21: ['c23']  | Entropy Contribution=0.090244046
+  Rank 22: ['c24']  | Entropy Contribution=0.090244046
+  Rank 23: ['c25']  | Entropy Contribution=0.090244046
+  Rank 24: ['c26']  | Entropy Contribution=0.090244046
+  Rank 25: ['c27']  | Entropy Contribution=0.090244046
+  Rank 26: ['c28']  | Entropy Contribution=0.090244046
+  Rank 27: ['c32']  | Entropy Contribution=0.090244046
+  Rank 28: ['c33']  | Entropy Contribution=0.090244046
+  Rank 29: ['c34']  | Entropy Contribution=0.090244046
+  Rank 30: ['c35']  | Entropy Contribution=0.090244046
+  Rank 31: ['c36']  | Entropy Contribution=0.090244046
+  Rank 32: ['c37']  | Entropy Contribution=0.090244046
+  Rank 33: ['c38']  | Entropy Contribution=0.090244046
+  Rank 34: ['c39']  | Entropy Contribution=0.090244046
+  Rank 35: ['c40']  | Entropy Contribution=0.090244046
+  Rank 36: ['c41']  | Entropy Contribution=0.090244046
+  Rank 37: ['c42']  | Entropy Contribution=0.090244046
+  Rank 38: ['c44']  | Entropy Contribution=0.090244046
+  Rank 39: ['c45']  | Entropy Contribution=0.090244046
+  Rank 40: ['c46']  | Entropy Contribution=0.090244046
+  Rank 41: ['c47']  | Entropy Contribution=0.090244046
+  Rank 42: ['c48']  | Entropy Contribution=0.090244046
+  Rank 43: ['c49']  | Entropy Contribution=0.090244046
+  Rank 44: ['c50']  | Entropy Contribution=0.090244046
+  Rank 45: ['c51']  | Entropy Contribution=0.090244046
+  Rank 46: ['c52']  | Entropy Contribution=0.090244046
+  Rank 47: ['c67']  | Entropy Contribution=0.090244046
+  Rank 48: ['c79']  | Entropy Contribution=0.090244046
+  Rank 49: ['c80']  | Entropy Contribution=0.090244046
+  Rank 50: ['c81']  | Entropy Contribution=0.090244046
+  Rank 51: ['c82']  | Entropy Contribution=0.090244046
+  Rank 52: ['c83']  | Entropy Contribution=0.090244046
+  Rank 53: ['c84']  | Entropy Contribution=0.090244046
+  Rank 54: ['c85']  | Entropy Contribution=0.090244046
+  Rank 55: ['c86']  | Entropy Contribution=0.090244046
+  Rank 56: ['c87']  | Entropy Contribution=0.090244046
+  Rank 57: ['c88']  | Entropy Contribution=0.090244046
+  Rank 58: ['c89']  | Entropy Contribution=0.090244046
+  Rank 59: ['c90']  | Entropy Contribution=0.090244046
+  Rank 60: ['c91']  | Entropy Contribution=0.090244046
+  Rank 61: ['c92']  | Entropy Contribution=0.090244046
+  Rank 62: ['c93']  | Entropy Contribution=0.090244046
+  Rank 63: ['c18']  | Entropy Contribution=0.137630395
+  Rank 64: ['c19']  | Entropy Contribution=0.137630395
+  Rank 65: ['c43']  | Entropy Contribution=0.137630395
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #7
+  Info Gain: 0.003
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 11
+================================================================================
+
+Tests used so far: 20 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.025
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.010
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.090448108
+  Rank 2: ['c2']  | Entropy Contribution=0.090448108
+  Rank 3: ['c3']  | Entropy Contribution=0.090448108
+  Rank 4: ['c4']  | Entropy Contribution=0.090448108
+  Rank 5: ['c5']  | Entropy Contribution=0.090448108
+  Rank 6: ['c6']  | Entropy Contribution=0.090448108
+  Rank 7: ['c7']  | Entropy Contribution=0.090448108
+  Rank 8: ['c8']  | Entropy Contribution=0.090448108
+  Rank 9: ['c9']  | Entropy Contribution=0.090448108
+  Rank 10: ['c10']  | Entropy Contribution=0.090448108
+  Rank 11: ['c11']  | Entropy Contribution=0.090448108
+  Rank 12: ['c12']  | Entropy Contribution=0.090448108
+  Rank 13: ['c13']  | Entropy Contribution=0.090448108
+  Rank 14: ['c14']  | Entropy Contribution=0.090448108
+  Rank 15: ['c15']  | Entropy Contribution=0.090448108
+  Rank 16: ['c16']  | Entropy Contribution=0.090448108
+  Rank 17: ['c17']  | Entropy Contribution=0.090448108
+  Rank 18: ['c20']  | Entropy Contribution=0.090448108
+  Rank 19: ['c21']  | Entropy Contribution=0.090448108
+  Rank 20: ['c22']  | Entropy Contribution=0.090448108
+  Rank 21: ['c23']  | Entropy Contribution=0.090448108
+  Rank 22: ['c24']  | Entropy Contribution=0.090448108
+  Rank 23: ['c25']  | Entropy Contribution=0.090448108
+  Rank 24: ['c26']  | Entropy Contribution=0.090448108
+  Rank 25: ['c27']  | Entropy Contribution=0.090448108
+  Rank 26: ['c28']  | Entropy Contribution=0.090448108
+  Rank 27: ['c32']  | Entropy Contribution=0.090448108
+  Rank 28: ['c33']  | Entropy Contribution=0.090448108
+  Rank 29: ['c34']  | Entropy Contribution=0.090448108
+  Rank 30: ['c35']  | Entropy Contribution=0.090448108
+  Rank 31: ['c36']  | Entropy Contribution=0.090448108
+  Rank 32: ['c37']  | Entropy Contribution=0.090448108
+  Rank 33: ['c38']  | Entropy Contribution=0.090448108
+  Rank 34: ['c39']  | Entropy Contribution=0.090448108
+  Rank 35: ['c40']  | Entropy Contribution=0.090448108
+  Rank 36: ['c41']  | Entropy Contribution=0.090448108
+  Rank 37: ['c42']  | Entropy Contribution=0.090448108
+  Rank 38: ['c44']  | Entropy Contribution=0.090448108
+  Rank 39: ['c45']  | Entropy Contribution=0.090448108
+  Rank 40: ['c46']  | Entropy Contribution=0.090448108
+  Rank 41: ['c47']  | Entropy Contribution=0.090448108
+  Rank 42: ['c48']  | Entropy Contribution=0.090448108
+  Rank 43: ['c49']  | Entropy Contribution=0.090448108
+  Rank 44: ['c50']  | Entropy Contribution=0.090448108
+  Rank 45: ['c51']  | Entropy Contribution=0.090448108
+  Rank 46: ['c52']  | Entropy Contribution=0.090448108
+  Rank 47: ['c67']  | Entropy Contribution=0.090448108
+  Rank 48: ['c79']  | Entropy Contribution=0.090448108
+  Rank 49: ['c80']  | Entropy Contribution=0.090448108
+  Rank 50: ['c81']  | Entropy Contribution=0.090448108
+  Rank 51: ['c82']  | Entropy Contribution=0.090448108
+  Rank 52: ['c83']  | Entropy Contribution=0.090448108
+  Rank 53: ['c84']  | Entropy Contribution=0.090448108
+  Rank 54: ['c85']  | Entropy Contribution=0.090448108
+  Rank 55: ['c86']  | Entropy Contribution=0.090448108
+  Rank 56: ['c87']  | Entropy Contribution=0.090448108
+  Rank 57: ['c88']  | Entropy Contribution=0.090448108
+  Rank 58: ['c89']  | Entropy Contribution=0.090448108
+  Rank 59: ['c90']  | Entropy Contribution=0.090448108
+  Rank 60: ['c91']  | Entropy Contribution=0.090448108
+  Rank 61: ['c92']  | Entropy Contribution=0.090448108
+  Rank 62: ['c93']  | Entropy Contribution=0.090448108
+  Rank 63: ['c18']  | Entropy Contribution=0.134133066
+  Rank 64: ['c19']  | Entropy Contribution=0.134133066
+  Rank 65: ['c43']  | Entropy Contribution=0.134133066
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #35
+  Info Gain: 0.003
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 12
+================================================================================
+
+Tests used so far: 21 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.026
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.007
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.090180788
+  Rank 2: ['c2']  | Entropy Contribution=0.090180788
+  Rank 3: ['c3']  | Entropy Contribution=0.090180788
+  Rank 4: ['c4']  | Entropy Contribution=0.090180788
+  Rank 5: ['c5']  | Entropy Contribution=0.090180788
+  Rank 6: ['c6']  | Entropy Contribution=0.090180788
+  Rank 7: ['c7']  | Entropy Contribution=0.090180788
+  Rank 8: ['c8']  | Entropy Contribution=0.090180788
+  Rank 9: ['c9']  | Entropy Contribution=0.090180788
+  Rank 10: ['c10']  | Entropy Contribution=0.090180788
+  Rank 11: ['c11']  | Entropy Contribution=0.090180788
+  Rank 12: ['c12']  | Entropy Contribution=0.090180788
+  Rank 13: ['c13']  | Entropy Contribution=0.090180788
+  Rank 14: ['c14']  | Entropy Contribution=0.090180788
+  Rank 15: ['c15']  | Entropy Contribution=0.090180788
+  Rank 16: ['c16']  | Entropy Contribution=0.090180788
+  Rank 17: ['c17']  | Entropy Contribution=0.090180788
+  Rank 18: ['c20']  | Entropy Contribution=0.090180788
+  Rank 19: ['c21']  | Entropy Contribution=0.090180788
+  Rank 20: ['c22']  | Entropy Contribution=0.090180788
+  Rank 21: ['c23']  | Entropy Contribution=0.090180788
+  Rank 22: ['c24']  | Entropy Contribution=0.090180788
+  Rank 23: ['c25']  | Entropy Contribution=0.090180788
+  Rank 24: ['c26']  | Entropy Contribution=0.090180788
+  Rank 25: ['c27']  | Entropy Contribution=0.090180788
+  Rank 26: ['c28']  | Entropy Contribution=0.090180788
+  Rank 27: ['c32']  | Entropy Contribution=0.090180788
+  Rank 28: ['c33']  | Entropy Contribution=0.090180788
+  Rank 29: ['c34']  | Entropy Contribution=0.090180788
+  Rank 30: ['c35']  | Entropy Contribution=0.090180788
+  Rank 31: ['c36']  | Entropy Contribution=0.090180788
+  Rank 32: ['c37']  | Entropy Contribution=0.090180788
+  Rank 33: ['c38']  | Entropy Contribution=0.090180788
+  Rank 34: ['c39']  | Entropy Contribution=0.090180788
+  Rank 35: ['c40']  | Entropy Contribution=0.090180788
+  Rank 36: ['c41']  | Entropy Contribution=0.090180788
+  Rank 37: ['c42']  | Entropy Contribution=0.090180788
+  Rank 38: ['c44']  | Entropy Contribution=0.090180788
+  Rank 39: ['c45']  | Entropy Contribution=0.090180788
+  Rank 40: ['c46']  | Entropy Contribution=0.090180788
+  Rank 41: ['c47']  | Entropy Contribution=0.090180788
+  Rank 42: ['c48']  | Entropy Contribution=0.090180788
+  Rank 43: ['c49']  | Entropy Contribution=0.090180788
+  Rank 44: ['c50']  | Entropy Contribution=0.090180788
+  Rank 45: ['c51']  | Entropy Contribution=0.090180788
+  Rank 46: ['c52']  | Entropy Contribution=0.090180788
+  Rank 47: ['c67']  | Entropy Contribution=0.090180788
+  Rank 48: ['c79']  | Entropy Contribution=0.090180788
+  Rank 49: ['c80']  | Entropy Contribution=0.090180788
+  Rank 50: ['c81']  | Entropy Contribution=0.090180788
+  Rank 51: ['c82']  | Entropy Contribution=0.090180788
+  Rank 52: ['c83']  | Entropy Contribution=0.090180788
+  Rank 53: ['c84']  | Entropy Contribution=0.090180788
+  Rank 54: ['c85']  | Entropy Contribution=0.090180788
+  Rank 55: ['c86']  | Entropy Contribution=0.090180788
+  Rank 56: ['c87']  | Entropy Contribution=0.090180788
+  Rank 57: ['c88']  | Entropy Contribution=0.090180788
+  Rank 58: ['c89']  | Entropy Contribution=0.090180788
+  Rank 59: ['c90']  | Entropy Contribution=0.090180788
+  Rank 60: ['c91']  | Entropy Contribution=0.090180788
+  Rank 61: ['c92']  | Entropy Contribution=0.090180788
+  Rank 62: ['c93']  | Entropy Contribution=0.090180788
+  Rank 63: ['c18']  | Entropy Contribution=0.138704528
+  Rank 64: ['c19']  | Entropy Contribution=0.138704528
+  Rank 65: ['c43']  | Entropy Contribution=0.138704528
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #8
+  Info Gain: 0.003
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 13
+================================================================================
+
+Tests used so far: 22 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.026
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.009
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.090373251
+  Rank 2: ['c2']  | Entropy Contribution=0.090373251
+  Rank 3: ['c3']  | Entropy Contribution=0.090373251
+  Rank 4: ['c4']  | Entropy Contribution=0.090373251
+  Rank 5: ['c5']  | Entropy Contribution=0.090373251
+  Rank 6: ['c6']  | Entropy Contribution=0.090373251
+  Rank 7: ['c7']  | Entropy Contribution=0.090373251
+  Rank 8: ['c8']  | Entropy Contribution=0.090373251
+  Rank 9: ['c9']  | Entropy Contribution=0.090373251
+  Rank 10: ['c10']  | Entropy Contribution=0.090373251
+  Rank 11: ['c11']  | Entropy Contribution=0.090373251
+  Rank 12: ['c12']  | Entropy Contribution=0.090373251
+  Rank 13: ['c13']  | Entropy Contribution=0.090373251
+  Rank 14: ['c14']  | Entropy Contribution=0.090373251
+  Rank 15: ['c15']  | Entropy Contribution=0.090373251
+  Rank 16: ['c16']  | Entropy Contribution=0.090373251
+  Rank 17: ['c17']  | Entropy Contribution=0.090373251
+  Rank 18: ['c20']  | Entropy Contribution=0.090373251
+  Rank 19: ['c21']  | Entropy Contribution=0.090373251
+  Rank 20: ['c22']  | Entropy Contribution=0.090373251
+  Rank 21: ['c23']  | Entropy Contribution=0.090373251
+  Rank 22: ['c24']  | Entropy Contribution=0.090373251
+  Rank 23: ['c25']  | Entropy Contribution=0.090373251
+  Rank 24: ['c26']  | Entropy Contribution=0.090373251
+  Rank 25: ['c27']  | Entropy Contribution=0.090373251
+  Rank 26: ['c28']  | Entropy Contribution=0.090373251
+  Rank 27: ['c32']  | Entropy Contribution=0.090373251
+  Rank 28: ['c33']  | Entropy Contribution=0.090373251
+  Rank 29: ['c34']  | Entropy Contribution=0.090373251
+  Rank 30: ['c35']  | Entropy Contribution=0.090373251
+  Rank 31: ['c36']  | Entropy Contribution=0.090373251
+  Rank 32: ['c37']  | Entropy Contribution=0.090373251
+  Rank 33: ['c38']  | Entropy Contribution=0.090373251
+  Rank 34: ['c39']  | Entropy Contribution=0.090373251
+  Rank 35: ['c40']  | Entropy Contribution=0.090373251
+  Rank 36: ['c41']  | Entropy Contribution=0.090373251
+  Rank 37: ['c42']  | Entropy Contribution=0.090373251
+  Rank 38: ['c44']  | Entropy Contribution=0.090373251
+  Rank 39: ['c45']  | Entropy Contribution=0.090373251
+  Rank 40: ['c46']  | Entropy Contribution=0.090373251
+  Rank 41: ['c47']  | Entropy Contribution=0.090373251
+  Rank 42: ['c48']  | Entropy Contribution=0.090373251
+  Rank 43: ['c49']  | Entropy Contribution=0.090373251
+  Rank 44: ['c50']  | Entropy Contribution=0.090373251
+  Rank 45: ['c51']  | Entropy Contribution=0.090373251
+  Rank 46: ['c52']  | Entropy Contribution=0.090373251
+  Rank 47: ['c67']  | Entropy Contribution=0.090373251
+  Rank 48: ['c79']  | Entropy Contribution=0.090373251
+  Rank 49: ['c80']  | Entropy Contribution=0.090373251
+  Rank 50: ['c81']  | Entropy Contribution=0.090373251
+  Rank 51: ['c82']  | Entropy Contribution=0.090373251
+  Rank 52: ['c83']  | Entropy Contribution=0.090373251
+  Rank 53: ['c84']  | Entropy Contribution=0.090373251
+  Rank 54: ['c85']  | Entropy Contribution=0.090373251
+  Rank 55: ['c86']  | Entropy Contribution=0.090373251
+  Rank 56: ['c87']  | Entropy Contribution=0.090373251
+  Rank 57: ['c88']  | Entropy Contribution=0.090373251
+  Rank 58: ['c89']  | Entropy Contribution=0.090373251
+  Rank 59: ['c90']  | Entropy Contribution=0.090373251
+  Rank 60: ['c91']  | Entropy Contribution=0.090373251
+  Rank 61: ['c92']  | Entropy Contribution=0.090373251
+  Rank 62: ['c93']  | Entropy Contribution=0.090373251
+  Rank 63: ['c18']  | Entropy Contribution=0.135421795
+  Rank 64: ['c19']  | Entropy Contribution=0.135421795
+  Rank 65: ['c43']  | Entropy Contribution=0.135421795
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #9
+  Info Gain: 0.003
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 14
+================================================================================
+
+Tests used so far: 23 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.025
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.011
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.090537891
+  Rank 2: ['c2']  | Entropy Contribution=0.090537891
+  Rank 3: ['c3']  | Entropy Contribution=0.090537891
+  Rank 4: ['c4']  | Entropy Contribution=0.090537891
+  Rank 5: ['c5']  | Entropy Contribution=0.090537891
+  Rank 6: ['c6']  | Entropy Contribution=0.090537891
+  Rank 7: ['c7']  | Entropy Contribution=0.090537891
+  Rank 8: ['c8']  | Entropy Contribution=0.090537891
+  Rank 9: ['c9']  | Entropy Contribution=0.090537891
+  Rank 10: ['c10']  | Entropy Contribution=0.090537891
+  Rank 11: ['c11']  | Entropy Contribution=0.090537891
+  Rank 12: ['c12']  | Entropy Contribution=0.090537891
+  Rank 13: ['c13']  | Entropy Contribution=0.090537891
+  Rank 14: ['c14']  | Entropy Contribution=0.090537891
+  Rank 15: ['c15']  | Entropy Contribution=0.090537891
+  Rank 16: ['c16']  | Entropy Contribution=0.090537891
+  Rank 17: ['c17']  | Entropy Contribution=0.090537891
+  Rank 18: ['c20']  | Entropy Contribution=0.090537891
+  Rank 19: ['c21']  | Entropy Contribution=0.090537891
+  Rank 20: ['c22']  | Entropy Contribution=0.090537891
+  Rank 21: ['c23']  | Entropy Contribution=0.090537891
+  Rank 22: ['c24']  | Entropy Contribution=0.090537891
+  Rank 23: ['c25']  | Entropy Contribution=0.090537891
+  Rank 24: ['c26']  | Entropy Contribution=0.090537891
+  Rank 25: ['c27']  | Entropy Contribution=0.090537891
+  Rank 26: ['c28']  | Entropy Contribution=0.090537891
+  Rank 27: ['c32']  | Entropy Contribution=0.090537891
+  Rank 28: ['c33']  | Entropy Contribution=0.090537891
+  Rank 29: ['c34']  | Entropy Contribution=0.090537891
+  Rank 30: ['c35']  | Entropy Contribution=0.090537891
+  Rank 31: ['c36']  | Entropy Contribution=0.090537891
+  Rank 32: ['c37']  | Entropy Contribution=0.090537891
+  Rank 33: ['c38']  | Entropy Contribution=0.090537891
+  Rank 34: ['c39']  | Entropy Contribution=0.090537891
+  Rank 35: ['c40']  | Entropy Contribution=0.090537891
+  Rank 36: ['c41']  | Entropy Contribution=0.090537891
+  Rank 37: ['c42']  | Entropy Contribution=0.090537891
+  Rank 38: ['c44']  | Entropy Contribution=0.090537891
+  Rank 39: ['c45']  | Entropy Contribution=0.090537891
+  Rank 40: ['c46']  | Entropy Contribution=0.090537891
+  Rank 41: ['c47']  | Entropy Contribution=0.090537891
+  Rank 42: ['c48']  | Entropy Contribution=0.090537891
+  Rank 43: ['c49']  | Entropy Contribution=0.090537891
+  Rank 44: ['c50']  | Entropy Contribution=0.090537891
+  Rank 45: ['c51']  | Entropy Contribution=0.090537891
+  Rank 46: ['c52']  | Entropy Contribution=0.090537891
+  Rank 47: ['c67']  | Entropy Contribution=0.090537891
+  Rank 48: ['c79']  | Entropy Contribution=0.090537891
+  Rank 49: ['c80']  | Entropy Contribution=0.090537891
+  Rank 50: ['c81']  | Entropy Contribution=0.090537891
+  Rank 51: ['c82']  | Entropy Contribution=0.090537891
+  Rank 52: ['c83']  | Entropy Contribution=0.090537891
+  Rank 53: ['c84']  | Entropy Contribution=0.090537891
+  Rank 54: ['c85']  | Entropy Contribution=0.090537891
+  Rank 55: ['c86']  | Entropy Contribution=0.090537891
+  Rank 56: ['c87']  | Entropy Contribution=0.090537891
+  Rank 57: ['c88']  | Entropy Contribution=0.090537891
+  Rank 58: ['c89']  | Entropy Contribution=0.090537891
+  Rank 59: ['c90']  | Entropy Contribution=0.090537891
+  Rank 60: ['c91']  | Entropy Contribution=0.090537891
+  Rank 61: ['c92']  | Entropy Contribution=0.090537891
+  Rank 62: ['c93']  | Entropy Contribution=0.090537891
+  Rank 63: ['c18']  | Entropy Contribution=0.132578361
+  Rank 64: ['c19']  | Entropy Contribution=0.132578361
+  Rank 65: ['c43']  | Entropy Contribution=0.132578361
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #43
+  Info Gain: 0.002
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 15
+================================================================================
+
+Tests used so far: 24 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.026
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.009
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.090309588
+  Rank 2: ['c2']  | Entropy Contribution=0.090309588
+  Rank 3: ['c3']  | Entropy Contribution=0.090309588
+  Rank 4: ['c4']  | Entropy Contribution=0.090309588
+  Rank 5: ['c5']  | Entropy Contribution=0.090309588
+  Rank 6: ['c6']  | Entropy Contribution=0.090309588
+  Rank 7: ['c7']  | Entropy Contribution=0.090309588
+  Rank 8: ['c8']  | Entropy Contribution=0.090309588
+  Rank 9: ['c9']  | Entropy Contribution=0.090309588
+  Rank 10: ['c10']  | Entropy Contribution=0.090309588
+  Rank 11: ['c11']  | Entropy Contribution=0.090309588
+  Rank 12: ['c12']  | Entropy Contribution=0.090309588
+  Rank 13: ['c13']  | Entropy Contribution=0.090309588
+  Rank 14: ['c14']  | Entropy Contribution=0.090309588
+  Rank 15: ['c15']  | Entropy Contribution=0.090309588
+  Rank 16: ['c16']  | Entropy Contribution=0.090309588
+  Rank 17: ['c17']  | Entropy Contribution=0.090309588
+  Rank 18: ['c20']  | Entropy Contribution=0.090309588
+  Rank 19: ['c21']  | Entropy Contribution=0.090309588
+  Rank 20: ['c22']  | Entropy Contribution=0.090309588
+  Rank 21: ['c23']  | Entropy Contribution=0.090309588
+  Rank 22: ['c24']  | Entropy Contribution=0.090309588
+  Rank 23: ['c25']  | Entropy Contribution=0.090309588
+  Rank 24: ['c26']  | Entropy Contribution=0.090309588
+  Rank 25: ['c27']  | Entropy Contribution=0.090309588
+  Rank 26: ['c28']  | Entropy Contribution=0.090309588
+  Rank 27: ['c32']  | Entropy Contribution=0.090309588
+  Rank 28: ['c33']  | Entropy Contribution=0.090309588
+  Rank 29: ['c34']  | Entropy Contribution=0.090309588
+  Rank 30: ['c35']  | Entropy Contribution=0.090309588
+  Rank 31: ['c36']  | Entropy Contribution=0.090309588
+  Rank 32: ['c37']  | Entropy Contribution=0.090309588
+  Rank 33: ['c38']  | Entropy Contribution=0.090309588
+  Rank 34: ['c39']  | Entropy Contribution=0.090309588
+  Rank 35: ['c40']  | Entropy Contribution=0.090309588
+  Rank 36: ['c41']  | Entropy Contribution=0.090309588
+  Rank 37: ['c42']  | Entropy Contribution=0.090309588
+  Rank 38: ['c44']  | Entropy Contribution=0.090309588
+  Rank 39: ['c45']  | Entropy Contribution=0.090309588
+  Rank 40: ['c46']  | Entropy Contribution=0.090309588
+  Rank 41: ['c47']  | Entropy Contribution=0.090309588
+  Rank 42: ['c48']  | Entropy Contribution=0.090309588
+  Rank 43: ['c49']  | Entropy Contribution=0.090309588
+  Rank 44: ['c50']  | Entropy Contribution=0.090309588
+  Rank 45: ['c51']  | Entropy Contribution=0.090309588
+  Rank 46: ['c52']  | Entropy Contribution=0.090309588
+  Rank 47: ['c67']  | Entropy Contribution=0.090309588
+  Rank 48: ['c79']  | Entropy Contribution=0.090309588
+  Rank 49: ['c80']  | Entropy Contribution=0.090309588
+  Rank 50: ['c81']  | Entropy Contribution=0.090309588
+  Rank 51: ['c82']  | Entropy Contribution=0.090309588
+  Rank 52: ['c83']  | Entropy Contribution=0.090309588
+  Rank 53: ['c84']  | Entropy Contribution=0.090309588
+  Rank 54: ['c85']  | Entropy Contribution=0.090309588
+  Rank 55: ['c86']  | Entropy Contribution=0.090309588
+  Rank 56: ['c87']  | Entropy Contribution=0.090309588
+  Rank 57: ['c88']  | Entropy Contribution=0.090309588
+  Rank 58: ['c89']  | Entropy Contribution=0.090309588
+  Rank 59: ['c90']  | Entropy Contribution=0.090309588
+  Rank 60: ['c91']  | Entropy Contribution=0.090309588
+  Rank 61: ['c92']  | Entropy Contribution=0.090309588
+  Rank 62: ['c93']  | Entropy Contribution=0.090309588
+  Rank 63: ['c18']  | Entropy Contribution=0.136512501
+  Rank 64: ['c19']  | Entropy Contribution=0.136512501
+  Rank 65: ['c43']  | Entropy Contribution=0.136512501
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #12
+  Info Gain: 0.002
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 16
+================================================================================
+
+Tests used so far: 25 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.025
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.010
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.090467005
+  Rank 2: ['c2']  | Entropy Contribution=0.090467005
+  Rank 3: ['c3']  | Entropy Contribution=0.090467005
+  Rank 4: ['c4']  | Entropy Contribution=0.090467005
+  Rank 5: ['c5']  | Entropy Contribution=0.090467005
+  Rank 6: ['c6']  | Entropy Contribution=0.090467005
+  Rank 7: ['c7']  | Entropy Contribution=0.090467005
+  Rank 8: ['c8']  | Entropy Contribution=0.090467005
+  Rank 9: ['c9']  | Entropy Contribution=0.090467005
+  Rank 10: ['c10']  | Entropy Contribution=0.090467005
+  Rank 11: ['c11']  | Entropy Contribution=0.090467005
+  Rank 12: ['c12']  | Entropy Contribution=0.090467005
+  Rank 13: ['c13']  | Entropy Contribution=0.090467005
+  Rank 14: ['c14']  | Entropy Contribution=0.090467005
+  Rank 15: ['c15']  | Entropy Contribution=0.090467005
+  Rank 16: ['c16']  | Entropy Contribution=0.090467005
+  Rank 17: ['c17']  | Entropy Contribution=0.090467005
+  Rank 18: ['c20']  | Entropy Contribution=0.090467005
+  Rank 19: ['c21']  | Entropy Contribution=0.090467005
+  Rank 20: ['c22']  | Entropy Contribution=0.090467005
+  Rank 21: ['c23']  | Entropy Contribution=0.090467005
+  Rank 22: ['c24']  | Entropy Contribution=0.090467005
+  Rank 23: ['c25']  | Entropy Contribution=0.090467005
+  Rank 24: ['c26']  | Entropy Contribution=0.090467005
+  Rank 25: ['c27']  | Entropy Contribution=0.090467005
+  Rank 26: ['c28']  | Entropy Contribution=0.090467005
+  Rank 27: ['c32']  | Entropy Contribution=0.090467005
+  Rank 28: ['c33']  | Entropy Contribution=0.090467005
+  Rank 29: ['c34']  | Entropy Contribution=0.090467005
+  Rank 30: ['c35']  | Entropy Contribution=0.090467005
+  Rank 31: ['c36']  | Entropy Contribution=0.090467005
+  Rank 32: ['c37']  | Entropy Contribution=0.090467005
+  Rank 33: ['c38']  | Entropy Contribution=0.090467005
+  Rank 34: ['c39']  | Entropy Contribution=0.090467005
+  Rank 35: ['c40']  | Entropy Contribution=0.090467005
+  Rank 36: ['c41']  | Entropy Contribution=0.090467005
+  Rank 37: ['c42']  | Entropy Contribution=0.090467005
+  Rank 38: ['c44']  | Entropy Contribution=0.090467005
+  Rank 39: ['c45']  | Entropy Contribution=0.090467005
+  Rank 40: ['c46']  | Entropy Contribution=0.090467005
+  Rank 41: ['c47']  | Entropy Contribution=0.090467005
+  Rank 42: ['c48']  | Entropy Contribution=0.090467005
+  Rank 43: ['c49']  | Entropy Contribution=0.090467005
+  Rank 44: ['c50']  | Entropy Contribution=0.090467005
+  Rank 45: ['c51']  | Entropy Contribution=0.090467005
+  Rank 46: ['c52']  | Entropy Contribution=0.090467005
+  Rank 47: ['c67']  | Entropy Contribution=0.090467005
+  Rank 48: ['c79']  | Entropy Contribution=0.090467005
+  Rank 49: ['c80']  | Entropy Contribution=0.090467005
+  Rank 50: ['c81']  | Entropy Contribution=0.090467005
+  Rank 51: ['c82']  | Entropy Contribution=0.090467005
+  Rank 52: ['c83']  | Entropy Contribution=0.090467005
+  Rank 53: ['c84']  | Entropy Contribution=0.090467005
+  Rank 54: ['c85']  | Entropy Contribution=0.090467005
+  Rank 55: ['c86']  | Entropy Contribution=0.090467005
+  Rank 56: ['c87']  | Entropy Contribution=0.090467005
+  Rank 57: ['c88']  | Entropy Contribution=0.090467005
+  Rank 58: ['c89']  | Entropy Contribution=0.090467005
+  Rank 59: ['c90']  | Entropy Contribution=0.090467005
+  Rank 60: ['c91']  | Entropy Contribution=0.090467005
+  Rank 61: ['c92']  | Entropy Contribution=0.090467005
+  Rank 62: ['c93']  | Entropy Contribution=0.090467005
+  Rank 63: ['c18']  | Entropy Contribution=0.133806662
+  Rank 64: ['c19']  | Entropy Contribution=0.133806662
+  Rank 65: ['c43']  | Entropy Contribution=0.133806662
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #13
+  Info Gain: 0.002
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 17
+================================================================================
+
+Tests used so far: 26 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.025
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.012
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.090604589
+  Rank 2: ['c2']  | Entropy Contribution=0.090604589
+  Rank 3: ['c3']  | Entropy Contribution=0.090604589
+  Rank 4: ['c4']  | Entropy Contribution=0.090604589
+  Rank 5: ['c5']  | Entropy Contribution=0.090604589
+  Rank 6: ['c6']  | Entropy Contribution=0.090604589
+  Rank 7: ['c7']  | Entropy Contribution=0.090604589
+  Rank 8: ['c8']  | Entropy Contribution=0.090604589
+  Rank 9: ['c9']  | Entropy Contribution=0.090604589
+  Rank 10: ['c10']  | Entropy Contribution=0.090604589
+  Rank 11: ['c11']  | Entropy Contribution=0.090604589
+  Rank 12: ['c12']  | Entropy Contribution=0.090604589
+  Rank 13: ['c13']  | Entropy Contribution=0.090604589
+  Rank 14: ['c14']  | Entropy Contribution=0.090604589
+  Rank 15: ['c15']  | Entropy Contribution=0.090604589
+  Rank 16: ['c16']  | Entropy Contribution=0.090604589
+  Rank 17: ['c17']  | Entropy Contribution=0.090604589
+  Rank 18: ['c20']  | Entropy Contribution=0.090604589
+  Rank 19: ['c21']  | Entropy Contribution=0.090604589
+  Rank 20: ['c22']  | Entropy Contribution=0.090604589
+  Rank 21: ['c23']  | Entropy Contribution=0.090604589
+  Rank 22: ['c24']  | Entropy Contribution=0.090604589
+  Rank 23: ['c25']  | Entropy Contribution=0.090604589
+  Rank 24: ['c26']  | Entropy Contribution=0.090604589
+  Rank 25: ['c27']  | Entropy Contribution=0.090604589
+  Rank 26: ['c28']  | Entropy Contribution=0.090604589
+  Rank 27: ['c32']  | Entropy Contribution=0.090604589
+  Rank 28: ['c33']  | Entropy Contribution=0.090604589
+  Rank 29: ['c34']  | Entropy Contribution=0.090604589
+  Rank 30: ['c35']  | Entropy Contribution=0.090604589
+  Rank 31: ['c36']  | Entropy Contribution=0.090604589
+  Rank 32: ['c37']  | Entropy Contribution=0.090604589
+  Rank 33: ['c38']  | Entropy Contribution=0.090604589
+  Rank 34: ['c39']  | Entropy Contribution=0.090604589
+  Rank 35: ['c40']  | Entropy Contribution=0.090604589
+  Rank 36: ['c41']  | Entropy Contribution=0.090604589
+  Rank 37: ['c42']  | Entropy Contribution=0.090604589
+  Rank 38: ['c44']  | Entropy Contribution=0.090604589
+  Rank 39: ['c45']  | Entropy Contribution=0.090604589
+  Rank 40: ['c46']  | Entropy Contribution=0.090604589
+  Rank 41: ['c47']  | Entropy Contribution=0.090604589
+  Rank 42: ['c48']  | Entropy Contribution=0.090604589
+  Rank 43: ['c49']  | Entropy Contribution=0.090604589
+  Rank 44: ['c50']  | Entropy Contribution=0.090604589
+  Rank 45: ['c51']  | Entropy Contribution=0.090604589
+  Rank 46: ['c52']  | Entropy Contribution=0.090604589
+  Rank 47: ['c67']  | Entropy Contribution=0.090604589
+  Rank 48: ['c79']  | Entropy Contribution=0.090604589
+  Rank 49: ['c80']  | Entropy Contribution=0.090604589
+  Rank 50: ['c81']  | Entropy Contribution=0.090604589
+  Rank 51: ['c82']  | Entropy Contribution=0.090604589
+  Rank 52: ['c83']  | Entropy Contribution=0.090604589
+  Rank 53: ['c84']  | Entropy Contribution=0.090604589
+  Rank 54: ['c85']  | Entropy Contribution=0.090604589
+  Rank 55: ['c86']  | Entropy Contribution=0.090604589
+  Rank 56: ['c87']  | Entropy Contribution=0.090604589
+  Rank 57: ['c88']  | Entropy Contribution=0.090604589
+  Rank 58: ['c89']  | Entropy Contribution=0.090604589
+  Rank 59: ['c90']  | Entropy Contribution=0.090604589
+  Rank 60: ['c91']  | Entropy Contribution=0.090604589
+  Rank 61: ['c92']  | Entropy Contribution=0.090604589
+  Rank 62: ['c93']  | Entropy Contribution=0.090604589
+  Rank 63: ['c18']  | Entropy Contribution=0.131416944
+  Rank 64: ['c19']  | Entropy Contribution=0.131416944
+  Rank 65: ['c43']  | Entropy Contribution=0.131416944
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #14
+  Info Gain: 0.002
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 18
+================================================================================
+
+Tests used so far: 27 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.024
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.013
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.090725869
+  Rank 2: ['c2']  | Entropy Contribution=0.090725869
+  Rank 3: ['c3']  | Entropy Contribution=0.090725869
+  Rank 4: ['c4']  | Entropy Contribution=0.090725869
+  Rank 5: ['c5']  | Entropy Contribution=0.090725869
+  Rank 6: ['c6']  | Entropy Contribution=0.090725869
+  Rank 7: ['c7']  | Entropy Contribution=0.090725869
+  Rank 8: ['c8']  | Entropy Contribution=0.090725869
+  Rank 9: ['c9']  | Entropy Contribution=0.090725869
+  Rank 10: ['c10']  | Entropy Contribution=0.090725869
+  Rank 11: ['c11']  | Entropy Contribution=0.090725869
+  Rank 12: ['c12']  | Entropy Contribution=0.090725869
+  Rank 13: ['c13']  | Entropy Contribution=0.090725869
+  Rank 14: ['c14']  | Entropy Contribution=0.090725869
+  Rank 15: ['c15']  | Entropy Contribution=0.090725869
+  Rank 16: ['c16']  | Entropy Contribution=0.090725869
+  Rank 17: ['c17']  | Entropy Contribution=0.090725869
+  Rank 18: ['c20']  | Entropy Contribution=0.090725869
+  Rank 19: ['c21']  | Entropy Contribution=0.090725869
+  Rank 20: ['c22']  | Entropy Contribution=0.090725869
+  Rank 21: ['c23']  | Entropy Contribution=0.090725869
+  Rank 22: ['c24']  | Entropy Contribution=0.090725869
+  Rank 23: ['c25']  | Entropy Contribution=0.090725869
+  Rank 24: ['c26']  | Entropy Contribution=0.090725869
+  Rank 25: ['c27']  | Entropy Contribution=0.090725869
+  Rank 26: ['c28']  | Entropy Contribution=0.090725869
+  Rank 27: ['c32']  | Entropy Contribution=0.090725869
+  Rank 28: ['c33']  | Entropy Contribution=0.090725869
+  Rank 29: ['c34']  | Entropy Contribution=0.090725869
+  Rank 30: ['c35']  | Entropy Contribution=0.090725869
+  Rank 31: ['c36']  | Entropy Contribution=0.090725869
+  Rank 32: ['c37']  | Entropy Contribution=0.090725869
+  Rank 33: ['c38']  | Entropy Contribution=0.090725869
+  Rank 34: ['c39']  | Entropy Contribution=0.090725869
+  Rank 35: ['c40']  | Entropy Contribution=0.090725869
+  Rank 36: ['c41']  | Entropy Contribution=0.090725869
+  Rank 37: ['c42']  | Entropy Contribution=0.090725869
+  Rank 38: ['c44']  | Entropy Contribution=0.090725869
+  Rank 39: ['c45']  | Entropy Contribution=0.090725869
+  Rank 40: ['c46']  | Entropy Contribution=0.090725869
+  Rank 41: ['c47']  | Entropy Contribution=0.090725869
+  Rank 42: ['c48']  | Entropy Contribution=0.090725869
+  Rank 43: ['c49']  | Entropy Contribution=0.090725869
+  Rank 44: ['c50']  | Entropy Contribution=0.090725869
+  Rank 45: ['c51']  | Entropy Contribution=0.090725869
+  Rank 46: ['c52']  | Entropy Contribution=0.090725869
+  Rank 47: ['c67']  | Entropy Contribution=0.090725869
+  Rank 48: ['c79']  | Entropy Contribution=0.090725869
+  Rank 49: ['c80']  | Entropy Contribution=0.090725869
+  Rank 50: ['c81']  | Entropy Contribution=0.090725869
+  Rank 51: ['c82']  | Entropy Contribution=0.090725869
+  Rank 52: ['c83']  | Entropy Contribution=0.090725869
+  Rank 53: ['c84']  | Entropy Contribution=0.090725869
+  Rank 54: ['c85']  | Entropy Contribution=0.090725869
+  Rank 55: ['c86']  | Entropy Contribution=0.090725869
+  Rank 56: ['c87']  | Entropy Contribution=0.090725869
+  Rank 57: ['c88']  | Entropy Contribution=0.090725869
+  Rank 58: ['c89']  | Entropy Contribution=0.090725869
+  Rank 59: ['c90']  | Entropy Contribution=0.090725869
+  Rank 60: ['c91']  | Entropy Contribution=0.090725869
+  Rank 61: ['c92']  | Entropy Contribution=0.090725869
+  Rank 62: ['c93']  | Entropy Contribution=0.090725869
+  Rank 63: ['c18']  | Entropy Contribution=0.129290793
+  Rank 64: ['c19']  | Entropy Contribution=0.129290793
+  Rank 65: ['c43']  | Entropy Contribution=0.129290793
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #16
+  Info Gain: 0.001
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 19
+================================================================================
+
+Tests used so far: 28 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.024
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.014
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.090833580
+  Rank 2: ['c2']  | Entropy Contribution=0.090833580
+  Rank 3: ['c3']  | Entropy Contribution=0.090833580
+  Rank 4: ['c4']  | Entropy Contribution=0.090833580
+  Rank 5: ['c5']  | Entropy Contribution=0.090833580
+  Rank 6: ['c6']  | Entropy Contribution=0.090833580
+  Rank 7: ['c7']  | Entropy Contribution=0.090833580
+  Rank 8: ['c8']  | Entropy Contribution=0.090833580
+  Rank 9: ['c9']  | Entropy Contribution=0.090833580
+  Rank 10: ['c10']  | Entropy Contribution=0.090833580
+  Rank 11: ['c11']  | Entropy Contribution=0.090833580
+  Rank 12: ['c12']  | Entropy Contribution=0.090833580
+  Rank 13: ['c13']  | Entropy Contribution=0.090833580
+  Rank 14: ['c14']  | Entropy Contribution=0.090833580
+  Rank 15: ['c15']  | Entropy Contribution=0.090833580
+  Rank 16: ['c16']  | Entropy Contribution=0.090833580
+  Rank 17: ['c17']  | Entropy Contribution=0.090833580
+  Rank 18: ['c20']  | Entropy Contribution=0.090833580
+  Rank 19: ['c21']  | Entropy Contribution=0.090833580
+  Rank 20: ['c22']  | Entropy Contribution=0.090833580
+  Rank 21: ['c23']  | Entropy Contribution=0.090833580
+  Rank 22: ['c24']  | Entropy Contribution=0.090833580
+  Rank 23: ['c25']  | Entropy Contribution=0.090833580
+  Rank 24: ['c26']  | Entropy Contribution=0.090833580
+  Rank 25: ['c27']  | Entropy Contribution=0.090833580
+  Rank 26: ['c28']  | Entropy Contribution=0.090833580
+  Rank 27: ['c32']  | Entropy Contribution=0.090833580
+  Rank 28: ['c33']  | Entropy Contribution=0.090833580
+  Rank 29: ['c34']  | Entropy Contribution=0.090833580
+  Rank 30: ['c35']  | Entropy Contribution=0.090833580
+  Rank 31: ['c36']  | Entropy Contribution=0.090833580
+  Rank 32: ['c37']  | Entropy Contribution=0.090833580
+  Rank 33: ['c38']  | Entropy Contribution=0.090833580
+  Rank 34: ['c39']  | Entropy Contribution=0.090833580
+  Rank 35: ['c40']  | Entropy Contribution=0.090833580
+  Rank 36: ['c41']  | Entropy Contribution=0.090833580
+  Rank 37: ['c42']  | Entropy Contribution=0.090833580
+  Rank 38: ['c44']  | Entropy Contribution=0.090833580
+  Rank 39: ['c45']  | Entropy Contribution=0.090833580
+  Rank 40: ['c46']  | Entropy Contribution=0.090833580
+  Rank 41: ['c47']  | Entropy Contribution=0.090833580
+  Rank 42: ['c48']  | Entropy Contribution=0.090833580
+  Rank 43: ['c49']  | Entropy Contribution=0.090833580
+  Rank 44: ['c50']  | Entropy Contribution=0.090833580
+  Rank 45: ['c51']  | Entropy Contribution=0.090833580
+  Rank 46: ['c52']  | Entropy Contribution=0.090833580
+  Rank 47: ['c67']  | Entropy Contribution=0.090833580
+  Rank 48: ['c79']  | Entropy Contribution=0.090833580
+  Rank 49: ['c80']  | Entropy Contribution=0.090833580
+  Rank 50: ['c81']  | Entropy Contribution=0.090833580
+  Rank 51: ['c82']  | Entropy Contribution=0.090833580
+  Rank 52: ['c83']  | Entropy Contribution=0.090833580
+  Rank 53: ['c84']  | Entropy Contribution=0.090833580
+  Rank 54: ['c85']  | Entropy Contribution=0.090833580
+  Rank 55: ['c86']  | Entropy Contribution=0.090833580
+  Rank 56: ['c87']  | Entropy Contribution=0.090833580
+  Rank 57: ['c88']  | Entropy Contribution=0.090833580
+  Rank 58: ['c89']  | Entropy Contribution=0.090833580
+  Rank 59: ['c90']  | Entropy Contribution=0.090833580
+  Rank 60: ['c91']  | Entropy Contribution=0.090833580
+  Rank 61: ['c92']  | Entropy Contribution=0.090833580
+  Rank 62: ['c93']  | Entropy Contribution=0.090833580
+  Rank 63: ['c18']  | Entropy Contribution=0.127386726
+  Rank 64: ['c19']  | Entropy Contribution=0.127386726
+  Rank 65: ['c43']  | Entropy Contribution=0.127386726
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #17
+  Info Gain: 0.001
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 20
+================================================================================
+
+Tests used so far: 29 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.023
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.015
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.090929879
+  Rank 2: ['c2']  | Entropy Contribution=0.090929879
+  Rank 3: ['c3']  | Entropy Contribution=0.090929879
+  Rank 4: ['c4']  | Entropy Contribution=0.090929879
+  Rank 5: ['c5']  | Entropy Contribution=0.090929879
+  Rank 6: ['c6']  | Entropy Contribution=0.090929879
+  Rank 7: ['c7']  | Entropy Contribution=0.090929879
+  Rank 8: ['c8']  | Entropy Contribution=0.090929879
+  Rank 9: ['c9']  | Entropy Contribution=0.090929879
+  Rank 10: ['c10']  | Entropy Contribution=0.090929879
+  Rank 11: ['c11']  | Entropy Contribution=0.090929879
+  Rank 12: ['c12']  | Entropy Contribution=0.090929879
+  Rank 13: ['c13']  | Entropy Contribution=0.090929879
+  Rank 14: ['c14']  | Entropy Contribution=0.090929879
+  Rank 15: ['c15']  | Entropy Contribution=0.090929879
+  Rank 16: ['c16']  | Entropy Contribution=0.090929879
+  Rank 17: ['c17']  | Entropy Contribution=0.090929879
+  Rank 18: ['c20']  | Entropy Contribution=0.090929879
+  Rank 19: ['c21']  | Entropy Contribution=0.090929879
+  Rank 20: ['c22']  | Entropy Contribution=0.090929879
+  Rank 21: ['c23']  | Entropy Contribution=0.090929879
+  Rank 22: ['c24']  | Entropy Contribution=0.090929879
+  Rank 23: ['c25']  | Entropy Contribution=0.090929879
+  Rank 24: ['c26']  | Entropy Contribution=0.090929879
+  Rank 25: ['c27']  | Entropy Contribution=0.090929879
+  Rank 26: ['c28']  | Entropy Contribution=0.090929879
+  Rank 27: ['c32']  | Entropy Contribution=0.090929879
+  Rank 28: ['c33']  | Entropy Contribution=0.090929879
+  Rank 29: ['c34']  | Entropy Contribution=0.090929879
+  Rank 30: ['c35']  | Entropy Contribution=0.090929879
+  Rank 31: ['c36']  | Entropy Contribution=0.090929879
+  Rank 32: ['c37']  | Entropy Contribution=0.090929879
+  Rank 33: ['c38']  | Entropy Contribution=0.090929879
+  Rank 34: ['c39']  | Entropy Contribution=0.090929879
+  Rank 35: ['c40']  | Entropy Contribution=0.090929879
+  Rank 36: ['c41']  | Entropy Contribution=0.090929879
+  Rank 37: ['c42']  | Entropy Contribution=0.090929879
+  Rank 38: ['c44']  | Entropy Contribution=0.090929879
+  Rank 39: ['c45']  | Entropy Contribution=0.090929879
+  Rank 40: ['c46']  | Entropy Contribution=0.090929879
+  Rank 41: ['c47']  | Entropy Contribution=0.090929879
+  Rank 42: ['c48']  | Entropy Contribution=0.090929879
+  Rank 43: ['c49']  | Entropy Contribution=0.090929879
+  Rank 44: ['c50']  | Entropy Contribution=0.090929879
+  Rank 45: ['c51']  | Entropy Contribution=0.090929879
+  Rank 46: ['c52']  | Entropy Contribution=0.090929879
+  Rank 47: ['c67']  | Entropy Contribution=0.090929879
+  Rank 48: ['c79']  | Entropy Contribution=0.090929879
+  Rank 49: ['c80']  | Entropy Contribution=0.090929879
+  Rank 50: ['c81']  | Entropy Contribution=0.090929879
+  Rank 51: ['c82']  | Entropy Contribution=0.090929879
+  Rank 52: ['c83']  | Entropy Contribution=0.090929879
+  Rank 53: ['c84']  | Entropy Contribution=0.090929879
+  Rank 54: ['c85']  | Entropy Contribution=0.090929879
+  Rank 55: ['c86']  | Entropy Contribution=0.090929879
+  Rank 56: ['c87']  | Entropy Contribution=0.090929879
+  Rank 57: ['c88']  | Entropy Contribution=0.090929879
+  Rank 58: ['c89']  | Entropy Contribution=0.090929879
+  Rank 59: ['c90']  | Entropy Contribution=0.090929879
+  Rank 60: ['c91']  | Entropy Contribution=0.090929879
+  Rank 61: ['c92']  | Entropy Contribution=0.090929879
+  Rank 62: ['c93']  | Entropy Contribution=0.090929879
+  Rank 63: ['c18']  | Entropy Contribution=0.125671558
+  Rank 64: ['c19']  | Entropy Contribution=0.125671558
+  Rank 65: ['c43']  | Entropy Contribution=0.125671558
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #18
+  Info Gain: 0.001
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 21
+================================================================================
+
+Tests used so far: 30 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.023
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.015
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.091016489
+  Rank 2: ['c2']  | Entropy Contribution=0.091016489
+  Rank 3: ['c3']  | Entropy Contribution=0.091016489
+  Rank 4: ['c4']  | Entropy Contribution=0.091016489
+  Rank 5: ['c5']  | Entropy Contribution=0.091016489
+  Rank 6: ['c6']  | Entropy Contribution=0.091016489
+  Rank 7: ['c7']  | Entropy Contribution=0.091016489
+  Rank 8: ['c8']  | Entropy Contribution=0.091016489
+  Rank 9: ['c9']  | Entropy Contribution=0.091016489
+  Rank 10: ['c10']  | Entropy Contribution=0.091016489
+  Rank 11: ['c11']  | Entropy Contribution=0.091016489
+  Rank 12: ['c12']  | Entropy Contribution=0.091016489
+  Rank 13: ['c13']  | Entropy Contribution=0.091016489
+  Rank 14: ['c14']  | Entropy Contribution=0.091016489
+  Rank 15: ['c15']  | Entropy Contribution=0.091016489
+  Rank 16: ['c16']  | Entropy Contribution=0.091016489
+  Rank 17: ['c17']  | Entropy Contribution=0.091016489
+  Rank 18: ['c20']  | Entropy Contribution=0.091016489
+  Rank 19: ['c21']  | Entropy Contribution=0.091016489
+  Rank 20: ['c22']  | Entropy Contribution=0.091016489
+  Rank 21: ['c23']  | Entropy Contribution=0.091016489
+  Rank 22: ['c24']  | Entropy Contribution=0.091016489
+  Rank 23: ['c25']  | Entropy Contribution=0.091016489
+  Rank 24: ['c26']  | Entropy Contribution=0.091016489
+  Rank 25: ['c27']  | Entropy Contribution=0.091016489
+  Rank 26: ['c28']  | Entropy Contribution=0.091016489
+  Rank 27: ['c32']  | Entropy Contribution=0.091016489
+  Rank 28: ['c33']  | Entropy Contribution=0.091016489
+  Rank 29: ['c34']  | Entropy Contribution=0.091016489
+  Rank 30: ['c35']  | Entropy Contribution=0.091016489
+  Rank 31: ['c36']  | Entropy Contribution=0.091016489
+  Rank 32: ['c37']  | Entropy Contribution=0.091016489
+  Rank 33: ['c38']  | Entropy Contribution=0.091016489
+  Rank 34: ['c39']  | Entropy Contribution=0.091016489
+  Rank 35: ['c40']  | Entropy Contribution=0.091016489
+  Rank 36: ['c41']  | Entropy Contribution=0.091016489
+  Rank 37: ['c42']  | Entropy Contribution=0.091016489
+  Rank 38: ['c44']  | Entropy Contribution=0.091016489
+  Rank 39: ['c45']  | Entropy Contribution=0.091016489
+  Rank 40: ['c46']  | Entropy Contribution=0.091016489
+  Rank 41: ['c47']  | Entropy Contribution=0.091016489
+  Rank 42: ['c48']  | Entropy Contribution=0.091016489
+  Rank 43: ['c49']  | Entropy Contribution=0.091016489
+  Rank 44: ['c50']  | Entropy Contribution=0.091016489
+  Rank 45: ['c51']  | Entropy Contribution=0.091016489
+  Rank 46: ['c52']  | Entropy Contribution=0.091016489
+  Rank 47: ['c67']  | Entropy Contribution=0.091016489
+  Rank 48: ['c79']  | Entropy Contribution=0.091016489
+  Rank 49: ['c80']  | Entropy Contribution=0.091016489
+  Rank 50: ['c81']  | Entropy Contribution=0.091016489
+  Rank 51: ['c82']  | Entropy Contribution=0.091016489
+  Rank 52: ['c83']  | Entropy Contribution=0.091016489
+  Rank 53: ['c84']  | Entropy Contribution=0.091016489
+  Rank 54: ['c85']  | Entropy Contribution=0.091016489
+  Rank 55: ['c86']  | Entropy Contribution=0.091016489
+  Rank 56: ['c87']  | Entropy Contribution=0.091016489
+  Rank 57: ['c88']  | Entropy Contribution=0.091016489
+  Rank 58: ['c89']  | Entropy Contribution=0.091016489
+  Rank 59: ['c90']  | Entropy Contribution=0.091016489
+  Rank 60: ['c91']  | Entropy Contribution=0.091016489
+  Rank 61: ['c92']  | Entropy Contribution=0.091016489
+  Rank 62: ['c93']  | Entropy Contribution=0.091016489
+  Rank 63: ['c18']  | Entropy Contribution=0.124118419
+  Rank 64: ['c19']  | Entropy Contribution=0.124118419
+  Rank 65: ['c43']  | Entropy Contribution=0.124118419
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #20
+  Info Gain: 0.001
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 22
+================================================================================
+
+Tests used so far: 31 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.022
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.016
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.091094803
+  Rank 2: ['c2']  | Entropy Contribution=0.091094803
+  Rank 3: ['c3']  | Entropy Contribution=0.091094803
+  Rank 4: ['c4']  | Entropy Contribution=0.091094803
+  Rank 5: ['c5']  | Entropy Contribution=0.091094803
+  Rank 6: ['c6']  | Entropy Contribution=0.091094803
+  Rank 7: ['c7']  | Entropy Contribution=0.091094803
+  Rank 8: ['c8']  | Entropy Contribution=0.091094803
+  Rank 9: ['c9']  | Entropy Contribution=0.091094803
+  Rank 10: ['c10']  | Entropy Contribution=0.091094803
+  Rank 11: ['c11']  | Entropy Contribution=0.091094803
+  Rank 12: ['c12']  | Entropy Contribution=0.091094803
+  Rank 13: ['c13']  | Entropy Contribution=0.091094803
+  Rank 14: ['c14']  | Entropy Contribution=0.091094803
+  Rank 15: ['c15']  | Entropy Contribution=0.091094803
+  Rank 16: ['c16']  | Entropy Contribution=0.091094803
+  Rank 17: ['c17']  | Entropy Contribution=0.091094803
+  Rank 18: ['c20']  | Entropy Contribution=0.091094803
+  Rank 19: ['c21']  | Entropy Contribution=0.091094803
+  Rank 20: ['c22']  | Entropy Contribution=0.091094803
+  Rank 21: ['c23']  | Entropy Contribution=0.091094803
+  Rank 22: ['c24']  | Entropy Contribution=0.091094803
+  Rank 23: ['c25']  | Entropy Contribution=0.091094803
+  Rank 24: ['c26']  | Entropy Contribution=0.091094803
+  Rank 25: ['c27']  | Entropy Contribution=0.091094803
+  Rank 26: ['c28']  | Entropy Contribution=0.091094803
+  Rank 27: ['c32']  | Entropy Contribution=0.091094803
+  Rank 28: ['c33']  | Entropy Contribution=0.091094803
+  Rank 29: ['c34']  | Entropy Contribution=0.091094803
+  Rank 30: ['c35']  | Entropy Contribution=0.091094803
+  Rank 31: ['c36']  | Entropy Contribution=0.091094803
+  Rank 32: ['c37']  | Entropy Contribution=0.091094803
+  Rank 33: ['c38']  | Entropy Contribution=0.091094803
+  Rank 34: ['c39']  | Entropy Contribution=0.091094803
+  Rank 35: ['c40']  | Entropy Contribution=0.091094803
+  Rank 36: ['c41']  | Entropy Contribution=0.091094803
+  Rank 37: ['c42']  | Entropy Contribution=0.091094803
+  Rank 38: ['c44']  | Entropy Contribution=0.091094803
+  Rank 39: ['c45']  | Entropy Contribution=0.091094803
+  Rank 40: ['c46']  | Entropy Contribution=0.091094803
+  Rank 41: ['c47']  | Entropy Contribution=0.091094803
+  Rank 42: ['c48']  | Entropy Contribution=0.091094803
+  Rank 43: ['c49']  | Entropy Contribution=0.091094803
+  Rank 44: ['c50']  | Entropy Contribution=0.091094803
+  Rank 45: ['c51']  | Entropy Contribution=0.091094803
+  Rank 46: ['c52']  | Entropy Contribution=0.091094803
+  Rank 47: ['c67']  | Entropy Contribution=0.091094803
+  Rank 48: ['c79']  | Entropy Contribution=0.091094803
+  Rank 49: ['c80']  | Entropy Contribution=0.091094803
+  Rank 50: ['c81']  | Entropy Contribution=0.091094803
+  Rank 51: ['c82']  | Entropy Contribution=0.091094803
+  Rank 52: ['c83']  | Entropy Contribution=0.091094803
+  Rank 53: ['c84']  | Entropy Contribution=0.091094803
+  Rank 54: ['c85']  | Entropy Contribution=0.091094803
+  Rank 55: ['c86']  | Entropy Contribution=0.091094803
+  Rank 56: ['c87']  | Entropy Contribution=0.091094803
+  Rank 57: ['c88']  | Entropy Contribution=0.091094803
+  Rank 58: ['c89']  | Entropy Contribution=0.091094803
+  Rank 59: ['c90']  | Entropy Contribution=0.091094803
+  Rank 60: ['c91']  | Entropy Contribution=0.091094803
+  Rank 61: ['c92']  | Entropy Contribution=0.091094803
+  Rank 62: ['c93']  | Entropy Contribution=0.091094803
+  Rank 63: ['c18']  | Entropy Contribution=0.122705317
+  Rank 64: ['c19']  | Entropy Contribution=0.122705317
+  Rank 65: ['c43']  | Entropy Contribution=0.122705317
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #22
+  Info Gain: 0.001
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 23
+================================================================================
+
+Tests used so far: 32 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.022
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.017
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.091165958
+  Rank 2: ['c2']  | Entropy Contribution=0.091165958
+  Rank 3: ['c3']  | Entropy Contribution=0.091165958
+  Rank 4: ['c4']  | Entropy Contribution=0.091165958
+  Rank 5: ['c5']  | Entropy Contribution=0.091165958
+  Rank 6: ['c6']  | Entropy Contribution=0.091165958
+  Rank 7: ['c7']  | Entropy Contribution=0.091165958
+  Rank 8: ['c8']  | Entropy Contribution=0.091165958
+  Rank 9: ['c9']  | Entropy Contribution=0.091165958
+  Rank 10: ['c10']  | Entropy Contribution=0.091165958
+  Rank 11: ['c11']  | Entropy Contribution=0.091165958
+  Rank 12: ['c12']  | Entropy Contribution=0.091165958
+  Rank 13: ['c13']  | Entropy Contribution=0.091165958
+  Rank 14: ['c14']  | Entropy Contribution=0.091165958
+  Rank 15: ['c15']  | Entropy Contribution=0.091165958
+  Rank 16: ['c16']  | Entropy Contribution=0.091165958
+  Rank 17: ['c17']  | Entropy Contribution=0.091165958
+  Rank 18: ['c20']  | Entropy Contribution=0.091165958
+  Rank 19: ['c21']  | Entropy Contribution=0.091165958
+  Rank 20: ['c22']  | Entropy Contribution=0.091165958
+  Rank 21: ['c23']  | Entropy Contribution=0.091165958
+  Rank 22: ['c24']  | Entropy Contribution=0.091165958
+  Rank 23: ['c25']  | Entropy Contribution=0.091165958
+  Rank 24: ['c26']  | Entropy Contribution=0.091165958
+  Rank 25: ['c27']  | Entropy Contribution=0.091165958
+  Rank 26: ['c28']  | Entropy Contribution=0.091165958
+  Rank 27: ['c32']  | Entropy Contribution=0.091165958
+  Rank 28: ['c33']  | Entropy Contribution=0.091165958
+  Rank 29: ['c34']  | Entropy Contribution=0.091165958
+  Rank 30: ['c35']  | Entropy Contribution=0.091165958
+  Rank 31: ['c36']  | Entropy Contribution=0.091165958
+  Rank 32: ['c37']  | Entropy Contribution=0.091165958
+  Rank 33: ['c38']  | Entropy Contribution=0.091165958
+  Rank 34: ['c39']  | Entropy Contribution=0.091165958
+  Rank 35: ['c40']  | Entropy Contribution=0.091165958
+  Rank 36: ['c41']  | Entropy Contribution=0.091165958
+  Rank 37: ['c42']  | Entropy Contribution=0.091165958
+  Rank 38: ['c44']  | Entropy Contribution=0.091165958
+  Rank 39: ['c45']  | Entropy Contribution=0.091165958
+  Rank 40: ['c46']  | Entropy Contribution=0.091165958
+  Rank 41: ['c47']  | Entropy Contribution=0.091165958
+  Rank 42: ['c48']  | Entropy Contribution=0.091165958
+  Rank 43: ['c49']  | Entropy Contribution=0.091165958
+  Rank 44: ['c50']  | Entropy Contribution=0.091165958
+  Rank 45: ['c51']  | Entropy Contribution=0.091165958
+  Rank 46: ['c52']  | Entropy Contribution=0.091165958
+  Rank 47: ['c67']  | Entropy Contribution=0.091165958
+  Rank 48: ['c79']  | Entropy Contribution=0.091165958
+  Rank 49: ['c80']  | Entropy Contribution=0.091165958
+  Rank 50: ['c81']  | Entropy Contribution=0.091165958
+  Rank 51: ['c82']  | Entropy Contribution=0.091165958
+  Rank 52: ['c83']  | Entropy Contribution=0.091165958
+  Rank 53: ['c84']  | Entropy Contribution=0.091165958
+  Rank 54: ['c85']  | Entropy Contribution=0.091165958
+  Rank 55: ['c86']  | Entropy Contribution=0.091165958
+  Rank 56: ['c87']  | Entropy Contribution=0.091165958
+  Rank 57: ['c88']  | Entropy Contribution=0.091165958
+  Rank 58: ['c89']  | Entropy Contribution=0.091165958
+  Rank 59: ['c90']  | Entropy Contribution=0.091165958
+  Rank 60: ['c91']  | Entropy Contribution=0.091165958
+  Rank 61: ['c92']  | Entropy Contribution=0.091165958
+  Rank 62: ['c93']  | Entropy Contribution=0.091165958
+  Rank 63: ['c18']  | Entropy Contribution=0.121414078
+  Rank 64: ['c19']  | Entropy Contribution=0.121414078
+  Rank 65: ['c43']  | Entropy Contribution=0.121414078
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #23
+  Info Gain: 0.001
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 24
+================================================================================
+
+Tests used so far: 33 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.022
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.017
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.091230893
+  Rank 2: ['c2']  | Entropy Contribution=0.091230893
+  Rank 3: ['c3']  | Entropy Contribution=0.091230893
+  Rank 4: ['c4']  | Entropy Contribution=0.091230893
+  Rank 5: ['c5']  | Entropy Contribution=0.091230893
+  Rank 6: ['c6']  | Entropy Contribution=0.091230893
+  Rank 7: ['c7']  | Entropy Contribution=0.091230893
+  Rank 8: ['c8']  | Entropy Contribution=0.091230893
+  Rank 9: ['c9']  | Entropy Contribution=0.091230893
+  Rank 10: ['c10']  | Entropy Contribution=0.091230893
+  Rank 11: ['c11']  | Entropy Contribution=0.091230893
+  Rank 12: ['c12']  | Entropy Contribution=0.091230893
+  Rank 13: ['c13']  | Entropy Contribution=0.091230893
+  Rank 14: ['c14']  | Entropy Contribution=0.091230893
+  Rank 15: ['c15']  | Entropy Contribution=0.091230893
+  Rank 16: ['c16']  | Entropy Contribution=0.091230893
+  Rank 17: ['c17']  | Entropy Contribution=0.091230893
+  Rank 18: ['c20']  | Entropy Contribution=0.091230893
+  Rank 19: ['c21']  | Entropy Contribution=0.091230893
+  Rank 20: ['c22']  | Entropy Contribution=0.091230893
+  Rank 21: ['c23']  | Entropy Contribution=0.091230893
+  Rank 22: ['c24']  | Entropy Contribution=0.091230893
+  Rank 23: ['c25']  | Entropy Contribution=0.091230893
+  Rank 24: ['c26']  | Entropy Contribution=0.091230893
+  Rank 25: ['c27']  | Entropy Contribution=0.091230893
+  Rank 26: ['c28']  | Entropy Contribution=0.091230893
+  Rank 27: ['c32']  | Entropy Contribution=0.091230893
+  Rank 28: ['c33']  | Entropy Contribution=0.091230893
+  Rank 29: ['c34']  | Entropy Contribution=0.091230893
+  Rank 30: ['c35']  | Entropy Contribution=0.091230893
+  Rank 31: ['c36']  | Entropy Contribution=0.091230893
+  Rank 32: ['c37']  | Entropy Contribution=0.091230893
+  Rank 33: ['c38']  | Entropy Contribution=0.091230893
+  Rank 34: ['c39']  | Entropy Contribution=0.091230893
+  Rank 35: ['c40']  | Entropy Contribution=0.091230893
+  Rank 36: ['c41']  | Entropy Contribution=0.091230893
+  Rank 37: ['c42']  | Entropy Contribution=0.091230893
+  Rank 38: ['c44']  | Entropy Contribution=0.091230893
+  Rank 39: ['c45']  | Entropy Contribution=0.091230893
+  Rank 40: ['c46']  | Entropy Contribution=0.091230893
+  Rank 41: ['c47']  | Entropy Contribution=0.091230893
+  Rank 42: ['c48']  | Entropy Contribution=0.091230893
+  Rank 43: ['c49']  | Entropy Contribution=0.091230893
+  Rank 44: ['c50']  | Entropy Contribution=0.091230893
+  Rank 45: ['c51']  | Entropy Contribution=0.091230893
+  Rank 46: ['c52']  | Entropy Contribution=0.091230893
+  Rank 47: ['c67']  | Entropy Contribution=0.091230893
+  Rank 48: ['c79']  | Entropy Contribution=0.091230893
+  Rank 49: ['c80']  | Entropy Contribution=0.091230893
+  Rank 50: ['c81']  | Entropy Contribution=0.091230893
+  Rank 51: ['c82']  | Entropy Contribution=0.091230893
+  Rank 52: ['c83']  | Entropy Contribution=0.091230893
+  Rank 53: ['c84']  | Entropy Contribution=0.091230893
+  Rank 54: ['c85']  | Entropy Contribution=0.091230893
+  Rank 55: ['c86']  | Entropy Contribution=0.091230893
+  Rank 56: ['c87']  | Entropy Contribution=0.091230893
+  Rank 57: ['c88']  | Entropy Contribution=0.091230893
+  Rank 58: ['c89']  | Entropy Contribution=0.091230893
+  Rank 59: ['c90']  | Entropy Contribution=0.091230893
+  Rank 60: ['c91']  | Entropy Contribution=0.091230893
+  Rank 61: ['c92']  | Entropy Contribution=0.091230893
+  Rank 62: ['c93']  | Entropy Contribution=0.091230893
+  Rank 63: ['c18']  | Entropy Contribution=0.120229549
+  Rank 64: ['c19']  | Entropy Contribution=0.120229549
+  Rank 65: ['c43']  | Entropy Contribution=0.120229549
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #25
+  Info Gain: 0.001
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 25
+================================================================================
+
+Tests used so far: 34 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.022
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.017
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.091290389
+  Rank 2: ['c2']  | Entropy Contribution=0.091290389
+  Rank 3: ['c3']  | Entropy Contribution=0.091290389
+  Rank 4: ['c4']  | Entropy Contribution=0.091290389
+  Rank 5: ['c5']  | Entropy Contribution=0.091290389
+  Rank 6: ['c6']  | Entropy Contribution=0.091290389
+  Rank 7: ['c7']  | Entropy Contribution=0.091290389
+  Rank 8: ['c8']  | Entropy Contribution=0.091290389
+  Rank 9: ['c9']  | Entropy Contribution=0.091290389
+  Rank 10: ['c10']  | Entropy Contribution=0.091290389
+  Rank 11: ['c11']  | Entropy Contribution=0.091290389
+  Rank 12: ['c12']  | Entropy Contribution=0.091290389
+  Rank 13: ['c13']  | Entropy Contribution=0.091290389
+  Rank 14: ['c14']  | Entropy Contribution=0.091290389
+  Rank 15: ['c15']  | Entropy Contribution=0.091290389
+  Rank 16: ['c16']  | Entropy Contribution=0.091290389
+  Rank 17: ['c17']  | Entropy Contribution=0.091290389
+  Rank 18: ['c20']  | Entropy Contribution=0.091290389
+  Rank 19: ['c21']  | Entropy Contribution=0.091290389
+  Rank 20: ['c22']  | Entropy Contribution=0.091290389
+  Rank 21: ['c23']  | Entropy Contribution=0.091290389
+  Rank 22: ['c24']  | Entropy Contribution=0.091290389
+  Rank 23: ['c25']  | Entropy Contribution=0.091290389
+  Rank 24: ['c26']  | Entropy Contribution=0.091290389
+  Rank 25: ['c27']  | Entropy Contribution=0.091290389
+  Rank 26: ['c28']  | Entropy Contribution=0.091290389
+  Rank 27: ['c32']  | Entropy Contribution=0.091290389
+  Rank 28: ['c33']  | Entropy Contribution=0.091290389
+  Rank 29: ['c34']  | Entropy Contribution=0.091290389
+  Rank 30: ['c35']  | Entropy Contribution=0.091290389
+  Rank 31: ['c36']  | Entropy Contribution=0.091290389
+  Rank 32: ['c37']  | Entropy Contribution=0.091290389
+  Rank 33: ['c38']  | Entropy Contribution=0.091290389
+  Rank 34: ['c39']  | Entropy Contribution=0.091290389
+  Rank 35: ['c40']  | Entropy Contribution=0.091290389
+  Rank 36: ['c41']  | Entropy Contribution=0.091290389
+  Rank 37: ['c42']  | Entropy Contribution=0.091290389
+  Rank 38: ['c44']  | Entropy Contribution=0.091290389
+  Rank 39: ['c45']  | Entropy Contribution=0.091290389
+  Rank 40: ['c46']  | Entropy Contribution=0.091290389
+  Rank 41: ['c47']  | Entropy Contribution=0.091290389
+  Rank 42: ['c48']  | Entropy Contribution=0.091290389
+  Rank 43: ['c49']  | Entropy Contribution=0.091290389
+  Rank 44: ['c50']  | Entropy Contribution=0.091290389
+  Rank 45: ['c51']  | Entropy Contribution=0.091290389
+  Rank 46: ['c52']  | Entropy Contribution=0.091290389
+  Rank 47: ['c67']  | Entropy Contribution=0.091290389
+  Rank 48: ['c79']  | Entropy Contribution=0.091290389
+  Rank 49: ['c80']  | Entropy Contribution=0.091290389
+  Rank 50: ['c81']  | Entropy Contribution=0.091290389
+  Rank 51: ['c82']  | Entropy Contribution=0.091290389
+  Rank 52: ['c83']  | Entropy Contribution=0.091290389
+  Rank 53: ['c84']  | Entropy Contribution=0.091290389
+  Rank 54: ['c85']  | Entropy Contribution=0.091290389
+  Rank 55: ['c86']  | Entropy Contribution=0.091290389
+  Rank 56: ['c87']  | Entropy Contribution=0.091290389
+  Rank 57: ['c88']  | Entropy Contribution=0.091290389
+  Rank 58: ['c89']  | Entropy Contribution=0.091290389
+  Rank 59: ['c90']  | Entropy Contribution=0.091290389
+  Rank 60: ['c91']  | Entropy Contribution=0.091290389
+  Rank 61: ['c92']  | Entropy Contribution=0.091290389
+  Rank 62: ['c93']  | Entropy Contribution=0.091290389
+  Rank 63: ['c18']  | Entropy Contribution=0.119138994
+  Rank 64: ['c19']  | Entropy Contribution=0.119138994
+  Rank 65: ['c43']  | Entropy Contribution=0.119138994
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #26
+  Info Gain: 0.001
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 26
+================================================================================
+
+Tests used so far: 35 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.021
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.018
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.091345102
+  Rank 2: ['c2']  | Entropy Contribution=0.091345102
+  Rank 3: ['c3']  | Entropy Contribution=0.091345102
+  Rank 4: ['c4']  | Entropy Contribution=0.091345102
+  Rank 5: ['c5']  | Entropy Contribution=0.091345102
+  Rank 6: ['c6']  | Entropy Contribution=0.091345102
+  Rank 7: ['c7']  | Entropy Contribution=0.091345102
+  Rank 8: ['c8']  | Entropy Contribution=0.091345102
+  Rank 9: ['c9']  | Entropy Contribution=0.091345102
+  Rank 10: ['c10']  | Entropy Contribution=0.091345102
+  Rank 11: ['c11']  | Entropy Contribution=0.091345102
+  Rank 12: ['c12']  | Entropy Contribution=0.091345102
+  Rank 13: ['c13']  | Entropy Contribution=0.091345102
+  Rank 14: ['c14']  | Entropy Contribution=0.091345102
+  Rank 15: ['c15']  | Entropy Contribution=0.091345102
+  Rank 16: ['c16']  | Entropy Contribution=0.091345102
+  Rank 17: ['c17']  | Entropy Contribution=0.091345102
+  Rank 18: ['c20']  | Entropy Contribution=0.091345102
+  Rank 19: ['c21']  | Entropy Contribution=0.091345102
+  Rank 20: ['c22']  | Entropy Contribution=0.091345102
+  Rank 21: ['c23']  | Entropy Contribution=0.091345102
+  Rank 22: ['c24']  | Entropy Contribution=0.091345102
+  Rank 23: ['c25']  | Entropy Contribution=0.091345102
+  Rank 24: ['c26']  | Entropy Contribution=0.091345102
+  Rank 25: ['c27']  | Entropy Contribution=0.091345102
+  Rank 26: ['c28']  | Entropy Contribution=0.091345102
+  Rank 27: ['c32']  | Entropy Contribution=0.091345102
+  Rank 28: ['c33']  | Entropy Contribution=0.091345102
+  Rank 29: ['c34']  | Entropy Contribution=0.091345102
+  Rank 30: ['c35']  | Entropy Contribution=0.091345102
+  Rank 31: ['c36']  | Entropy Contribution=0.091345102
+  Rank 32: ['c37']  | Entropy Contribution=0.091345102
+  Rank 33: ['c38']  | Entropy Contribution=0.091345102
+  Rank 34: ['c39']  | Entropy Contribution=0.091345102
+  Rank 35: ['c40']  | Entropy Contribution=0.091345102
+  Rank 36: ['c41']  | Entropy Contribution=0.091345102
+  Rank 37: ['c42']  | Entropy Contribution=0.091345102
+  Rank 38: ['c44']  | Entropy Contribution=0.091345102
+  Rank 39: ['c45']  | Entropy Contribution=0.091345102
+  Rank 40: ['c46']  | Entropy Contribution=0.091345102
+  Rank 41: ['c47']  | Entropy Contribution=0.091345102
+  Rank 42: ['c48']  | Entropy Contribution=0.091345102
+  Rank 43: ['c49']  | Entropy Contribution=0.091345102
+  Rank 44: ['c50']  | Entropy Contribution=0.091345102
+  Rank 45: ['c51']  | Entropy Contribution=0.091345102
+  Rank 46: ['c52']  | Entropy Contribution=0.091345102
+  Rank 47: ['c67']  | Entropy Contribution=0.091345102
+  Rank 48: ['c79']  | Entropy Contribution=0.091345102
+  Rank 49: ['c80']  | Entropy Contribution=0.091345102
+  Rank 50: ['c81']  | Entropy Contribution=0.091345102
+  Rank 51: ['c82']  | Entropy Contribution=0.091345102
+  Rank 52: ['c83']  | Entropy Contribution=0.091345102
+  Rank 53: ['c84']  | Entropy Contribution=0.091345102
+  Rank 54: ['c85']  | Entropy Contribution=0.091345102
+  Rank 55: ['c86']  | Entropy Contribution=0.091345102
+  Rank 56: ['c87']  | Entropy Contribution=0.091345102
+  Rank 57: ['c88']  | Entropy Contribution=0.091345102
+  Rank 58: ['c89']  | Entropy Contribution=0.091345102
+  Rank 59: ['c90']  | Entropy Contribution=0.091345102
+  Rank 60: ['c91']  | Entropy Contribution=0.091345102
+  Rank 61: ['c92']  | Entropy Contribution=0.091345102
+  Rank 62: ['c93']  | Entropy Contribution=0.091345102
+  Rank 63: ['c18']  | Entropy Contribution=0.118131632
+  Rank 64: ['c19']  | Entropy Contribution=0.118131632
+  Rank 65: ['c43']  | Entropy Contribution=0.118131632
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #27
+  Info Gain: 0.000
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 27
+================================================================================
+
+Tests used so far: 36 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.021
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.018
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.091395588
+  Rank 2: ['c2']  | Entropy Contribution=0.091395588
+  Rank 3: ['c3']  | Entropy Contribution=0.091395588
+  Rank 4: ['c4']  | Entropy Contribution=0.091395588
+  Rank 5: ['c5']  | Entropy Contribution=0.091395588
+  Rank 6: ['c6']  | Entropy Contribution=0.091395588
+  Rank 7: ['c7']  | Entropy Contribution=0.091395588
+  Rank 8: ['c8']  | Entropy Contribution=0.091395588
+  Rank 9: ['c9']  | Entropy Contribution=0.091395588
+  Rank 10: ['c10']  | Entropy Contribution=0.091395588
+  Rank 11: ['c11']  | Entropy Contribution=0.091395588
+  Rank 12: ['c12']  | Entropy Contribution=0.091395588
+  Rank 13: ['c13']  | Entropy Contribution=0.091395588
+  Rank 14: ['c14']  | Entropy Contribution=0.091395588
+  Rank 15: ['c15']  | Entropy Contribution=0.091395588
+  Rank 16: ['c16']  | Entropy Contribution=0.091395588
+  Rank 17: ['c17']  | Entropy Contribution=0.091395588
+  Rank 18: ['c20']  | Entropy Contribution=0.091395588
+  Rank 19: ['c21']  | Entropy Contribution=0.091395588
+  Rank 20: ['c22']  | Entropy Contribution=0.091395588
+  Rank 21: ['c23']  | Entropy Contribution=0.091395588
+  Rank 22: ['c24']  | Entropy Contribution=0.091395588
+  Rank 23: ['c25']  | Entropy Contribution=0.091395588
+  Rank 24: ['c26']  | Entropy Contribution=0.091395588
+  Rank 25: ['c27']  | Entropy Contribution=0.091395588
+  Rank 26: ['c28']  | Entropy Contribution=0.091395588
+  Rank 27: ['c32']  | Entropy Contribution=0.091395588
+  Rank 28: ['c33']  | Entropy Contribution=0.091395588
+  Rank 29: ['c34']  | Entropy Contribution=0.091395588
+  Rank 30: ['c35']  | Entropy Contribution=0.091395588
+  Rank 31: ['c36']  | Entropy Contribution=0.091395588
+  Rank 32: ['c37']  | Entropy Contribution=0.091395588
+  Rank 33: ['c38']  | Entropy Contribution=0.091395588
+  Rank 34: ['c39']  | Entropy Contribution=0.091395588
+  Rank 35: ['c40']  | Entropy Contribution=0.091395588
+  Rank 36: ['c41']  | Entropy Contribution=0.091395588
+  Rank 37: ['c42']  | Entropy Contribution=0.091395588
+  Rank 38: ['c44']  | Entropy Contribution=0.091395588
+  Rank 39: ['c45']  | Entropy Contribution=0.091395588
+  Rank 40: ['c46']  | Entropy Contribution=0.091395588
+  Rank 41: ['c47']  | Entropy Contribution=0.091395588
+  Rank 42: ['c48']  | Entropy Contribution=0.091395588
+  Rank 43: ['c49']  | Entropy Contribution=0.091395588
+  Rank 44: ['c50']  | Entropy Contribution=0.091395588
+  Rank 45: ['c51']  | Entropy Contribution=0.091395588
+  Rank 46: ['c52']  | Entropy Contribution=0.091395588
+  Rank 47: ['c67']  | Entropy Contribution=0.091395588
+  Rank 48: ['c79']  | Entropy Contribution=0.091395588
+  Rank 49: ['c80']  | Entropy Contribution=0.091395588
+  Rank 50: ['c81']  | Entropy Contribution=0.091395588
+  Rank 51: ['c82']  | Entropy Contribution=0.091395588
+  Rank 52: ['c83']  | Entropy Contribution=0.091395588
+  Rank 53: ['c84']  | Entropy Contribution=0.091395588
+  Rank 54: ['c85']  | Entropy Contribution=0.091395588
+  Rank 55: ['c86']  | Entropy Contribution=0.091395588
+  Rank 56: ['c87']  | Entropy Contribution=0.091395588
+  Rank 57: ['c88']  | Entropy Contribution=0.091395588
+  Rank 58: ['c89']  | Entropy Contribution=0.091395588
+  Rank 59: ['c90']  | Entropy Contribution=0.091395588
+  Rank 60: ['c91']  | Entropy Contribution=0.091395588
+  Rank 61: ['c92']  | Entropy Contribution=0.091395588
+  Rank 62: ['c93']  | Entropy Contribution=0.091395588
+  Rank 63: ['c18']  | Entropy Contribution=0.117198273
+  Rank 64: ['c19']  | Entropy Contribution=0.117198273
+  Rank 65: ['c43']  | Entropy Contribution=0.117198273
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #28
+  Info Gain: 0.000
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 28
+================================================================================
+
+Tests used so far: 37 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.021
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.018
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.091442317
+  Rank 2: ['c2']  | Entropy Contribution=0.091442317
+  Rank 3: ['c3']  | Entropy Contribution=0.091442317
+  Rank 4: ['c4']  | Entropy Contribution=0.091442317
+  Rank 5: ['c5']  | Entropy Contribution=0.091442317
+  Rank 6: ['c6']  | Entropy Contribution=0.091442317
+  Rank 7: ['c7']  | Entropy Contribution=0.091442317
+  Rank 8: ['c8']  | Entropy Contribution=0.091442317
+  Rank 9: ['c9']  | Entropy Contribution=0.091442317
+  Rank 10: ['c10']  | Entropy Contribution=0.091442317
+  Rank 11: ['c11']  | Entropy Contribution=0.091442317
+  Rank 12: ['c12']  | Entropy Contribution=0.091442317
+  Rank 13: ['c13']  | Entropy Contribution=0.091442317
+  Rank 14: ['c14']  | Entropy Contribution=0.091442317
+  Rank 15: ['c15']  | Entropy Contribution=0.091442317
+  Rank 16: ['c16']  | Entropy Contribution=0.091442317
+  Rank 17: ['c17']  | Entropy Contribution=0.091442317
+  Rank 18: ['c20']  | Entropy Contribution=0.091442317
+  Rank 19: ['c21']  | Entropy Contribution=0.091442317
+  Rank 20: ['c22']  | Entropy Contribution=0.091442317
+  Rank 21: ['c23']  | Entropy Contribution=0.091442317
+  Rank 22: ['c24']  | Entropy Contribution=0.091442317
+  Rank 23: ['c25']  | Entropy Contribution=0.091442317
+  Rank 24: ['c26']  | Entropy Contribution=0.091442317
+  Rank 25: ['c27']  | Entropy Contribution=0.091442317
+  Rank 26: ['c28']  | Entropy Contribution=0.091442317
+  Rank 27: ['c32']  | Entropy Contribution=0.091442317
+  Rank 28: ['c33']  | Entropy Contribution=0.091442317
+  Rank 29: ['c34']  | Entropy Contribution=0.091442317
+  Rank 30: ['c35']  | Entropy Contribution=0.091442317
+  Rank 31: ['c36']  | Entropy Contribution=0.091442317
+  Rank 32: ['c37']  | Entropy Contribution=0.091442317
+  Rank 33: ['c38']  | Entropy Contribution=0.091442317
+  Rank 34: ['c39']  | Entropy Contribution=0.091442317
+  Rank 35: ['c40']  | Entropy Contribution=0.091442317
+  Rank 36: ['c41']  | Entropy Contribution=0.091442317
+  Rank 37: ['c42']  | Entropy Contribution=0.091442317
+  Rank 38: ['c44']  | Entropy Contribution=0.091442317
+  Rank 39: ['c45']  | Entropy Contribution=0.091442317
+  Rank 40: ['c46']  | Entropy Contribution=0.091442317
+  Rank 41: ['c47']  | Entropy Contribution=0.091442317
+  Rank 42: ['c48']  | Entropy Contribution=0.091442317
+  Rank 43: ['c49']  | Entropy Contribution=0.091442317
+  Rank 44: ['c50']  | Entropy Contribution=0.091442317
+  Rank 45: ['c51']  | Entropy Contribution=0.091442317
+  Rank 46: ['c52']  | Entropy Contribution=0.091442317
+  Rank 47: ['c67']  | Entropy Contribution=0.091442317
+  Rank 48: ['c79']  | Entropy Contribution=0.091442317
+  Rank 49: ['c80']  | Entropy Contribution=0.091442317
+  Rank 50: ['c81']  | Entropy Contribution=0.091442317
+  Rank 51: ['c82']  | Entropy Contribution=0.091442317
+  Rank 52: ['c83']  | Entropy Contribution=0.091442317
+  Rank 53: ['c84']  | Entropy Contribution=0.091442317
+  Rank 54: ['c85']  | Entropy Contribution=0.091442317
+  Rank 55: ['c86']  | Entropy Contribution=0.091442317
+  Rank 56: ['c87']  | Entropy Contribution=0.091442317
+  Rank 57: ['c88']  | Entropy Contribution=0.091442317
+  Rank 58: ['c89']  | Entropy Contribution=0.091442317
+  Rank 59: ['c90']  | Entropy Contribution=0.091442317
+  Rank 60: ['c91']  | Entropy Contribution=0.091442317
+  Rank 61: ['c92']  | Entropy Contribution=0.091442317
+  Rank 62: ['c93']  | Entropy Contribution=0.091442317
+  Rank 63: ['c18']  | Entropy Contribution=0.116331033
+  Rank 64: ['c19']  | Entropy Contribution=0.116331033
+  Rank 65: ['c43']  | Entropy Contribution=0.116331033
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #29
+  Info Gain: 0.000
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 29
+================================================================================
+
+Tests used so far: 38 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.021
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.019
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.091485694
+  Rank 2: ['c2']  | Entropy Contribution=0.091485694
+  Rank 3: ['c3']  | Entropy Contribution=0.091485694
+  Rank 4: ['c4']  | Entropy Contribution=0.091485694
+  Rank 5: ['c5']  | Entropy Contribution=0.091485694
+  Rank 6: ['c6']  | Entropy Contribution=0.091485694
+  Rank 7: ['c7']  | Entropy Contribution=0.091485694
+  Rank 8: ['c8']  | Entropy Contribution=0.091485694
+  Rank 9: ['c9']  | Entropy Contribution=0.091485694
+  Rank 10: ['c10']  | Entropy Contribution=0.091485694
+  Rank 11: ['c11']  | Entropy Contribution=0.091485694
+  Rank 12: ['c12']  | Entropy Contribution=0.091485694
+  Rank 13: ['c13']  | Entropy Contribution=0.091485694
+  Rank 14: ['c14']  | Entropy Contribution=0.091485694
+  Rank 15: ['c15']  | Entropy Contribution=0.091485694
+  Rank 16: ['c16']  | Entropy Contribution=0.091485694
+  Rank 17: ['c17']  | Entropy Contribution=0.091485694
+  Rank 18: ['c20']  | Entropy Contribution=0.091485694
+  Rank 19: ['c21']  | Entropy Contribution=0.091485694
+  Rank 20: ['c22']  | Entropy Contribution=0.091485694
+  Rank 21: ['c23']  | Entropy Contribution=0.091485694
+  Rank 22: ['c24']  | Entropy Contribution=0.091485694
+  Rank 23: ['c25']  | Entropy Contribution=0.091485694
+  Rank 24: ['c26']  | Entropy Contribution=0.091485694
+  Rank 25: ['c27']  | Entropy Contribution=0.091485694
+  Rank 26: ['c28']  | Entropy Contribution=0.091485694
+  Rank 27: ['c32']  | Entropy Contribution=0.091485694
+  Rank 28: ['c33']  | Entropy Contribution=0.091485694
+  Rank 29: ['c34']  | Entropy Contribution=0.091485694
+  Rank 30: ['c35']  | Entropy Contribution=0.091485694
+  Rank 31: ['c36']  | Entropy Contribution=0.091485694
+  Rank 32: ['c37']  | Entropy Contribution=0.091485694
+  Rank 33: ['c38']  | Entropy Contribution=0.091485694
+  Rank 34: ['c39']  | Entropy Contribution=0.091485694
+  Rank 35: ['c40']  | Entropy Contribution=0.091485694
+  Rank 36: ['c41']  | Entropy Contribution=0.091485694
+  Rank 37: ['c42']  | Entropy Contribution=0.091485694
+  Rank 38: ['c44']  | Entropy Contribution=0.091485694
+  Rank 39: ['c45']  | Entropy Contribution=0.091485694
+  Rank 40: ['c46']  | Entropy Contribution=0.091485694
+  Rank 41: ['c47']  | Entropy Contribution=0.091485694
+  Rank 42: ['c48']  | Entropy Contribution=0.091485694
+  Rank 43: ['c49']  | Entropy Contribution=0.091485694
+  Rank 44: ['c50']  | Entropy Contribution=0.091485694
+  Rank 45: ['c51']  | Entropy Contribution=0.091485694
+  Rank 46: ['c52']  | Entropy Contribution=0.091485694
+  Rank 47: ['c67']  | Entropy Contribution=0.091485694
+  Rank 48: ['c79']  | Entropy Contribution=0.091485694
+  Rank 49: ['c80']  | Entropy Contribution=0.091485694
+  Rank 50: ['c81']  | Entropy Contribution=0.091485694
+  Rank 51: ['c82']  | Entropy Contribution=0.091485694
+  Rank 52: ['c83']  | Entropy Contribution=0.091485694
+  Rank 53: ['c84']  | Entropy Contribution=0.091485694
+  Rank 54: ['c85']  | Entropy Contribution=0.091485694
+  Rank 55: ['c86']  | Entropy Contribution=0.091485694
+  Rank 56: ['c87']  | Entropy Contribution=0.091485694
+  Rank 57: ['c88']  | Entropy Contribution=0.091485694
+  Rank 58: ['c89']  | Entropy Contribution=0.091485694
+  Rank 59: ['c90']  | Entropy Contribution=0.091485694
+  Rank 60: ['c91']  | Entropy Contribution=0.091485694
+  Rank 61: ['c92']  | Entropy Contribution=0.091485694
+  Rank 62: ['c93']  | Entropy Contribution=0.091485694
+  Rank 63: ['c18']  | Entropy Contribution=0.115523114
+  Rank 64: ['c19']  | Entropy Contribution=0.115523114
+  Rank 65: ['c43']  | Entropy Contribution=0.115523114
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #31
+  Info Gain: 0.000
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 30
+================================================================================
+
+Tests used so far: 39 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.020
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.019
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.091526067
+  Rank 2: ['c2']  | Entropy Contribution=0.091526067
+  Rank 3: ['c3']  | Entropy Contribution=0.091526067
+  Rank 4: ['c4']  | Entropy Contribution=0.091526067
+  Rank 5: ['c5']  | Entropy Contribution=0.091526067
+  Rank 6: ['c6']  | Entropy Contribution=0.091526067
+  Rank 7: ['c7']  | Entropy Contribution=0.091526067
+  Rank 8: ['c8']  | Entropy Contribution=0.091526067
+  Rank 9: ['c9']  | Entropy Contribution=0.091526067
+  Rank 10: ['c10']  | Entropy Contribution=0.091526067
+  Rank 11: ['c11']  | Entropy Contribution=0.091526067
+  Rank 12: ['c12']  | Entropy Contribution=0.091526067
+  Rank 13: ['c13']  | Entropy Contribution=0.091526067
+  Rank 14: ['c14']  | Entropy Contribution=0.091526067
+  Rank 15: ['c15']  | Entropy Contribution=0.091526067
+  Rank 16: ['c16']  | Entropy Contribution=0.091526067
+  Rank 17: ['c17']  | Entropy Contribution=0.091526067
+  Rank 18: ['c20']  | Entropy Contribution=0.091526067
+  Rank 19: ['c21']  | Entropy Contribution=0.091526067
+  Rank 20: ['c22']  | Entropy Contribution=0.091526067
+  Rank 21: ['c23']  | Entropy Contribution=0.091526067
+  Rank 22: ['c24']  | Entropy Contribution=0.091526067
+  Rank 23: ['c25']  | Entropy Contribution=0.091526067
+  Rank 24: ['c26']  | Entropy Contribution=0.091526067
+  Rank 25: ['c27']  | Entropy Contribution=0.091526067
+  Rank 26: ['c28']  | Entropy Contribution=0.091526067
+  Rank 27: ['c32']  | Entropy Contribution=0.091526067
+  Rank 28: ['c33']  | Entropy Contribution=0.091526067
+  Rank 29: ['c34']  | Entropy Contribution=0.091526067
+  Rank 30: ['c35']  | Entropy Contribution=0.091526067
+  Rank 31: ['c36']  | Entropy Contribution=0.091526067
+  Rank 32: ['c37']  | Entropy Contribution=0.091526067
+  Rank 33: ['c38']  | Entropy Contribution=0.091526067
+  Rank 34: ['c39']  | Entropy Contribution=0.091526067
+  Rank 35: ['c40']  | Entropy Contribution=0.091526067
+  Rank 36: ['c41']  | Entropy Contribution=0.091526067
+  Rank 37: ['c42']  | Entropy Contribution=0.091526067
+  Rank 38: ['c44']  | Entropy Contribution=0.091526067
+  Rank 39: ['c45']  | Entropy Contribution=0.091526067
+  Rank 40: ['c46']  | Entropy Contribution=0.091526067
+  Rank 41: ['c47']  | Entropy Contribution=0.091526067
+  Rank 42: ['c48']  | Entropy Contribution=0.091526067
+  Rank 43: ['c49']  | Entropy Contribution=0.091526067
+  Rank 44: ['c50']  | Entropy Contribution=0.091526067
+  Rank 45: ['c51']  | Entropy Contribution=0.091526067
+  Rank 46: ['c52']  | Entropy Contribution=0.091526067
+  Rank 47: ['c67']  | Entropy Contribution=0.091526067
+  Rank 48: ['c79']  | Entropy Contribution=0.091526067
+  Rank 49: ['c80']  | Entropy Contribution=0.091526067
+  Rank 50: ['c81']  | Entropy Contribution=0.091526067
+  Rank 51: ['c82']  | Entropy Contribution=0.091526067
+  Rank 52: ['c83']  | Entropy Contribution=0.091526067
+  Rank 53: ['c84']  | Entropy Contribution=0.091526067
+  Rank 54: ['c85']  | Entropy Contribution=0.091526067
+  Rank 55: ['c86']  | Entropy Contribution=0.091526067
+  Rank 56: ['c87']  | Entropy Contribution=0.091526067
+  Rank 57: ['c88']  | Entropy Contribution=0.091526067
+  Rank 58: ['c89']  | Entropy Contribution=0.091526067
+  Rank 59: ['c90']  | Entropy Contribution=0.091526067
+  Rank 60: ['c91']  | Entropy Contribution=0.091526067
+  Rank 61: ['c92']  | Entropy Contribution=0.091526067
+  Rank 62: ['c93']  | Entropy Contribution=0.091526067
+  Rank 63: ['c18']  | Entropy Contribution=0.114768620
+  Rank 64: ['c19']  | Entropy Contribution=0.114768620
+  Rank 65: ['c43']  | Entropy Contribution=0.114768620
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #36
+  Info Gain: 0.000
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 31
+================================================================================
+
+Tests used so far: 40 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.020
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.019
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.091563738
+  Rank 2: ['c2']  | Entropy Contribution=0.091563738
+  Rank 3: ['c3']  | Entropy Contribution=0.091563738
+  Rank 4: ['c4']  | Entropy Contribution=0.091563738
+  Rank 5: ['c5']  | Entropy Contribution=0.091563738
+  Rank 6: ['c6']  | Entropy Contribution=0.091563738
+  Rank 7: ['c7']  | Entropy Contribution=0.091563738
+  Rank 8: ['c8']  | Entropy Contribution=0.091563738
+  Rank 9: ['c9']  | Entropy Contribution=0.091563738
+  Rank 10: ['c10']  | Entropy Contribution=0.091563738
+  Rank 11: ['c11']  | Entropy Contribution=0.091563738
+  Rank 12: ['c12']  | Entropy Contribution=0.091563738
+  Rank 13: ['c13']  | Entropy Contribution=0.091563738
+  Rank 14: ['c14']  | Entropy Contribution=0.091563738
+  Rank 15: ['c15']  | Entropy Contribution=0.091563738
+  Rank 16: ['c16']  | Entropy Contribution=0.091563738
+  Rank 17: ['c17']  | Entropy Contribution=0.091563738
+  Rank 18: ['c20']  | Entropy Contribution=0.091563738
+  Rank 19: ['c21']  | Entropy Contribution=0.091563738
+  Rank 20: ['c22']  | Entropy Contribution=0.091563738
+  Rank 21: ['c23']  | Entropy Contribution=0.091563738
+  Rank 22: ['c24']  | Entropy Contribution=0.091563738
+  Rank 23: ['c25']  | Entropy Contribution=0.091563738
+  Rank 24: ['c26']  | Entropy Contribution=0.091563738
+  Rank 25: ['c27']  | Entropy Contribution=0.091563738
+  Rank 26: ['c28']  | Entropy Contribution=0.091563738
+  Rank 27: ['c32']  | Entropy Contribution=0.091563738
+  Rank 28: ['c33']  | Entropy Contribution=0.091563738
+  Rank 29: ['c34']  | Entropy Contribution=0.091563738
+  Rank 30: ['c35']  | Entropy Contribution=0.091563738
+  Rank 31: ['c36']  | Entropy Contribution=0.091563738
+  Rank 32: ['c37']  | Entropy Contribution=0.091563738
+  Rank 33: ['c38']  | Entropy Contribution=0.091563738
+  Rank 34: ['c39']  | Entropy Contribution=0.091563738
+  Rank 35: ['c40']  | Entropy Contribution=0.091563738
+  Rank 36: ['c41']  | Entropy Contribution=0.091563738
+  Rank 37: ['c42']  | Entropy Contribution=0.091563738
+  Rank 38: ['c44']  | Entropy Contribution=0.091563738
+  Rank 39: ['c45']  | Entropy Contribution=0.091563738
+  Rank 40: ['c46']  | Entropy Contribution=0.091563738
+  Rank 41: ['c47']  | Entropy Contribution=0.091563738
+  Rank 42: ['c48']  | Entropy Contribution=0.091563738
+  Rank 43: ['c49']  | Entropy Contribution=0.091563738
+  Rank 44: ['c50']  | Entropy Contribution=0.091563738
+  Rank 45: ['c51']  | Entropy Contribution=0.091563738
+  Rank 46: ['c52']  | Entropy Contribution=0.091563738
+  Rank 47: ['c67']  | Entropy Contribution=0.091563738
+  Rank 48: ['c79']  | Entropy Contribution=0.091563738
+  Rank 49: ['c80']  | Entropy Contribution=0.091563738
+  Rank 50: ['c81']  | Entropy Contribution=0.091563738
+  Rank 51: ['c82']  | Entropy Contribution=0.091563738
+  Rank 52: ['c83']  | Entropy Contribution=0.091563738
+  Rank 53: ['c84']  | Entropy Contribution=0.091563738
+  Rank 54: ['c85']  | Entropy Contribution=0.091563738
+  Rank 55: ['c86']  | Entropy Contribution=0.091563738
+  Rank 56: ['c87']  | Entropy Contribution=0.091563738
+  Rank 57: ['c88']  | Entropy Contribution=0.091563738
+  Rank 58: ['c89']  | Entropy Contribution=0.091563738
+  Rank 59: ['c90']  | Entropy Contribution=0.091563738
+  Rank 60: ['c91']  | Entropy Contribution=0.091563738
+  Rank 61: ['c92']  | Entropy Contribution=0.091563738
+  Rank 62: ['c93']  | Entropy Contribution=0.091563738
+  Rank 63: ['c18']  | Entropy Contribution=0.114062411
+  Rank 64: ['c19']  | Entropy Contribution=0.114062411
+  Rank 65: ['c43']  | Entropy Contribution=0.114062411
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #38
+  Info Gain: 0.000
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 32
+================================================================================
+
+Tests used so far: 41 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.020
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.019
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.091598969
+  Rank 2: ['c2']  | Entropy Contribution=0.091598969
+  Rank 3: ['c3']  | Entropy Contribution=0.091598969
+  Rank 4: ['c4']  | Entropy Contribution=0.091598969
+  Rank 5: ['c5']  | Entropy Contribution=0.091598969
+  Rank 6: ['c6']  | Entropy Contribution=0.091598969
+  Rank 7: ['c7']  | Entropy Contribution=0.091598969
+  Rank 8: ['c8']  | Entropy Contribution=0.091598969
+  Rank 9: ['c9']  | Entropy Contribution=0.091598969
+  Rank 10: ['c10']  | Entropy Contribution=0.091598969
+  Rank 11: ['c11']  | Entropy Contribution=0.091598969
+  Rank 12: ['c12']  | Entropy Contribution=0.091598969
+  Rank 13: ['c13']  | Entropy Contribution=0.091598969
+  Rank 14: ['c14']  | Entropy Contribution=0.091598969
+  Rank 15: ['c15']  | Entropy Contribution=0.091598969
+  Rank 16: ['c16']  | Entropy Contribution=0.091598969
+  Rank 17: ['c17']  | Entropy Contribution=0.091598969
+  Rank 18: ['c20']  | Entropy Contribution=0.091598969
+  Rank 19: ['c21']  | Entropy Contribution=0.091598969
+  Rank 20: ['c22']  | Entropy Contribution=0.091598969
+  Rank 21: ['c23']  | Entropy Contribution=0.091598969
+  Rank 22: ['c24']  | Entropy Contribution=0.091598969
+  Rank 23: ['c25']  | Entropy Contribution=0.091598969
+  Rank 24: ['c26']  | Entropy Contribution=0.091598969
+  Rank 25: ['c27']  | Entropy Contribution=0.091598969
+  Rank 26: ['c28']  | Entropy Contribution=0.091598969
+  Rank 27: ['c32']  | Entropy Contribution=0.091598969
+  Rank 28: ['c33']  | Entropy Contribution=0.091598969
+  Rank 29: ['c34']  | Entropy Contribution=0.091598969
+  Rank 30: ['c35']  | Entropy Contribution=0.091598969
+  Rank 31: ['c36']  | Entropy Contribution=0.091598969
+  Rank 32: ['c37']  | Entropy Contribution=0.091598969
+  Rank 33: ['c38']  | Entropy Contribution=0.091598969
+  Rank 34: ['c39']  | Entropy Contribution=0.091598969
+  Rank 35: ['c40']  | Entropy Contribution=0.091598969
+  Rank 36: ['c41']  | Entropy Contribution=0.091598969
+  Rank 37: ['c42']  | Entropy Contribution=0.091598969
+  Rank 38: ['c44']  | Entropy Contribution=0.091598969
+  Rank 39: ['c45']  | Entropy Contribution=0.091598969
+  Rank 40: ['c46']  | Entropy Contribution=0.091598969
+  Rank 41: ['c47']  | Entropy Contribution=0.091598969
+  Rank 42: ['c48']  | Entropy Contribution=0.091598969
+  Rank 43: ['c49']  | Entropy Contribution=0.091598969
+  Rank 44: ['c50']  | Entropy Contribution=0.091598969
+  Rank 45: ['c51']  | Entropy Contribution=0.091598969
+  Rank 46: ['c52']  | Entropy Contribution=0.091598969
+  Rank 47: ['c67']  | Entropy Contribution=0.091598969
+  Rank 48: ['c79']  | Entropy Contribution=0.091598969
+  Rank 49: ['c80']  | Entropy Contribution=0.091598969
+  Rank 50: ['c81']  | Entropy Contribution=0.091598969
+  Rank 51: ['c82']  | Entropy Contribution=0.091598969
+  Rank 52: ['c83']  | Entropy Contribution=0.091598969
+  Rank 53: ['c84']  | Entropy Contribution=0.091598969
+  Rank 54: ['c85']  | Entropy Contribution=0.091598969
+  Rank 55: ['c86']  | Entropy Contribution=0.091598969
+  Rank 56: ['c87']  | Entropy Contribution=0.091598969
+  Rank 57: ['c88']  | Entropy Contribution=0.091598969
+  Rank 58: ['c89']  | Entropy Contribution=0.091598969
+  Rank 59: ['c90']  | Entropy Contribution=0.091598969
+  Rank 60: ['c91']  | Entropy Contribution=0.091598969
+  Rank 61: ['c92']  | Entropy Contribution=0.091598969
+  Rank 62: ['c93']  | Entropy Contribution=0.091598969
+  Rank 63: ['c18']  | Entropy Contribution=0.113399989
+  Rank 64: ['c19']  | Entropy Contribution=0.113399989
+  Rank 65: ['c43']  | Entropy Contribution=0.113399989
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #39
+  Info Gain: 0.000
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 33
+================================================================================
+
+Tests used so far: 42 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.020
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.020
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.091631990
+  Rank 2: ['c2']  | Entropy Contribution=0.091631990
+  Rank 3: ['c3']  | Entropy Contribution=0.091631990
+  Rank 4: ['c4']  | Entropy Contribution=0.091631990
+  Rank 5: ['c5']  | Entropy Contribution=0.091631990
+  Rank 6: ['c6']  | Entropy Contribution=0.091631990
+  Rank 7: ['c7']  | Entropy Contribution=0.091631990
+  Rank 8: ['c8']  | Entropy Contribution=0.091631990
+  Rank 9: ['c9']  | Entropy Contribution=0.091631990
+  Rank 10: ['c10']  | Entropy Contribution=0.091631990
+  Rank 11: ['c11']  | Entropy Contribution=0.091631990
+  Rank 12: ['c12']  | Entropy Contribution=0.091631990
+  Rank 13: ['c13']  | Entropy Contribution=0.091631990
+  Rank 14: ['c14']  | Entropy Contribution=0.091631990
+  Rank 15: ['c15']  | Entropy Contribution=0.091631990
+  Rank 16: ['c16']  | Entropy Contribution=0.091631990
+  Rank 17: ['c17']  | Entropy Contribution=0.091631990
+  Rank 18: ['c20']  | Entropy Contribution=0.091631990
+  Rank 19: ['c21']  | Entropy Contribution=0.091631990
+  Rank 20: ['c22']  | Entropy Contribution=0.091631990
+  Rank 21: ['c23']  | Entropy Contribution=0.091631990
+  Rank 22: ['c24']  | Entropy Contribution=0.091631990
+  Rank 23: ['c25']  | Entropy Contribution=0.091631990
+  Rank 24: ['c26']  | Entropy Contribution=0.091631990
+  Rank 25: ['c27']  | Entropy Contribution=0.091631990
+  Rank 26: ['c28']  | Entropy Contribution=0.091631990
+  Rank 27: ['c32']  | Entropy Contribution=0.091631990
+  Rank 28: ['c33']  | Entropy Contribution=0.091631990
+  Rank 29: ['c34']  | Entropy Contribution=0.091631990
+  Rank 30: ['c35']  | Entropy Contribution=0.091631990
+  Rank 31: ['c36']  | Entropy Contribution=0.091631990
+  Rank 32: ['c37']  | Entropy Contribution=0.091631990
+  Rank 33: ['c38']  | Entropy Contribution=0.091631990
+  Rank 34: ['c39']  | Entropy Contribution=0.091631990
+  Rank 35: ['c40']  | Entropy Contribution=0.091631990
+  Rank 36: ['c41']  | Entropy Contribution=0.091631990
+  Rank 37: ['c42']  | Entropy Contribution=0.091631990
+  Rank 38: ['c44']  | Entropy Contribution=0.091631990
+  Rank 39: ['c45']  | Entropy Contribution=0.091631990
+  Rank 40: ['c46']  | Entropy Contribution=0.091631990
+  Rank 41: ['c47']  | Entropy Contribution=0.091631990
+  Rank 42: ['c48']  | Entropy Contribution=0.091631990
+  Rank 43: ['c49']  | Entropy Contribution=0.091631990
+  Rank 44: ['c50']  | Entropy Contribution=0.091631990
+  Rank 45: ['c51']  | Entropy Contribution=0.091631990
+  Rank 46: ['c52']  | Entropy Contribution=0.091631990
+  Rank 47: ['c67']  | Entropy Contribution=0.091631990
+  Rank 48: ['c79']  | Entropy Contribution=0.091631990
+  Rank 49: ['c80']  | Entropy Contribution=0.091631990
+  Rank 50: ['c81']  | Entropy Contribution=0.091631990
+  Rank 51: ['c82']  | Entropy Contribution=0.091631990
+  Rank 52: ['c83']  | Entropy Contribution=0.091631990
+  Rank 53: ['c84']  | Entropy Contribution=0.091631990
+  Rank 54: ['c85']  | Entropy Contribution=0.091631990
+  Rank 55: ['c86']  | Entropy Contribution=0.091631990
+  Rank 56: ['c87']  | Entropy Contribution=0.091631990
+  Rank 57: ['c88']  | Entropy Contribution=0.091631990
+  Rank 58: ['c89']  | Entropy Contribution=0.091631990
+  Rank 59: ['c90']  | Entropy Contribution=0.091631990
+  Rank 60: ['c91']  | Entropy Contribution=0.091631990
+  Rank 61: ['c92']  | Entropy Contribution=0.091631990
+  Rank 62: ['c93']  | Entropy Contribution=0.091631990
+  Rank 63: ['c18']  | Entropy Contribution=0.112777397
+  Rank 64: ['c19']  | Entropy Contribution=0.112777397
+  Rank 65: ['c43']  | Entropy Contribution=0.112777397
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #40
+  Info Gain: 0.000
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 34
+================================================================================
+
+Tests used so far: 43 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.020
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.020
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.091663003
+  Rank 2: ['c2']  | Entropy Contribution=0.091663003
+  Rank 3: ['c3']  | Entropy Contribution=0.091663003
+  Rank 4: ['c4']  | Entropy Contribution=0.091663003
+  Rank 5: ['c5']  | Entropy Contribution=0.091663003
+  Rank 6: ['c6']  | Entropy Contribution=0.091663003
+  Rank 7: ['c7']  | Entropy Contribution=0.091663003
+  Rank 8: ['c8']  | Entropy Contribution=0.091663003
+  Rank 9: ['c9']  | Entropy Contribution=0.091663003
+  Rank 10: ['c10']  | Entropy Contribution=0.091663003
+  Rank 11: ['c11']  | Entropy Contribution=0.091663003
+  Rank 12: ['c12']  | Entropy Contribution=0.091663003
+  Rank 13: ['c13']  | Entropy Contribution=0.091663003
+  Rank 14: ['c14']  | Entropy Contribution=0.091663003
+  Rank 15: ['c15']  | Entropy Contribution=0.091663003
+  Rank 16: ['c16']  | Entropy Contribution=0.091663003
+  Rank 17: ['c17']  | Entropy Contribution=0.091663003
+  Rank 18: ['c20']  | Entropy Contribution=0.091663003
+  Rank 19: ['c21']  | Entropy Contribution=0.091663003
+  Rank 20: ['c22']  | Entropy Contribution=0.091663003
+  Rank 21: ['c23']  | Entropy Contribution=0.091663003
+  Rank 22: ['c24']  | Entropy Contribution=0.091663003
+  Rank 23: ['c25']  | Entropy Contribution=0.091663003
+  Rank 24: ['c26']  | Entropy Contribution=0.091663003
+  Rank 25: ['c27']  | Entropy Contribution=0.091663003
+  Rank 26: ['c28']  | Entropy Contribution=0.091663003
+  Rank 27: ['c32']  | Entropy Contribution=0.091663003
+  Rank 28: ['c33']  | Entropy Contribution=0.091663003
+  Rank 29: ['c34']  | Entropy Contribution=0.091663003
+  Rank 30: ['c35']  | Entropy Contribution=0.091663003
+  Rank 31: ['c36']  | Entropy Contribution=0.091663003
+  Rank 32: ['c37']  | Entropy Contribution=0.091663003
+  Rank 33: ['c38']  | Entropy Contribution=0.091663003
+  Rank 34: ['c39']  | Entropy Contribution=0.091663003
+  Rank 35: ['c40']  | Entropy Contribution=0.091663003
+  Rank 36: ['c41']  | Entropy Contribution=0.091663003
+  Rank 37: ['c42']  | Entropy Contribution=0.091663003
+  Rank 38: ['c44']  | Entropy Contribution=0.091663003
+  Rank 39: ['c45']  | Entropy Contribution=0.091663003
+  Rank 40: ['c46']  | Entropy Contribution=0.091663003
+  Rank 41: ['c47']  | Entropy Contribution=0.091663003
+  Rank 42: ['c48']  | Entropy Contribution=0.091663003
+  Rank 43: ['c49']  | Entropy Contribution=0.091663003
+  Rank 44: ['c50']  | Entropy Contribution=0.091663003
+  Rank 45: ['c51']  | Entropy Contribution=0.091663003
+  Rank 46: ['c52']  | Entropy Contribution=0.091663003
+  Rank 47: ['c67']  | Entropy Contribution=0.091663003
+  Rank 48: ['c79']  | Entropy Contribution=0.091663003
+  Rank 49: ['c80']  | Entropy Contribution=0.091663003
+  Rank 50: ['c81']  | Entropy Contribution=0.091663003
+  Rank 51: ['c82']  | Entropy Contribution=0.091663003
+  Rank 52: ['c83']  | Entropy Contribution=0.091663003
+  Rank 53: ['c84']  | Entropy Contribution=0.091663003
+  Rank 54: ['c85']  | Entropy Contribution=0.091663003
+  Rank 55: ['c86']  | Entropy Contribution=0.091663003
+  Rank 56: ['c87']  | Entropy Contribution=0.091663003
+  Rank 57: ['c88']  | Entropy Contribution=0.091663003
+  Rank 58: ['c89']  | Entropy Contribution=0.091663003
+  Rank 59: ['c90']  | Entropy Contribution=0.091663003
+  Rank 60: ['c91']  | Entropy Contribution=0.091663003
+  Rank 61: ['c92']  | Entropy Contribution=0.091663003
+  Rank 62: ['c93']  | Entropy Contribution=0.091663003
+  Rank 63: ['c18']  | Entropy Contribution=0.112191142
+  Rank 64: ['c19']  | Entropy Contribution=0.112191142
+  Rank 65: ['c43']  | Entropy Contribution=0.112191142
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #41
+  Info Gain: 0.000
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 35
+================================================================================
+
+Tests used so far: 44 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.020
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.020
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.091692185
+  Rank 2: ['c2']  | Entropy Contribution=0.091692185
+  Rank 3: ['c3']  | Entropy Contribution=0.091692185
+  Rank 4: ['c4']  | Entropy Contribution=0.091692185
+  Rank 5: ['c5']  | Entropy Contribution=0.091692185
+  Rank 6: ['c6']  | Entropy Contribution=0.091692185
+  Rank 7: ['c7']  | Entropy Contribution=0.091692185
+  Rank 8: ['c8']  | Entropy Contribution=0.091692185
+  Rank 9: ['c9']  | Entropy Contribution=0.091692185
+  Rank 10: ['c10']  | Entropy Contribution=0.091692185
+  Rank 11: ['c11']  | Entropy Contribution=0.091692185
+  Rank 12: ['c12']  | Entropy Contribution=0.091692185
+  Rank 13: ['c13']  | Entropy Contribution=0.091692185
+  Rank 14: ['c14']  | Entropy Contribution=0.091692185
+  Rank 15: ['c15']  | Entropy Contribution=0.091692185
+  Rank 16: ['c16']  | Entropy Contribution=0.091692185
+  Rank 17: ['c17']  | Entropy Contribution=0.091692185
+  Rank 18: ['c20']  | Entropy Contribution=0.091692185
+  Rank 19: ['c21']  | Entropy Contribution=0.091692185
+  Rank 20: ['c22']  | Entropy Contribution=0.091692185
+  Rank 21: ['c23']  | Entropy Contribution=0.091692185
+  Rank 22: ['c24']  | Entropy Contribution=0.091692185
+  Rank 23: ['c25']  | Entropy Contribution=0.091692185
+  Rank 24: ['c26']  | Entropy Contribution=0.091692185
+  Rank 25: ['c27']  | Entropy Contribution=0.091692185
+  Rank 26: ['c28']  | Entropy Contribution=0.091692185
+  Rank 27: ['c32']  | Entropy Contribution=0.091692185
+  Rank 28: ['c33']  | Entropy Contribution=0.091692185
+  Rank 29: ['c34']  | Entropy Contribution=0.091692185
+  Rank 30: ['c35']  | Entropy Contribution=0.091692185
+  Rank 31: ['c36']  | Entropy Contribution=0.091692185
+  Rank 32: ['c37']  | Entropy Contribution=0.091692185
+  Rank 33: ['c38']  | Entropy Contribution=0.091692185
+  Rank 34: ['c39']  | Entropy Contribution=0.091692185
+  Rank 35: ['c40']  | Entropy Contribution=0.091692185
+  Rank 36: ['c41']  | Entropy Contribution=0.091692185
+  Rank 37: ['c42']  | Entropy Contribution=0.091692185
+  Rank 38: ['c44']  | Entropy Contribution=0.091692185
+  Rank 39: ['c45']  | Entropy Contribution=0.091692185
+  Rank 40: ['c46']  | Entropy Contribution=0.091692185
+  Rank 41: ['c47']  | Entropy Contribution=0.091692185
+  Rank 42: ['c48']  | Entropy Contribution=0.091692185
+  Rank 43: ['c49']  | Entropy Contribution=0.091692185
+  Rank 44: ['c50']  | Entropy Contribution=0.091692185
+  Rank 45: ['c51']  | Entropy Contribution=0.091692185
+  Rank 46: ['c52']  | Entropy Contribution=0.091692185
+  Rank 47: ['c67']  | Entropy Contribution=0.091692185
+  Rank 48: ['c79']  | Entropy Contribution=0.091692185
+  Rank 49: ['c80']  | Entropy Contribution=0.091692185
+  Rank 50: ['c81']  | Entropy Contribution=0.091692185
+  Rank 51: ['c82']  | Entropy Contribution=0.091692185
+  Rank 52: ['c83']  | Entropy Contribution=0.091692185
+  Rank 53: ['c84']  | Entropy Contribution=0.091692185
+  Rank 54: ['c85']  | Entropy Contribution=0.091692185
+  Rank 55: ['c86']  | Entropy Contribution=0.091692185
+  Rank 56: ['c87']  | Entropy Contribution=0.091692185
+  Rank 57: ['c88']  | Entropy Contribution=0.091692185
+  Rank 58: ['c89']  | Entropy Contribution=0.091692185
+  Rank 59: ['c90']  | Entropy Contribution=0.091692185
+  Rank 60: ['c91']  | Entropy Contribution=0.091692185
+  Rank 61: ['c92']  | Entropy Contribution=0.091692185
+  Rank 62: ['c93']  | Entropy Contribution=0.091692185
+  Rank 63: ['c18']  | Entropy Contribution=0.111638129
+  Rank 64: ['c19']  | Entropy Contribution=0.111638129
+  Rank 65: ['c43']  | Entropy Contribution=0.111638129
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #42
+  Info Gain: 0.000
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 36
+================================================================================
+
+Tests used so far: 45 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.020
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.020
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.091719694
+  Rank 2: ['c2']  | Entropy Contribution=0.091719694
+  Rank 3: ['c3']  | Entropy Contribution=0.091719694
+  Rank 4: ['c4']  | Entropy Contribution=0.091719694
+  Rank 5: ['c5']  | Entropy Contribution=0.091719694
+  Rank 6: ['c6']  | Entropy Contribution=0.091719694
+  Rank 7: ['c7']  | Entropy Contribution=0.091719694
+  Rank 8: ['c8']  | Entropy Contribution=0.091719694
+  Rank 9: ['c9']  | Entropy Contribution=0.091719694
+  Rank 10: ['c10']  | Entropy Contribution=0.091719694
+  Rank 11: ['c11']  | Entropy Contribution=0.091719694
+  Rank 12: ['c12']  | Entropy Contribution=0.091719694
+  Rank 13: ['c13']  | Entropy Contribution=0.091719694
+  Rank 14: ['c14']  | Entropy Contribution=0.091719694
+  Rank 15: ['c15']  | Entropy Contribution=0.091719694
+  Rank 16: ['c16']  | Entropy Contribution=0.091719694
+  Rank 17: ['c17']  | Entropy Contribution=0.091719694
+  Rank 18: ['c20']  | Entropy Contribution=0.091719694
+  Rank 19: ['c21']  | Entropy Contribution=0.091719694
+  Rank 20: ['c22']  | Entropy Contribution=0.091719694
+  Rank 21: ['c23']  | Entropy Contribution=0.091719694
+  Rank 22: ['c24']  | Entropy Contribution=0.091719694
+  Rank 23: ['c25']  | Entropy Contribution=0.091719694
+  Rank 24: ['c26']  | Entropy Contribution=0.091719694
+  Rank 25: ['c27']  | Entropy Contribution=0.091719694
+  Rank 26: ['c28']  | Entropy Contribution=0.091719694
+  Rank 27: ['c32']  | Entropy Contribution=0.091719694
+  Rank 28: ['c33']  | Entropy Contribution=0.091719694
+  Rank 29: ['c34']  | Entropy Contribution=0.091719694
+  Rank 30: ['c35']  | Entropy Contribution=0.091719694
+  Rank 31: ['c36']  | Entropy Contribution=0.091719694
+  Rank 32: ['c37']  | Entropy Contribution=0.091719694
+  Rank 33: ['c38']  | Entropy Contribution=0.091719694
+  Rank 34: ['c39']  | Entropy Contribution=0.091719694
+  Rank 35: ['c40']  | Entropy Contribution=0.091719694
+  Rank 36: ['c41']  | Entropy Contribution=0.091719694
+  Rank 37: ['c42']  | Entropy Contribution=0.091719694
+  Rank 38: ['c44']  | Entropy Contribution=0.091719694
+  Rank 39: ['c45']  | Entropy Contribution=0.091719694
+  Rank 40: ['c46']  | Entropy Contribution=0.091719694
+  Rank 41: ['c47']  | Entropy Contribution=0.091719694
+  Rank 42: ['c48']  | Entropy Contribution=0.091719694
+  Rank 43: ['c49']  | Entropy Contribution=0.091719694
+  Rank 44: ['c50']  | Entropy Contribution=0.091719694
+  Rank 45: ['c51']  | Entropy Contribution=0.091719694
+  Rank 46: ['c52']  | Entropy Contribution=0.091719694
+  Rank 47: ['c67']  | Entropy Contribution=0.091719694
+  Rank 48: ['c79']  | Entropy Contribution=0.091719694
+  Rank 49: ['c80']  | Entropy Contribution=0.091719694
+  Rank 50: ['c81']  | Entropy Contribution=0.091719694
+  Rank 51: ['c82']  | Entropy Contribution=0.091719694
+  Rank 52: ['c83']  | Entropy Contribution=0.091719694
+  Rank 53: ['c84']  | Entropy Contribution=0.091719694
+  Rank 54: ['c85']  | Entropy Contribution=0.091719694
+  Rank 55: ['c86']  | Entropy Contribution=0.091719694
+  Rank 56: ['c87']  | Entropy Contribution=0.091719694
+  Rank 57: ['c88']  | Entropy Contribution=0.091719694
+  Rank 58: ['c89']  | Entropy Contribution=0.091719694
+  Rank 59: ['c90']  | Entropy Contribution=0.091719694
+  Rank 60: ['c91']  | Entropy Contribution=0.091719694
+  Rank 61: ['c92']  | Entropy Contribution=0.091719694
+  Rank 62: ['c93']  | Entropy Contribution=0.091719694
+  Rank 63: ['c18']  | Entropy Contribution=0.111115605
+  Rank 64: ['c19']  | Entropy Contribution=0.111115605
+  Rank 65: ['c43']  | Entropy Contribution=0.111115605
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #45
+  Info Gain: 0.000
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52', 'c67', 'c79', 'c80', 'c81', 'c82', 'c83', 'c84', 'c85', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 37
+================================================================================
+
+Tests used so far: 46 / 46
+Number of diagnoses: 65
+Best diagnosis: ['c18'] with P = 0.019
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 6.020
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c1']  | Entropy Contribution=0.091745669
+  Rank 2: ['c2']  | Entropy Contribution=0.091745669
+  Rank 3: ['c3']  | Entropy Contribution=0.091745669
+  Rank 4: ['c4']  | Entropy Contribution=0.091745669
+  Rank 5: ['c5']  | Entropy Contribution=0.091745669
+  Rank 6: ['c6']  | Entropy Contribution=0.091745669
+  Rank 7: ['c7']  | Entropy Contribution=0.091745669
+  Rank 8: ['c8']  | Entropy Contribution=0.091745669
+  Rank 9: ['c9']  | Entropy Contribution=0.091745669
+  Rank 10: ['c10']  | Entropy Contribution=0.091745669
+  Rank 11: ['c11']  | Entropy Contribution=0.091745669
+  Rank 12: ['c12']  | Entropy Contribution=0.091745669
+  Rank 13: ['c13']  | Entropy Contribution=0.091745669
+  Rank 14: ['c14']  | Entropy Contribution=0.091745669
+  Rank 15: ['c15']  | Entropy Contribution=0.091745669
+  Rank 16: ['c16']  | Entropy Contribution=0.091745669
+  Rank 17: ['c17']  | Entropy Contribution=0.091745669
+  Rank 18: ['c20']  | Entropy Contribution=0.091745669
+  Rank 19: ['c21']  | Entropy Contribution=0.091745669
+  Rank 20: ['c22']  | Entropy Contribution=0.091745669
+  Rank 21: ['c23']  | Entropy Contribution=0.091745669
+  Rank 22: ['c24']  | Entropy Contribution=0.091745669
+  Rank 23: ['c25']  | Entropy Contribution=0.091745669
+  Rank 24: ['c26']  | Entropy Contribution=0.091745669
+  Rank 25: ['c27']  | Entropy Contribution=0.091745669
+  Rank 26: ['c28']  | Entropy Contribution=0.091745669
+  Rank 27: ['c32']  | Entropy Contribution=0.091745669
+  Rank 28: ['c33']  | Entropy Contribution=0.091745669
+  Rank 29: ['c34']  | Entropy Contribution=0.091745669
+  Rank 30: ['c35']  | Entropy Contribution=0.091745669
+  Rank 31: ['c36']  | Entropy Contribution=0.091745669
+  Rank 32: ['c37']  | Entropy Contribution=0.091745669
+  Rank 33: ['c38']  | Entropy Contribution=0.091745669
+  Rank 34: ['c39']  | Entropy Contribution=0.091745669
+  Rank 35: ['c40']  | Entropy Contribution=0.091745669
+  Rank 36: ['c41']  | Entropy Contribution=0.091745669
+  Rank 37: ['c42']  | Entropy Contribution=0.091745669
+  Rank 38: ['c44']  | Entropy Contribution=0.091745669
+  Rank 39: ['c45']  | Entropy Contribution=0.091745669
+  Rank 40: ['c46']  | Entropy Contribution=0.091745669
+  Rank 41: ['c47']  | Entropy Contribution=0.091745669
+  Rank 42: ['c48']  | Entropy Contribution=0.091745669
+  Rank 43: ['c49']  | Entropy Contribution=0.091745669
+  Rank 44: ['c50']  | Entropy Contribution=0.091745669
+  Rank 45: ['c51']  | Entropy Contribution=0.091745669
+  Rank 46: ['c52']  | Entropy Contribution=0.091745669
+  Rank 47: ['c67']  | Entropy Contribution=0.091745669
+  Rank 48: ['c79']  | Entropy Contribution=0.091745669
+  Rank 49: ['c80']  | Entropy Contribution=0.091745669
+  Rank 50: ['c81']  | Entropy Contribution=0.091745669
+  Rank 51: ['c82']  | Entropy Contribution=0.091745669
+  Rank 52: ['c83']  | Entropy Contribution=0.091745669
+  Rank 53: ['c84']  | Entropy Contribution=0.091745669
+  Rank 54: ['c85']  | Entropy Contribution=0.091745669
+  Rank 55: ['c86']  | Entropy Contribution=0.091745669
+  Rank 56: ['c87']  | Entropy Contribution=0.091745669
+  Rank 57: ['c88']  | Entropy Contribution=0.091745669
+  Rank 58: ['c89']  | Entropy Contribution=0.091745669
+  Rank 59: ['c90']  | Entropy Contribution=0.091745669
+  Rank 60: ['c91']  | Entropy Contribution=0.091745669
+  Rank 61: ['c92']  | Entropy Contribution=0.091745669
+  Rank 62: ['c93']  | Entropy Contribution=0.091745669
+  Rank 63: ['c18']  | Entropy Contribution=0.110621112
+  Rank 64: ['c19']  | Entropy Contribution=0.110621112
+  Rank 65: ['c43']  | Entropy Contribution=0.110621112
+
+================================================================================
+
+✗ ALL TESTS EXHAUSTED
+================================================================================
+Best diagnosis found: ['c18']
+Probability: 0.019
+Total tests used: 46 / 46
+Total iterations: 37
+
+================================================================================
+TDP COMPLETED
+================================================================================
+End Time: 2025-12-22 08:27:38
+Duration: 303.54 seconds
+Final diagnosis: ['c18']
+Probability: 0.019
+Total tests used: 46 / 46
+Total iterations: 37

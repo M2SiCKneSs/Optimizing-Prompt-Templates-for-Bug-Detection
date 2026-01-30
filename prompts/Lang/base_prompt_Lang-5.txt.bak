@@ -1,0 +1,262 @@
+### BUG_REPORT
+Title: LocaleUtils.toLocale does not parse strings starting with an underscore
+
+Description:
+Hi,
+Javadocs of Locale.toString() states that "If the language is missing, the string will begin with an underbar.". This is not handled in the LocaleUtils.toLocale method if it is meant to be the inversion method of Locale.toString().
+The fix for the ticket 328 does not handle well the case "fr__P", which I found out during fixing the first bug.
+I am attaching the patch for both problems.
+
+
+### FAILING_TEST
+org.apache.commons.lang3.LocaleUtils.countriesByLanguage(String)
+org.apache.commons.lang3.LocaleUtils.toLocale(String)
+org.apache.commons.lang3.LocaleUtils.isAvailableLocale(Locale)
+org.apache.commons.lang3.LocaleUtils.languagesByCountry(String)
+org.apache.commons.lang3.LocaleUtils.localeLookupList(Locale)
+org.apache.commons.lang3.LocaleUtils.toLocale(String)
+org.apache.commons.lang3.LocaleUtils.availableLocaleList()
+org.apache.commons.lang3.LocaleUtils.isAvailableLocale(Locale)
+org.apache.commons.lang3.LocaleUtils.LocaleUtils()
+org.apache.commons.lang3.LocaleUtils.localeLookupList(Locale)
+
+### CODE_SNIPPETS
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.LocaleUtils.countriesByLanguage(String)
+------------------------------------------------------------------------------------------
+public static List<Locale> countriesByLanguage(final String languageCode) {
+        if (languageCode == null) {
+            return Collections.emptyList();
+        }
+        List<Locale> countries = cCountriesByLanguage.get(languageCode);
+        if (countries == null) {
+            countries = new ArrayList<Locale>();
+            final List<Locale> locales = availableLocaleList();
+            for (int i = 0; i < locales.size(); i++) {
+                final Locale locale = locales.get(i);
+                if (languageCode.equals(locale.getLanguage()) &&
+                        locale.getCountry().length() != 0 &&
+                        locale.getVariant().isEmpty()) {
+                    countries.add(locale);
+                }
+            }
+            countries = Collections.unmodifiableList(countries);
+            cCountriesByLanguage.putIfAbsent(languageCode, countries);
+            countries = cCountriesByLanguage.get(languageCode);
+        }
+        return countries;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.LocaleUtils.toLocale(String)
+------------------------------------------------------------------------------------------
+public static Locale toLocale(final String str) {
+        if (str == null) {
+            return null;
+        }
+        if (str.contains("#")) { // LANG-879 - Cannot handle Java 7 script & extensions
+            throw new IllegalArgumentException("Invalid locale format: " + str);
+        }
+        final int len = str.length();
+        if (len < 2) {
+            throw new IllegalArgumentException("Invalid locale format: " + str);
+        }
+        final char ch0 = str.charAt(0);
+        if (ch0 == '_') {
+            if (len < 3) {
+                throw new IllegalArgumentException("Invalid locale format: " + str);
+            }
+            final char ch1 = str.charAt(1);
+            final char ch2 = str.charAt(2);
+            if (!Character.isUpperCase(ch1) || !Character.isUpperCase(ch2)) {
+                throw new IllegalArgumentException("Invalid locale format: " + str);
+            }
+            if (len == 3) {
+                return new Locale("", str.substring(1, 3));
+            }
+            if (len < 5) {
+                throw new IllegalArgumentException("Invalid locale format: " + str);
+            }
+            if (str.charAt(3) != '_') {
+                throw new IllegalArgumentException("Invalid locale format: " + str);
+            }
+            return new Locale("", str.substring(1, 3), str.substring(4));
+        }
+        final char ch1 = str.charAt(1);
+        if (!Character.isLowerCase(ch0) || !Character.isLowerCase(ch1)) {
+            throw new IllegalArgumentException("Invalid locale format: " + str);
+        }
+        if (len == 2) {
+            return new Locale(str);
+        }
+        if (len < 5) {
+            throw new IllegalArgumentException("Invalid locale format: " + str);
+        }
+        if (str.charAt(2) != '_') {
+            throw new IllegalArgumentException("Invalid locale format: " + str);
+        }
+        final char ch3 = str.charAt(3);
+        if (ch3 == '_') {
+            return new Locale(str.substring(0, 2), "", str.substring(4));
+        }
+        final char ch4 = str.charAt(4);
+        if (!Character.isUpperCase(ch3) || !Character.isUpperCase(ch4)) {
+            throw new IllegalArgumentException("Invalid locale format: " + str);
+        }
+        if (len == 5) {
+            return new Locale(str.substring(0, 2), str.substring(3, 5));
+        }
+        if (len < 7) {
+            throw new IllegalArgumentException("Invalid locale format: " + str);
+        }
+        if (str.charAt(5) != '_') {
+            throw new IllegalArgumentException("Invalid locale format: " + str);
+        }
+        return new Locale(str.substring(0, 2), str.substring(3, 5), str.substring(6));
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.LocaleUtils.isAvailableLocale(Locale)
+------------------------------------------------------------------------------------------
+public static boolean isAvailableLocale(final Locale locale) {
+        return availableLocaleList().contains(locale);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.LocaleUtils.languagesByCountry(String)
+------------------------------------------------------------------------------------------
+public static List<Locale> languagesByCountry(final String countryCode) {
+        if (countryCode == null) {
+            return Collections.emptyList();
+        }
+        List<Locale> langs = cLanguagesByCountry.get(countryCode);
+        if (langs == null) {
+            langs = new ArrayList<Locale>();
+            final List<Locale> locales = availableLocaleList();
+            for (int i = 0; i < locales.size(); i++) {
+                final Locale locale = locales.get(i);
+                if (countryCode.equals(locale.getCountry()) &&
+                        locale.getVariant().isEmpty()) {
+                    langs.add(locale);
+                }
+            }
+            langs = Collections.unmodifiableList(langs);
+            cLanguagesByCountry.putIfAbsent(countryCode, langs);
+            langs = cLanguagesByCountry.get(countryCode);
+        }
+        return langs;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.LocaleUtils.localeLookupList(Locale)
+------------------------------------------------------------------------------------------
+public static List<Locale> localeLookupList(final Locale locale) {
+        return localeLookupList(locale, locale);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.LocaleUtils.toLocale(String)
+------------------------------------------------------------------------------------------
+public static Locale toLocale(final String str) {
+        if (str == null) {
+            return null;
+        }
+        if (str.contains("#")) { // LANG-879 - Cannot handle Java 7 script & extensions
+            throw new IllegalArgumentException("Invalid locale format: " + str);
+        }
+        final int len = str.length();
+        if (len < 2) {
+            throw new IllegalArgumentException("Invalid locale format: " + str);
+        }
+        final char ch0 = str.charAt(0);
+        if (ch0 == '_') {
+            if (len < 3) {
+                throw new IllegalArgumentException("Invalid locale format: " + str);
+            }
+            final char ch1 = str.charAt(1);
+            final char ch2 = str.charAt(2);
+            if (!Character.isUpperCase(ch1) || !Character.isUpperCase(ch2)) {
+                throw new IllegalArgumentException("Invalid locale format: " + str);
+            }
+            if (len == 3) {
+                return new Locale("", str.substring(1, 3));
+            }
+            if (len < 5) {
+                throw new IllegalArgumentException("Invalid locale format: " + str);
+            }
+            if (str.charAt(3) != '_') {
+                throw new IllegalArgumentException("Invalid locale format: " + str);
+            }
+            return new Locale("", str.substring(1, 3), str.substring(4));
+        }
+        final char ch1 = str.charAt(1);
+        if (!Character.isLowerCase(ch0) || !Character.isLowerCase(ch1)) {
+            throw new IllegalArgumentException("Invalid locale format: " + str);
+        }
+        if (len == 2) {
+            return new Locale(str);
+        }
+        if (len < 5) {
+            throw new IllegalArgumentException("Invalid locale format: " + str);
+        }
+        if (str.charAt(2) != '_') {
+            throw new IllegalArgumentException("Invalid locale format: " + str);
+        }
+        final char ch3 = str.charAt(3);
+        if (ch3 == '_') {
+            return new Locale(str.substring(0, 2), "", str.substring(4));
+        }
+        final char ch4 = str.charAt(4);
+        if (!Character.isUpperCase(ch3) || !Character.isUpperCase(ch4)) {
+            throw new IllegalArgumentException("Invalid locale format: " + str);
+        }
+        if (len == 5) {
+            return new Locale(str.substring(0, 2), str.substring(3, 5));
+        }
+        if (len < 7) {
+            throw new IllegalArgumentException("Invalid locale format: " + str);
+        }
+        if (str.charAt(5) != '_') {
+            throw new IllegalArgumentException("Invalid locale format: " + str);
+        }
+        return new Locale(str.substring(0, 2), str.substring(3, 5), str.substring(6));
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.LocaleUtils.availableLocaleList()
+------------------------------------------------------------------------------------------
+public static List<Locale> availableLocaleList() {
+        return SyncAvoid.AVAILABLE_LOCALE_LIST;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.LocaleUtils.isAvailableLocale(Locale)
+------------------------------------------------------------------------------------------
+public static boolean isAvailableLocale(final Locale locale) {
+        return availableLocaleList().contains(locale);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.LocaleUtils.LocaleUtils()
+------------------------------------------------------------------------------------------
+public LocaleUtils() {
+      super();
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.LocaleUtils.localeLookupList(Locale)
+------------------------------------------------------------------------------------------
+public static List<Locale> localeLookupList(final Locale locale) {
+        return localeLookupList(locale, locale);
+    }
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.apache.commons.lang3.LocaleUtilsTest#testLang865
+Runtime: 1429576
+------------------------------------------------------------------------------------------
+java.lang.IllegalArgumentException: Invalid locale format: _GB at org.apache.commons.lang3.LocaleUtils.toLocale(LocaleUtils.java:99) at org.apache.commons.lang3.LocaleUtilsTest.assertValidToLocale(LocaleUtilsTest.java:119) at org.apache.commons.lang3.LocaleUtilsTest.testLang865(LocaleUtilsTest.java:505) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

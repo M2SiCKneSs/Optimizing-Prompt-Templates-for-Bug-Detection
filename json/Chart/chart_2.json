@@ -1,0 +1,31 @@
+{
+  "project": "Chart",
+  "bug_id": 2,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.jfree.data.general.DatasetUtilities.iterateDomainBounds(XYDataset)",
+      "score": 0.992426
+    },
+    {
+      "rank": 2,
+      "method": "org.jfree.data.general.DatasetUtilities.findDomainBounds(XYDataset)",
+      "score": 0.870513
+    },
+    {
+      "rank": 3,
+      "method": "org.jfree.data.general.DatasetUtilities.findDomainBounds(XYDataset",
+      "score": 0.756936
+    },
+    {
+      "rank": 4,
+      "method": "org.jfree.data.xy.XYIntervalDataItem.XYIntervalDataItem(double",
+      "score": 0.63486
+    },
+    {
+      "rank": 5,
+      "method": "org.jfree.data.xy.XYIntervalSeriesCollection.addSeries(XYIntervalSeries)",
+      "score": 0.51364
+    }
+  ]
+}

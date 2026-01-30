@@ -1,0 +1,133 @@
+### TOP_METHODS (Ochiai)
+Source CSV: C:\Users\user\Desktop\uni\mark\FAILING_TEST\Thefuck\thefuck_1_ochiai_top_10.csv
+
+1. thefuck.rules.go_unknown_command##get_golang_commands() | score=0.4082482904638631
+2. thefuck.rules.pip_unknown_command##get_new_command(command) | score=0.4082482904638631
+3. thefuck.rules.pip_unknown_command##match(command) | score=0.4082482904638631
+4. thefuck.rules.go_unknown_command##match(command) | score=0.4082482904638631
+5. thefuck.rules.go_unknown_command##get_new_command(command) | score=0.4082482904638631
+6. thefuck.specific.sudo##sudo_support(fn,command) | score=0.05423261445466404
+7. thefuck.utils##_for_app(fn,command) | score=0.04993761694389223
+8. thefuck.types$Command#from_raw_script(raw_script) | score=0.03623806888127808
+9. thefuck.types$Command#__repr__() | score=0.03623806888127808
+10. thefuck.types$Command#__init__(script,output) | score=0.03623806888127808
+
+### CODE_SNIPPETS
+
+---
+Rank: 1
+Method: thefuck.rules.go_unknown_command##get_golang_commands()
+Ochiai_Score: 0.4082482904638631
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\rules\go_unknown_command.py
+Status: OK
+Snippet:
+def get_golang_commands():
+    proc = subprocess.Popen('go', stderr=subprocess.PIPE)
+    lines = [line.decode('utf-8').strip() for line in proc.stderr.readlines()]
+    lines = dropwhile(lambda line: line != 'The commands are:', lines)
+    lines = islice(lines, 2, None)
+    lines = takewhile(lambda line: line, lines)
+    return [line.split(' ')[0] for line in lines]
+
+---
+Rank: 2
+Method: thefuck.rules.pip_unknown_command##get_new_command(command)
+Ochiai_Score: 0.4082482904638631
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\rules\pip_unknown_command.py
+Status: OK
+Snippet:
+def get_new_command(command):
+    broken_cmd = re.findall(r'ERROR: unknown command \"([a-z]+)\"',
+                            command.output)[0]
+    new_cmd = re.findall(r'maybe you meant \"([a-z]+)\"', command.output)[0]
+
+    return replace_argument(command.script, broken_cmd, new_cmd)
+
+---
+Rank: 3
+Method: thefuck.rules.pip_unknown_command##match(command)
+Ochiai_Score: 0.4082482904638631
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\rules\pip_unknown_command.py
+Status: OK
+Snippet:
+def match(command):
+    return ('pip' in command.script and
+            'unknown command' in command.output and
+            'maybe you meant' in command.output)
+
+---
+Rank: 4
+Method: thefuck.rules.go_unknown_command##match(command)
+Ochiai_Score: 0.4082482904638631
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\rules\go_unknown_command.py
+Status: OK
+Snippet:
+def match(command):
+    return 'unknown command' in command.output
+
+---
+Rank: 5
+Method: thefuck.rules.go_unknown_command##get_new_command(command)
+Ochiai_Score: 0.4082482904638631
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\rules\go_unknown_command.py
+Status: OK
+Snippet:
+def get_new_command(command):
+    closest_subcommand = get_closest(command.script_parts[1], get_golang_commands())
+    return replace_argument(command.script, command.script_parts[1],
+                            closest_subcommand)
+
+---
+Rank: 6
+Method: thefuck.specific.sudo##sudo_support(fn,command)
+Ochiai_Score: 0.05423261445466404
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\specific\sudo.py
+Status: OK
+Snippet:
+def sudo_support(fn, command):
+    """Removes sudo before calling fn and adds it after."""
+    if not command.script.startswith('sudo '):
+        return fn(command)
+
+    result = fn(command.update(script=command.script[5:]))
+
+    if result and isinstance(result, six.string_types):
+        return u'sudo {}'.format(result)
+    elif isinstance(result, list):
+        return [u'sudo {}'.format(x) for x in result]
+    else:
+        return result
+
+---
+Rank: 7
+Method: thefuck.utils##_for_app(fn,command)
+Ochiai_Score: 0.04993761694389223
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\utils.py
+Status: OK
+Snippet:
+    def _for_app(fn, command):
+        if is_app(command, *app_names, **kwargs):
+            return fn(command)
+        else:
+            return False
+
+---
+Rank: 8
+Method: thefuck.types$Command#from_raw_script(raw_script)
+Ochiai_Score: 0.03623806888127808
+Status: PARSE_ERROR
+Error: Unexpected method format (missing ##): thefuck.types$Command#from_raw_script(raw_script)
+
+---
+Rank: 9
+Method: thefuck.types$Command#__repr__()
+Ochiai_Score: 0.03623806888127808
+Status: PARSE_ERROR
+Error: Unexpected method format (missing ##): thefuck.types$Command#__repr__()
+
+---
+Rank: 10
+Method: thefuck.types$Command#__init__(script,output)
+Ochiai_Score: 0.03623806888127808
+Status: PARSE_ERROR
+Error: Unexpected method format (missing ##): thefuck.types$Command#__init__(script,output)

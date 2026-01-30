@@ -1,0 +1,31 @@
+{
+  "project": "Time",
+  "bug_id": 27,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.joda.time.format.PeriodFormatterBuilder.toFormatter(java.util.List",
+      "score": 0.995117
+    },
+    {
+      "rank": 2,
+      "method": "org.joda.time.PeriodType.forFields(DurationFieldType[])",
+      "score": 0.872305
+    },
+    {
+      "rank": 3,
+      "method": "org.joda.time.format.PeriodFormat.wordBased(Locale)",
+      "score": 0.756209
+    },
+    {
+      "rank": 4,
+      "method": "org.joda.time.PeriodType.yearWeekDay()",
+      "score": 0.639122
+    },
+    {
+      "rank": 5,
+      "method": "org.joda.time.format.PeriodFormatterBuilder.appendYears()",
+      "score": 0.518756
+    }
+  ]
+}

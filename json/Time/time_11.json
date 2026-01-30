@@ -1,0 +1,31 @@
+{
+  "project": "Time",
+  "bug_id": 11,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.joda.time.tz.ZoneInfoCompiler.<clinit>()",
+      "score": 0.997307
+    },
+    {
+      "rank": 2,
+      "method": "org.joda.time.tz.DateTimeZoneBuilder.addTransition(ArrayList<Transition>",
+      "score": 0.877621
+    },
+    {
+      "rank": 3,
+      "method": "org.joda.time.tz.DateTimeZoneBuilder.toDateTimeZone(String",
+      "score": 0.752351
+    },
+    {
+      "rank": 4,
+      "method": "org.joda.time.PeriodType.getIndexedField(ReadablePeriod",
+      "score": 0.637343
+    },
+    {
+      "rank": 5,
+      "method": "org.joda.time.tz.ZoneInfoCompiler.printUsage()",
+      "score": 0.513566
+    }
+  ]
+}

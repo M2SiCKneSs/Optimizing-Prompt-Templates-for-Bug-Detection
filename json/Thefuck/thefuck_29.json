@@ -1,0 +1,31 @@
+{
+  "project": "thefuck",
+  "bug_id": 29,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "thefuck.rules.pip_unknown_command##match(command)",
+      "score": 0.998053
+    },
+    {
+      "rank": 2,
+      "method": "thefuck.main##setup_user_dir()",
+      "score": 0.879685
+    },
+    {
+      "rank": 3,
+      "method": "thefuck.types$Rule#from_path(path)",
+      "score": 0.753432
+    },
+    {
+      "rank": 4,
+      "method": "thefuck.conf##get_settings(user_dir)",
+      "score": 0.633582
+    },
+    {
+      "rank": 5,
+      "method": "thefuck.types$Command#script_parts()",
+      "score": 0.511998
+    }
+  ]
+}

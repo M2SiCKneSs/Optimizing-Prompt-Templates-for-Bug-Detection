@@ -1,0 +1,31 @@
+{
+  "project": "thefuck",
+  "bug_id": 1,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "thefuck.conf##_settings_from_env()",
+      "score": 0.996445
+    },
+    {
+      "rank": 2,
+      "method": "thefuck.types$Command#stderr()",
+      "score": 0.877683
+    },
+    {
+      "rank": 3,
+      "method": "thefuck.conf##_priority_from_env(val)",
+      "score": 0.759392
+    },
+    {
+      "rank": 4,
+      "method": "thefuck.main##run_command(old_cmd,command,settings)",
+      "score": 0.631293
+    },
+    {
+      "rank": 5,
+      "method": "thefuck.rules.open##get_new_command(command,settings)",
+      "score": 0.51444
+    }
+  ]
+}

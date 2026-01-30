@@ -1,0 +1,31 @@
+{
+  "project": "thefuck",
+  "bug_id": 31,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "thefuck.rules.fix_file##_search(stderr)",
+      "score": 0.998631
+    },
+    {
+      "rank": 2,
+      "method": "thefuck.specific.sudo##sudo_support(fn,command)",
+      "score": 0.878133
+    },
+    {
+      "rank": 3,
+      "method": "thefuck.corrector##get_rules(user_dir,settings)",
+      "score": 0.759622
+    },
+    {
+      "rank": 4,
+      "method": "thefuck.rules.go_unknown_command##get_new_command(command)",
+      "score": 0.637996
+    },
+    {
+      "rank": 5,
+      "method": "thefuck.conf$_DefaultRulesNames#__add__(items)",
+      "score": 0.514015
+    }
+  ]
+}

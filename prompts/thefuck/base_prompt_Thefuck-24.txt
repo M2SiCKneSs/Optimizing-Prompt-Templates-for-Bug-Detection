@@ -1,0 +1,66 @@
+### TOP_METHODS (Ochiai)
+1. thefuck.conf$_DefaultRulesNames#__add__(items) | score=0.05620994273193427
+2. thefuck.conf$_DefaultRulesNames#__contains__(item) | score=0.05620994273193427
+3. thefuck.conf$_DefaultRulesNames#__eq__(other) | score=0.05620994273193427
+4. thefuck.conf##_settings_from_file(user_dir) | score=0.05620994273193427
+5. thefuck.conf##_rules_from_env(val) | score=0.05620994273193427
+
+
+### CODE_SNIPPETS
+
+
+
+---
+Rank: 1
+Method: thefuck.conf$_DefaultRulesNames#__add__(items)
+Ochiai_Score: 0.05620994273193427
+Status: PARSE_ERROR
+Error: Unexpected method format (missing ##): thefuck.conf$_DefaultRulesNames#__add__(items)
+
+
+---
+Rank: 2
+Method: thefuck.conf$_DefaultRulesNames#__contains__(item)
+Ochiai_Score: 0.05620994273193427
+Status: PARSE_ERROR
+Error: Unexpected method format (missing ##): thefuck.conf$_DefaultRulesNames#__contains__(item)
+
+
+---
+Rank: 3
+Method: thefuck.conf$_DefaultRulesNames#__eq__(other)
+Ochiai_Score: 0.05620994273193427
+Status: PARSE_ERROR
+Error: Unexpected method format (missing ##): thefuck.conf$_DefaultRulesNames#__eq__(other)
+
+
+---
+Rank: 4
+Method: thefuck.conf##_settings_from_file(user_dir)
+Ochiai_Score: 0.05620994273193427
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\conf.py
+Status: OK
+Snippet:
+    def _settings_from_file(self):
+        """Loads settings from file."""
+        settings = load_source(
+            'settings', text_type(self.user_dir.joinpath('settings.py')))
+        return {key: getattr(settings, key)
+                for key in const.DEFAULT_SETTINGS.keys()
+                if hasattr(settings, key)}
+
+
+---
+Rank: 5
+Method: thefuck.conf##_rules_from_env(val)
+Ochiai_Score: 0.05620994273193427
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\conf.py
+Status: OK
+Snippet:
+    def _rules_from_env(self, val):
+        """Transforms rules list from env-string to python."""
+        val = val.split(':')
+        if 'DEFAULT_RULES' in val:
+            val = const.DEFAULT_RULES + [rule for rule in val if rule != 'DEFAULT_RULES']
+        return val
+

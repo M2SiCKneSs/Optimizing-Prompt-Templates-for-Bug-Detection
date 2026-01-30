@@ -1,0 +1,31 @@
+{
+  "project": "black",
+  "bug_id": 14,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "black$FileMode#from_configuration()",
+      "score": 0.99892
+    },
+    {
+      "rank": 2,
+      "method": "black##reformat_many(sources,fast,write_back,mode,report)",
+      "score": 0.871747
+    },
+    {
+      "rank": 3,
+      "method": "black$Err#err()",
+      "score": 0.750836
+    },
+    {
+      "rank": 4,
+      "method": "black##reformat_one(src,line_length,fast,write_back,mode,report)",
+      "score": 0.636426
+    },
+    {
+      "rank": 5,
+      "method": "black##format_stdin_to_stdout(line_length,fast,write_back,mode)",
+      "score": 0.510666
+    }
+  ]
+}

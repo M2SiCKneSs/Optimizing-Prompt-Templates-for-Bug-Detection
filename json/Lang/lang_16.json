@@ -1,0 +1,31 @@
+{
+  "project": "Lang",
+  "bug_id": 16,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.lang3.math.NumberUtils.createNumber(String)",
+      "score": 0.998493
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.lang3.StringUtils.swapCase(String)",
+      "score": 0.877349
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.lang3.math.NumberUtils.createBigDecimal(String)",
+      "score": 0.755207
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.lang3.text.translate.NumericEntityUnescaper.translate(CharSequence",
+      "score": 0.637746
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.lang3.math.NumberUtils.createFloat(String)",
+      "score": 0.515336
+    }
+  ]
+}

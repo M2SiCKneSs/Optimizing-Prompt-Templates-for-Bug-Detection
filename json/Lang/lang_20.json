@@ -1,0 +1,31 @@
+{
+  "project": "Lang",
+  "bug_id": 20,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.lang3.StringUtils.join(java.lang.Object[]",
+      "score": 0.997019
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.lang3.StringUtils.join(Iterator<?>",
+      "score": 0.872826
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.lang3.StringUtils.join(T)",
+      "score": 0.756308
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.lang3.StringUtils.join(Iterable<?>",
+      "score": 0.63728
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.lang3.StringUtils.join(Object[]",
+      "score": 0.513153
+    }
+  ]
+}

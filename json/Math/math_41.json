@@ -1,0 +1,31 @@
+{
+  "project": "Math",
+  "bug_id": 41,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.math3.linear.TriDiagonalTransformer.transform()",
+      "score": 0.990449
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.math.stat.descriptive.moment.Variance.evaluate(double[]",
+      "score": 0.871049
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.math3.distribution.HypergeometricDistribution.calculateNumericalVariance()",
+      "score": 0.751524
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.math3.optimization.fitting.HarmonicFitter.fit()",
+      "score": 0.636567
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.math3.exception.util.ExceptionContext.getLocalizedMessage()",
+      "score": 0.516175
+    }
+  ]
+}

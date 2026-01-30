@@ -1,0 +1,16 @@
+name,outcome,runtime,stacktrace
+org.jfree.data.time.junit.TimePeriodValuesCollectionTests#test1161340,PASS,58596348,
+org.jfree.data.time.junit.TimePeriodValuesCollectionTests#testEquals,PASS,2094010,
+org.jfree.data.time.junit.TimePeriodValuesCollectionTests#testGetDomainBoundsWithInterval,PASS,3463957,
+org.jfree.data.time.junit.TimePeriodValuesCollectionTests#testGetDomainBoundsWithoutInterval,PASS,1712291,
+org.jfree.data.time.junit.TimePeriodValuesCollectionTests#testGetSeries,PASS,1319672,
+org.jfree.data.time.junit.TimePeriodValuesTests#test1161329,PASS,4380510,
+org.jfree.data.time.junit.TimePeriodValuesTests#testAdd,PASS,1646898,
+org.jfree.data.time.junit.TimePeriodValuesTests#testAddValue,PASS,1458905,
+org.jfree.data.time.junit.TimePeriodValuesTests#testClone,PASS,1963795,
+org.jfree.data.time.junit.TimePeriodValuesTests#testEquals,PASS,2231918,
+org.jfree.data.time.junit.TimePeriodValuesTests#testGetMaxMiddleIndex,FAIL,1981808,junit.framework.AssertionFailedError: expected:<1> but was:<3> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:234) at junit.framework.Assert.assertEquals(Assert.java:241) at junit.framework.TestCase.assertEquals(TestCase.java:409) at org.jfree.data.time.junit.TimePeriodValuesTests.testGetMaxMiddleIndex(TimePeriodValuesTests.java:377) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+org.jfree.data.time.junit.TimePeriodValuesTests#testGetMaxStartIndex,PASS,1685911,
+org.jfree.data.time.junit.TimePeriodValuesTests#testGetMinMiddleIndex,PASS,1228882,
+org.jfree.data.time.junit.TimePeriodValuesTests#testGetMinStartIndex,PASS,1214475,
+org.jfree.data.time.junit.TimePeriodValuesTests#testSerialization,PASS,4035412,

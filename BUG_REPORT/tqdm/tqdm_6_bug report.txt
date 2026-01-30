@@ -1,0 +1,2 @@
+fix disable=True edge case
+Fix #539 where `iterable is not None and not hasattr(iterable, "__len__")`

@@ -1,0 +1,210 @@
+### BUG_REPORT
+Title: Days#daysBetween throw exception for MonthDay with 29 February
+
+Description:
+final LocalDate january12012 = new LocalDate(2012, 1,1);
+final LocalDate february292012 = new LocalDate(2012, 2, 29);
+// OK
+assertEquals(59, Days.daysBetween(january12012, february292012).getDays());
+final MonthDay january1 = new MonthDay(1,1);
+final MonthDay february29 = new MonthDay(2, 29);
+// FAIL
+assertEquals(59, Days.daysBetween(january1, february29).getDays());
+org.joda.time.IllegalFieldValueException: Value 29 for dayOfMonth must be in the range [1,28]
+at org.joda.time.field.FieldUtils.verifyValueBounds(FieldUtils.java:217)
+at org.joda.time.field.PreciseDurationDateTimeField.set(PreciseDurationDateTimeField.java:78)
+at org.joda.time.chrono.BaseChronology.set(BaseChronology.java:240)
+at org.joda.time.base.BaseSingleFieldPeriod.between(BaseSingleFieldPeriod.java:103)
+at org.joda.time.Days.daysBetween(Days.java:141)
+Is there a way to avoid this happening? I understand fiddling around with the leap year, you're bound to get issues.
+Thanks!
+
+
+### FAILING_TEST
+org.joda.time.IllegalFieldValueException.createMessage(String,Number,Number,Number,String)
+org.joda.time.tz.ZoneInfoCompiler.printUsage()
+org.joda.time.DateTimeZone.getDefaultProvider()
+org.joda.time.DateTimeZone.getDefaultNameProvider()
+org.joda.time.IllegalFieldValueException.IllegalFieldValueException(DateTimeFieldType,Number,Number,Number)
+org.joda.time.IllegalFieldValueException.getMessage()
+org.joda.time.base.BaseSingleFieldPeriod.between(ReadablePartial,ReadablePartial,ReadablePeriod)
+org.joda.time.Months.monthsBetween(ReadablePartial,ReadablePartial)
+org.joda.time.Days.daysBetween(ReadablePartial,ReadablePartial)
+org.joda.time.Months.getFieldType()
+
+### CODE_SNIPPETS
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.IllegalFieldValueException.createMessage(String,Number,Number,Number,String)
+------------------------------------------------------------------------------------------
+private static String createMessage(String fieldName, Number value,
+                                        Number lowerBound, Number upperBound, String explain) {
+        StringBuilder buf = new StringBuilder()
+            .append("Value ").append(value).append(" for ").append(fieldName).append(' ');
+
+        if (lowerBound == null) {
+            if (upperBound == null) {
+                buf.append("is not supported");
+            } else {
+                buf.append("must not be larger than ").append(upperBound);
+            }
+        } else if (upperBound == null) {
+            buf.append("must not be smaller than ").append(lowerBound);
+        } else {
+            buf.append("must be in the range [")
+                .append(lowerBound)
+                .append(',')
+                .append(upperBound)
+                .append(']');
+        }
+        if (explain != null) {
+            buf.append(": ").append(explain);
+        }
+
+        return buf.toString();
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.tz.ZoneInfoCompiler.printUsage()
+------------------------------------------------------------------------------------------
+private static void printUsage() {
+        System.out.println("Usage: java org.joda.time.tz.ZoneInfoCompiler <options> <source files>");
+        System.out.println("where possible options include:");
+        System.out.println("  -src <directory>    Specify where to read source files");
+        System.out.println("  -dst <directory>    Specify where to write generated files");
+        System.out.println("  -verbose            Output verbosely (default false)");
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.DateTimeZone.getDefaultProvider()
+------------------------------------------------------------------------------------------
+private static Provider getDefaultProvider() {
+        Provider provider = null;
+
+        try {
+            String providerClass = System.getProperty("org.joda.time.DateTimeZone.Provider");
+            if (providerClass != null) {
+                try {
+                    provider = (Provider) Class.forName(providerClass).newInstance();
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        } catch (SecurityException ex) {
+            // ignored
+        }
+
+        if (provider == null) {
+            try {
+                provider = new ZoneInfoProvider("org/joda/time/tz/data");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        if (provider == null) {
+            provider = new UTCProvider();
+        }
+
+        return provider;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.DateTimeZone.getDefaultNameProvider()
+------------------------------------------------------------------------------------------
+private static NameProvider getDefaultNameProvider() {
+        NameProvider nameProvider = null;
+        try {
+            String providerClass = System.getProperty("org.joda.time.DateTimeZone.NameProvider");
+            if (providerClass != null) {
+                try {
+                    nameProvider = (NameProvider) Class.forName(providerClass).newInstance();
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        } catch (SecurityException ex) {
+            // ignore
+        }
+
+        if (nameProvider == null) {
+            nameProvider = new DefaultNameProvider();
+        }
+
+        return nameProvider;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.IllegalFieldValueException.IllegalFieldValueException(DateTimeFieldType,Number,Number,Number)
+------------------------------------------------------------------------------------------
+public IllegalFieldValueException(DateTimeFieldType fieldType,
+                                      Number value, Number lowerBound, Number upperBound) {
+        super(createMessage(fieldType.getName(), value, lowerBound, upperBound, null));
+        iDateTimeFieldType = fieldType;
+        iDurationFieldType = null;
+        iFieldName = fieldType.getName();
+        iNumberValue = value;
+        iStringValue = null;
+        iLowerBound = lowerBound;
+        iUpperBound = upperBound;
+        iMessage = super.getMessage();
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.IllegalFieldValueException.getMessage()
+------------------------------------------------------------------------------------------
+public String getMessage() {
+        return iMessage;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.base.BaseSingleFieldPeriod.between(ReadablePartial,ReadablePartial,ReadablePeriod)
+------------------------------------------------------------------------------------------
+protected static int between(ReadableInstant start, ReadableInstant end, DurationFieldType field) {
+        if (start == null || end == null) {
+            throw new IllegalArgumentException("ReadableInstant objects must not be null");
+        }
+        Chronology chrono = DateTimeUtils.getInstantChronology(start);
+        int amount = field.getField(chrono).getDifference(end.getMillis(), start.getMillis());
+        return amount;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.Months.monthsBetween(ReadablePartial,ReadablePartial)
+------------------------------------------------------------------------------------------
+public static Months monthsBetween(ReadableInstant start, ReadableInstant end) {
+        int amount = BaseSingleFieldPeriod.between(start, end, DurationFieldType.months());
+        return Months.months(amount);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.Days.daysBetween(ReadablePartial,ReadablePartial)
+------------------------------------------------------------------------------------------
+public static Days daysBetween(ReadableInstant start, ReadableInstant end) {
+        int amount = BaseSingleFieldPeriod.between(start, end, DurationFieldType.days());
+        return Days.days(amount);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.Months.getFieldType()
+------------------------------------------------------------------------------------------
+public DurationFieldType getFieldType() {
+        return DurationFieldType.months();
+    }
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.joda.time.TestDays#testFactory_daysBetween_RPartial_MonthDay
+Runtime: 37583271
+------------------------------------------------------------------------------------------
+org.joda.time.IllegalFieldValueException: Value 29 for dayOfMonth must be in the range [1
+
+------------------------------------------------------------------------------------------
+Fail #2
+Test: org.joda.time.TestMonths#testFactory_monthsBetween_RPartial_MonthDay
+Runtime: 8160949
+------------------------------------------------------------------------------------------
+org.joda.time.IllegalFieldValueException: Value 29 for dayOfMonth must be in the range [1

@@ -1,0 +1,31 @@
+{
+  "project": "Lang",
+  "bug_id": 19,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.lang3.text.translate.NumericEntityUnescaper.translate(java.lang.CharSequence",
+      "score": 0.99962
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.lang3.StringEscapeUtils.escapeXml(String)",
+      "score": 0.876626
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4(String)",
+      "score": 0.755831
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.lang3.StringEscapeUtils.escapeJava(String)",
+      "score": 0.6325
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.lang3.StringEscapeUtils.unescapeHtml3(String)",
+      "score": 0.51183
+    }
+  ]
+}

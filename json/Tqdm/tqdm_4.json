@@ -1,0 +1,31 @@
+{
+  "project": "tqdm",
+  "bug_id": 4,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "..tqdm.std$tqdm#print_status(s)",
+      "score": 0.997594
+    },
+    {
+      "rank": 2,
+      "method": "..tqdm._tqdm$TqdmDefaultWriteLock#__init__()",
+      "score": 0.879116
+    },
+    {
+      "rank": 3,
+      "method": "tqdm.gui$tqdm_gui#__iter__()",
+      "score": 0.759212
+    },
+    {
+      "rank": 4,
+      "method": "..tqdm.gui$tqdm_gui#__iter__()",
+      "score": 0.630025
+    },
+    {
+      "rank": 5,
+      "method": "..tqdm._tqdm$TqdmDefaultWriteLock#acquire()",
+      "score": 0.516508
+    }
+  ]
+}

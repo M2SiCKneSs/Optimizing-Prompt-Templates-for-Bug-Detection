@@ -1,0 +1,31 @@
+{
+  "project": "Math",
+  "bug_id": 8,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.math3.distribution.DiscreteDistribution.sample()",
+      "score": 0.991371
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.math3.distribution.DiscreteRealDistribution.DiscreteRealDistribution(double[]",
+      "score": 0.877107
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.math3.distribution.DiscreteDistribution.DiscreteDistribution(List<Pair<T",
+      "score": 0.759677
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.math3.distribution.DiscreteDistribution.getSamples()",
+      "score": 0.635319
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.math3.distribution.DiscreteRealDistribution.DiscreteRealDistribution(RandomGenerator",
+      "score": 0.511349
+    }
+  ]
+}

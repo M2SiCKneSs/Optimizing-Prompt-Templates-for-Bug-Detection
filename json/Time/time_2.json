@@ -1,0 +1,31 @@
+{
+  "project": "Time",
+  "bug_id": 2,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.joda.time.Partial.with(DateTimeFieldType",
+      "score": 0.997949
+    },
+    {
+      "rank": 2,
+      "method": "org.joda.time.field.UnsupportedDurationField.compareTo(DurationField)",
+      "score": 0.870938
+    },
+    {
+      "rank": 3,
+      "method": "org.joda.time.chrono.BuddhistChronology.assemble(Fields)",
+      "score": 0.757036
+    },
+    {
+      "rank": 4,
+      "method": "org.joda.time.format.DateTimeFormatterBuilder.printTo(Writer",
+      "score": 0.635189
+    },
+    {
+      "rank": 5,
+      "method": "org.joda.time.DateTimeZone.getDefaultProvider()",
+      "score": 0.513837
+    }
+  ]
+}

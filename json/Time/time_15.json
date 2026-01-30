@@ -1,0 +1,31 @@
+{
+  "project": "Time",
+  "bug_id": 15,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.joda.time.field.FieldUtils.safeNegate(int)",
+      "score": 0.999958
+    },
+    {
+      "rank": 2,
+      "method": "org.joda.time.tz.ZoneInfoCompiler.printUsage()",
+      "score": 0.879659
+    },
+    {
+      "rank": 3,
+      "method": "org.joda.time.field.FieldUtils.getWrappedValue(int",
+      "score": 0.758336
+    },
+    {
+      "rank": 4,
+      "method": "org.joda.time.field.FieldUtils.safeMultiply(long",
+      "score": 0.637499
+    },
+    {
+      "rank": 5,
+      "method": "org.joda.time.field.FieldUtils.safeMultiplyToInt(long",
+      "score": 0.519263
+    }
+  ]
+}

@@ -1,0 +1,146 @@
+### BUG_REPORT
+Title: DateUtils.isSameLocalTime does not work correct
+
+Description:
+Hi, I think I found a bug in the DateUtils class in the method isSameLocalTime.
+Example: 
+Calendar a = Calendar.getInstance();
+a.setTimeInMillis(1297364400000L);
+Calendar b = Calendar.getInstance();
+b.setTimeInMillis(1297321200000L);
+Assert.assertFalse(DateUtils.isSameLocalTime(a, b));
+This is because the method compares 
+cal1.get(Calendar.HOUR) == cal2.get(Calendar.HOUR) 
+but I think it has to be 
+cal1.get(Calendar.HOUR_OF_DAY) == cal2.get(Calendar.HOUR_OF_DAY)
+
+
+### FAILING_TEST
+org.apache.commons.lang3.time.DateUtils.isSameLocalTime(Calendar,Calendar)
+org.apache.commons.lang3.time.DateUtils.isSameDay(Calendar,Calendar)
+org.apache.commons.lang3.time.DateUtils.parseDateWithLeniency(String,String[],boolean)
+org.apache.commons.lang3.time.DateUtils.isSameDay(Date,Date)
+org.apache.commons.lang3.time.DateUtils.round(Calendar,int)
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.time.DateUtils.isSameLocalTime(Calendar,Calendar)
+------------------------------------------------------------------------------------------
+public static boolean isSameLocalTime(final Calendar cal1, final Calendar cal2) {
+        if (cal1 == null || cal2 == null) {
+            throw new IllegalArgumentException("The date must not be null");
+        }
+        return (cal1.get(Calendar.MILLISECOND) == cal2.get(Calendar.MILLISECOND) &&
+                cal1.get(Calendar.SECOND) == cal2.get(Calendar.SECOND) &&
+                cal1.get(Calendar.MINUTE) == cal2.get(Calendar.MINUTE) &&
+                cal1.get(Calendar.HOUR_OF_DAY) == cal2.get(Calendar.HOUR_OF_DAY) &&
+                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR) &&
+                cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                cal1.get(Calendar.ERA) == cal2.get(Calendar.ERA) &&
+                cal1.getClass() == cal2.getClass());
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.time.DateUtils.isSameDay(Calendar,Calendar)
+------------------------------------------------------------------------------------------
+public static boolean isSameDay(final Date date1, final Date date2) {
+        if (date1 == null || date2 == null) {
+            throw new IllegalArgumentException("The date must not be null");
+        }
+        final Calendar cal1 = Calendar.getInstance();
+        cal1.setTime(date1);
+        final Calendar cal2 = Calendar.getInstance();
+        cal2.setTime(date2);
+        return isSameDay(cal1, cal2);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.time.DateUtils.parseDateWithLeniency(String,String[],boolean)
+------------------------------------------------------------------------------------------
+private static Date parseDateWithLeniency(
+            final String str, final Locale locale, final String[] parsePatterns, final boolean lenient) throws ParseException {
+        if (str == null || parsePatterns == null) {
+            throw new IllegalArgumentException("Date and Patterns must not be null");
+        }
+        
+        SimpleDateFormat parser;
+        if (locale == null) {
+            parser = new SimpleDateFormat();
+        } else {
+            parser = new SimpleDateFormat("", locale);
+        }
+        
+        parser.setLenient(lenient);
+        final ParsePosition pos = new ParsePosition(0);
+        for (final String parsePattern : parsePatterns) {
+
+            String pattern = parsePattern;
+
+            // LANG-530 - need to make sure 'ZZ' output doesn't get passed to SimpleDateFormat
+            if (parsePattern.endsWith("ZZ")) {
+                pattern = pattern.substring(0, pattern.length() - 1);
+            }
+            
+            parser.applyPattern(pattern);
+            pos.setIndex(0);
+
+            String str2 = str;
+            // LANG-530 - need to make sure 'ZZ' output doesn't hit SimpleDateFormat as it will ParseException
+            if (parsePattern.endsWith("ZZ")) {
+                str2 = str.replaceAll("([-+][0-9][0-9]):([0-9][0-9])$", "$1$2"); 
+            }
+
+            final Date date = parser.parse(str2, pos);
+            if (date != null && pos.getIndex() == str2.length()) {
+                return date;
+            }
+        }
+        throw new ParseException("Unable to parse the date: " + str, -1);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.time.DateUtils.isSameDay(Date,Date)
+------------------------------------------------------------------------------------------
+public static boolean isSameDay(final Date date1, final Date date2) {
+        if (date1 == null || date2 == null) {
+            throw new IllegalArgumentException("The date must not be null");
+        }
+        final Calendar cal1 = Calendar.getInstance();
+        cal1.setTime(date1);
+        final Calendar cal2 = Calendar.getInstance();
+        cal2.setTime(date2);
+        return isSameDay(cal1, cal2);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.time.DateUtils.round(Calendar,int)
+------------------------------------------------------------------------------------------
+public static Date round(final Date date, final int field) {
+        if (date == null) {
+            throw new IllegalArgumentException("The date must not be null");
+        }
+        final Calendar gval = Calendar.getInstance();
+        gval.setTime(date);
+        modify(gval, field, MODIFY_ROUND);
+        return gval.getTime();
+    }
+
+------------------------------------------------------------------------------------------
+
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.apache.commons.lang3.time.DateUtilsTest#testIsSameLocalTime_Cal
+Runtime: 1579277
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: LANG-677 at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.assertTrue(Assert.java:22) at junit.framework.Assert.assertFalse(Assert.java:39) at junit.framework.TestCase.assertFalse(TestCase.java:210) at org.apache.commons.lang3.time.DateUtilsTest.testIsSameLocalTime_Cal(DateUtilsTest.java:237) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

@@ -1,0 +1,5 @@
+Fix trailing comma for function with one arg (#880) (#891)
+Modified maybe_remove_trailing_comma to remove trailing commas for
+typedarglists (in addition to arglists), and updated line split logic
+to ensure that all lines in a function definition that contain only one
+arg have a trailing comma.

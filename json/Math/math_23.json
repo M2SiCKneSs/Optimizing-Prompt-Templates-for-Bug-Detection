@@ -1,0 +1,31 @@
+{
+  "project": "Math",
+  "bug_id": 23,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.math3.optimization.univariate.BrentOptimizer.best(UnivariatePointValuePair",
+      "score": 0.999418
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.math3.analysis.function.StepFunction.StepFunction(double[]",
+      "score": 0.876489
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.math3.optimization.univariate.UnivariateMultiStartOptimizer.optimize(int",
+      "score": 0.751271
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.math3.optimization.univariate.BrentOptimizer.doOptimize()",
+      "score": 0.634668
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.math3.util.MathArrays.checkOrder(double[]",
+      "score": 0.512335
+    }
+  ]
+}

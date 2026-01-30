@@ -1,0 +1,35 @@
+BugsInPy Classification Metrics (K=5)
+==================================================
+
+Project: black (14 bugs analyzed)
+  Top-1 Hits: 0
+  Top-3 Hits: 0
+  Top-5 Hits: 1
+  Mean Precision: 0.0143
+  Mean Recall:    0.0714
+  Mean F1 Score:  0.0238
+  Mean Accuracy:  0.9597
+
+Project: thefuck (12 bugs analyzed)
+  Top-1 Hits: 6
+  Top-3 Hits: 9
+  Top-5 Hits: 9
+  Mean Precision: 0.1667
+  Mean Recall:    0.0936
+  Mean F1 Score:  0.0468
+  Mean Accuracy:  0.8168
+
+Project: tqdm (7 bugs analyzed)
+  Top-1 Hits: 0
+  Top-3 Hits: 2
+  Top-5 Hits: 2
+  Mean Precision: 0.0571
+  Mean Recall:    0.2857
+  Mean F1 Score:  0.0952
+  Mean Accuracy:  0.9376
+
+GLOBAL AVERAGES
+---------------
+Total Bugs Processed: 33
+Average F1 Score:     0.0473
+Average Accuracy:     0.9030

@@ -1,0 +1,3 @@
+Fix the @wrap_settings annotation
+It seems much more useful if it only adds settings that are not already
+set.

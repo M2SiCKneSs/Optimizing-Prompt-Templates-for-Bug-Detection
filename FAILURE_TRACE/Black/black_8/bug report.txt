@@ -1,0 +1,1 @@
+fix handling of comments in from imports (#829)

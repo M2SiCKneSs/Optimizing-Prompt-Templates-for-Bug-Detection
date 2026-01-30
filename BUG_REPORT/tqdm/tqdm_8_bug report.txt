@@ -1,0 +1,2 @@
+Fix a bug with new bar_format + fix unit test
+Signed-off-by: Stephen L. <lrq3000@gmail.com>

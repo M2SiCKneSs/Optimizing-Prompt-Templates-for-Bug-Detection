@@ -1,0 +1,103 @@
+### BUG_REPORT
+Title: StringUtils.join throws NPE when toString returns null for one of objects in collection
+
+Description:
+Try
+
+ 
+StringUtils.join(new Object[]{
+        new Object() {
+          @Override
+          public String toString() {
+            return null;
+          }
+        }
+    }, ',');
+
+
+ToString should probably never return null, but it does in javax.mail.internet.InternetAddress
+
+
+### FAILING_TEST
+org.apache.commons.lang3.StringUtils.join(T)
+org.apache.commons.lang3.StringUtils.join(Object[],char)
+org.apache.commons.lang3.StringUtils.join(Object[],char,int,int)
+org.apache.commons.lang3.StringUtils.join(Object[],String)
+org.apache.commons.lang3.StringUtils.join(Iterator<?>,char)
+org.apache.commons.lang3.StringUtils.join(Object[],char)
+org.apache.commons.lang3.StringUtils.join(Object[],char,int,int)
+org.apache.commons.lang3.StringUtils.join(T)
+org.apache.commons.lang3.StringUtils.join(Object[],String)
+org.apache.commons.lang3.StringUtils.join(Object[],String,int,int)
+
+### CODE_SNIPPETS
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.StringUtils.join(T)
+------------------------------------------------------------------------------------------
+public static <T> String join(final T... elements) {
+        return join(elements, null);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.StringUtils.join(Object[],char)
+------------------------------------------------------------------------------------------
+public static <T> String join(final T... elements) {
+        return join(elements, null);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.StringUtils.join(Object[],char,int,int)
+------------------------------------------------------------------------------------------
+public static <T> String join(final T... elements) {
+        return join(elements, null);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.StringUtils.join(Object[],String)
+------------------------------------------------------------------------------------------
+public static <T> String join(final T... elements) {
+        return join(elements, null);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.StringUtils.join(Iterator<?>,char)
+------------------------------------------------------------------------------------------
+public static <T> String join(final T... elements) {
+        return join(elements, null);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.StringUtils.join(Object[],char)
+------------------------------------------------------------------------------------------
+public static <T> String join(final T... elements) {
+        return join(elements, null);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.StringUtils.join(Object[],char,int,int)
+------------------------------------------------------------------------------------------
+public static <T> String join(final T... elements) {
+        return join(elements, null);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.StringUtils.join(T)
+------------------------------------------------------------------------------------------
+public static <T> String join(final T... elements) {
+        return join(elements, null);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.StringUtils.join(Object[],String)
+------------------------------------------------------------------------------------------
+public static <T> String join(final T... elements) {
+        return join(elements, null);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.StringUtils.join(Object[],String,int,int)
+------------------------------------------------------------------------------------------
+public static <T> String join(final T... elements) {
+        return join(elements, null);
+    }

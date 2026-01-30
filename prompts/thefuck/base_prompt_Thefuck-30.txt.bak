@@ -1,0 +1,162 @@
+### TOP_METHODS (Ochiai)
+Source CSV: C:\Users\user\Desktop\uni\mark\FAILING_TEST\Thefuck\thefuck_30_ochiai_top_10.csv
+
+1. thefuck.rules.fix_file##get_new_command(command,settings) | score=0.4879500364742666
+2. thefuck.rules.fix_file##match(command,settings) | score=0.4879500364742666
+3. thefuck.rules.fix_file##_search(stderr) | score=0.4879500364742666
+4. thefuck.rules.fix_file##_make_pattern(pattern) | score=0.4879500364742666
+5. thefuck.conf$_DefaultRulesNames#__add__(items) | score=0.21004201260420147
+6. thefuck.conf$_DefaultRulesNames#__eq__(other) | score=0.21004201260420147
+7. thefuck.conf##_settings_from_file(user_dir) | score=0.21004201260420147
+8. thefuck.conf##_rules_from_env(val) | score=0.21004201260420147
+9. thefuck.conf##_priority_from_env(val) | score=0.21004201260420147
+10. thefuck.conf##_val_from_env(env,attr) | score=0.21004201260420147
+
+### CODE_SNIPPETS
+
+---
+Rank: 1
+Method: thefuck.rules.fix_file##get_new_command(command,settings)
+Ochiai_Score: 0.4879500364742666
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\rules\fix_file.py
+Status: OK
+Snippet:
+def get_new_command(command):
+    m = _search(command.output)
+
+    # Note: there does not seem to be a standard for columns, so they are just
+    # ignored by default
+    if settings.fixcolcmd and 'col' in m.groupdict():
+        editor_call = settings.fixcolcmd.format(editor=os.environ['EDITOR'],
+                                                file=m.group('file'),
+                                                line=m.group('line'),
+                                                col=m.group('col'))
+    else:
+        editor_call = settings.fixlinecmd.format(editor=os.environ['EDITOR'],
+                                                 file=m.group('file'),
+                                                 line=m.group('line'))
+
+    return shell.and_(editor_call, command.script)
+
+---
+Rank: 2
+Method: thefuck.rules.fix_file##match(command,settings)
+Ochiai_Score: 0.4879500364742666
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\rules\fix_file.py
+Status: OK
+Snippet:
+def match(command):
+    if 'EDITOR' not in os.environ:
+        return False
+
+    return _search(command.output)
+
+---
+Rank: 3
+Method: thefuck.rules.fix_file##_search(stderr)
+Ochiai_Score: 0.4879500364742666
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\rules\fix_file.py
+Status: OK
+Snippet:
+def _search(output):
+    for pattern in patterns:
+        m = pattern(output)
+        if m and os.path.isfile(m.group('file')):
+            return m
+
+---
+Rank: 4
+Method: thefuck.rules.fix_file##_make_pattern(pattern)
+Ochiai_Score: 0.4879500364742666
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\rules\fix_file.py
+Status: OK
+Snippet:
+def _make_pattern(pattern):
+    pattern = pattern.replace('{file}', '(?P<file>[^:\n]+)') \
+                     .replace('{line}', '(?P<line>[0-9]+)') \
+                     .replace('{col}', '(?P<col>[0-9]+)')
+    return re.compile(pattern, re.MULTILINE)
+
+---
+Rank: 5
+Method: thefuck.conf$_DefaultRulesNames#__add__(items)
+Ochiai_Score: 0.21004201260420147
+Status: PARSE_ERROR
+Error: Unexpected method format (missing ##): thefuck.conf$_DefaultRulesNames#__add__(items)
+
+---
+Rank: 6
+Method: thefuck.conf$_DefaultRulesNames#__eq__(other)
+Ochiai_Score: 0.21004201260420147
+Status: PARSE_ERROR
+Error: Unexpected method format (missing ##): thefuck.conf$_DefaultRulesNames#__eq__(other)
+
+---
+Rank: 7
+Method: thefuck.conf##_settings_from_file(user_dir)
+Ochiai_Score: 0.21004201260420147
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\conf.py
+Status: OK
+Snippet:
+    def _settings_from_file(self):
+        """Loads settings from file."""
+        settings = load_source(
+            'settings', text_type(self.user_dir.joinpath('settings.py')))
+        return {key: getattr(settings, key)
+                for key in const.DEFAULT_SETTINGS.keys()
+                if hasattr(settings, key)}
+
+---
+Rank: 8
+Method: thefuck.conf##_rules_from_env(val)
+Ochiai_Score: 0.21004201260420147
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\conf.py
+Status: OK
+Snippet:
+    def _rules_from_env(self, val):
+        """Transforms rules list from env-string to python."""
+        val = val.split(':')
+        if 'DEFAULT_RULES' in val:
+            val = const.DEFAULT_RULES + [rule for rule in val if rule != 'DEFAULT_RULES']
+        return val
+
+---
+Rank: 9
+Method: thefuck.conf##_priority_from_env(val)
+Ochiai_Score: 0.21004201260420147
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\conf.py
+Status: OK
+Snippet:
+    def _priority_from_env(self, val):
+        """Gets priority pairs from env."""
+        for part in val.split(':'):
+            try:
+                rule, priority = part.split('=')
+                yield rule, int(priority)
+            except ValueError:
+                continue
+
+---
+Rank: 10
+Method: thefuck.conf##_val_from_env(env,attr)
+Ochiai_Score: 0.21004201260420147
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\conf.py
+Status: OK
+Snippet:
+    def _val_from_env(self, env, attr):
+        """Transforms env-strings to python."""
+        val = os.environ[env]
+        if attr in ('rules', 'exclude_rules'):
+            return self._rules_from_env(val)
+        elif attr == 'priority':
+            return dict(self._priority_from_env(val))
+        elif attr in ('wait_command', 'history_limit', 'wait_slow_command',
+                      'num_close_matches'):
+            return int(val)
+        elif attr in ('require_confirmation', 'no_colors', 'debug',
+                      'alter_history', 'instant_mode'):
+            return val.lower() == 'true'
+        elif attr == 'slow_commands':
+            return val.split(':')
+        else:
+            return val

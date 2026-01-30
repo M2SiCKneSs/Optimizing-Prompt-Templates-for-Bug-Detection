@@ -1,0 +1,57 @@
+### TOP_METHODS (Ochiai)
+1. thefuck.utils##_safe(fn,fallback) | score=0.30151134457776363
+2. thefuck.types$Rule#__repr__() | score=0.026555952586407233
+3. thefuck.types$Rule#from_path(path) | score=0.026555952586407233
+4. thefuck.types$Rule#is_enabled() | score=0.026555952586407233
+5. thefuck.types$Command#stderr() | score=0.026555952586407233
+
+
+### CODE_SNIPPETS
+
+
+
+---
+Rank: 1
+Method: thefuck.utils##_safe(fn,fallback)
+Ochiai_Score: 0.30151134457776363
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\utils.py
+Status: OK
+Snippet:
+    def _safe(fn, fallback):
+        try:
+            return fn()
+        except OSError:
+            return fallback
+
+
+---
+Rank: 2
+Method: thefuck.types$Rule#__repr__()
+Ochiai_Score: 0.026555952586407233
+Status: PARSE_ERROR
+Error: Unexpected method format (missing ##): thefuck.types$Rule#__repr__()
+
+
+---
+Rank: 3
+Method: thefuck.types$Rule#from_path(path)
+Ochiai_Score: 0.026555952586407233
+Status: PARSE_ERROR
+Error: Unexpected method format (missing ##): thefuck.types$Rule#from_path(path)
+
+
+---
+Rank: 4
+Method: thefuck.types$Rule#is_enabled()
+Ochiai_Score: 0.026555952586407233
+Status: PARSE_ERROR
+Error: Unexpected method format (missing ##): thefuck.types$Rule#is_enabled()
+
+
+---
+Rank: 5
+Method: thefuck.types$Command#stderr()
+Ochiai_Score: 0.026555952586407233
+Status: PARSE_ERROR
+Error: Unexpected method format (missing ##): thefuck.types$Command#stderr()
+

@@ -1,0 +1,173 @@
+### BUG_REPORT
+Title: ArrayIndexOutOfBoundsException in MathArrays.linearCombination
+
+Description:
+When MathArrays.linearCombination is passed arguments with length 1, it throws an ArrayOutOfBoundsException. This is caused by this line:
+double prodHighNext = prodHigh[1];
+linearCombination should check the length of the arguments and fall back to simple multiplication if length == 1.
+
+
+### FAILING_TEST
+org.apache.commons.math3.util.MathArrays.linearCombination(double[],double[])
+org.apache.commons.math3.util.MathArrays.sortInPlace(double[],OrderDirection,double[])
+org.apache.commons.math3.util.MathArrays.normalizeArray(double[],double)
+org.apache.commons.math3.util.MathArrays.ebeSubtract(double[],double[])
+org.apache.commons.math3.analysis.differentiation.DSCompiler.linearCombination(double,double[],int,double,double[],int,double[],int)
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.util.MathArrays.linearCombination(double[],double[])
+------------------------------------------------------------------------------------------
+public static double linearCombination(final double[] a, final double[] b)
+        throws DimensionMismatchException {
+        final int len = a.length;
+        if (len != b.length) {
+            throw new DimensionMismatchException(len, b.length);
+        }
+
+        if (len == 1) {
+            // Revert to scalar multiplication.
+            return a[0] * b[0];
+        }
+
+        final double[] prodHigh = new double[len];
+        double prodLowSum = 0;
+
+        for (int i = 0; i < len; i++) {
+            final double ai = a[i];
+            final double ca = SPLIT_FACTOR * ai;
+            final double aHigh = ca - (ca - ai);
+            final double aLow = ai - aHigh;
+
+            final double bi = b[i];
+            final double cb = SPLIT_FACTOR * bi;
+            final double bHigh = cb - (cb - bi);
+            final double bLow = bi - bHigh;
+            prodHigh[i] = ai * bi;
+            final double prodLow = aLow * bLow - (((prodHigh[i] -
+                                                    aHigh * bHigh) -
+                                                   aLow * bHigh) -
+                                                  aHigh * bLow);
+            prodLowSum += prodLow;
+        }
+
+
+        final double prodHighCur = prodHigh[0];
+        double prodHighNext = prodHigh[1];
+        double sHighPrev = prodHighCur + prodHighNext;
+        double sPrime = sHighPrev - prodHighNext;
+        double sLowSum = (prodHighNext - (sHighPrev - sPrime)) + (prodHighCur - sPrime);
+
+        final int lenMinusOne = len - 1;
+        for (int i = 1; i < lenMinusOne; i++) {
+            prodHighNext = prodHigh[i + 1];
+            final double sHighCur = sHighPrev + prodHighNext;
+            sPrime = sHighCur - prodHighNext;
+            sLowSum += (prodHighNext - (sHighCur - sPrime)) + (sHighPrev - sPrime);
+            sHighPrev = sHighCur;
+        }
+
+        double result = sHighPrev + (prodLowSum + sLowSum);
+
+        if (Double.isNaN(result)) {
+            // either we have split infinite numbers or some coefficients were NaNs,
+            // just rely on the naive implementation and let IEEE754 handle this
+            result = 0;
+            for (int i = 0; i < len; ++i) {
+                result += a[i] * b[i];
+            }
+        }
+
+        return result;
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.util.MathArrays.sortInPlace(double[],OrderDirection,double[])
+------------------------------------------------------------------------------------------
+public static void sortInPlace(double[] x, double[] ... yList)
+        throws DimensionMismatchException, NullArgumentException {
+        sortInPlace(x, OrderDirection.INCREASING, yList);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.util.MathArrays.normalizeArray(double[],double)
+------------------------------------------------------------------------------------------
+public static double[] normalizeArray(double[] values, double normalizedSum)
+         throws MathIllegalArgumentException, MathArithmeticException {
+         if (Double.isInfinite(normalizedSum)) {
+             throw new MathIllegalArgumentException(LocalizedFormats.NORMALIZE_INFINITE);
+         }
+         if (Double.isNaN(normalizedSum)) {
+             throw new MathIllegalArgumentException(LocalizedFormats.NORMALIZE_NAN);
+         }
+         double sum = 0d;
+         final int len = values.length;
+         double[] out = new double[len];
+         for (int i = 0; i < len; i++) {
+             if (Double.isInfinite(values[i])) {
+                 throw new MathIllegalArgumentException(LocalizedFormats.INFINITE_ARRAY_ELEMENT, values[i], i);
+             }
+             if (!Double.isNaN(values[i])) {
+                 sum += values[i];
+             }
+         }
+         if (sum == 0) {
+             throw new MathArithmeticException(LocalizedFormats.ARRAY_SUMS_TO_ZERO);
+         }
+         for (int i = 0; i < len; i++) {
+             if (Double.isNaN(values[i])) {
+                 out[i] = Double.NaN;
+             } else {
+                 out[i] = values[i] * normalizedSum / sum;
+             }
+         }
+         return out;
+     }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.util.MathArrays.ebeSubtract(double[],double[])
+------------------------------------------------------------------------------------------
+public static double[] ebeSubtract(double[] a, double[] b)
+        throws DimensionMismatchException {
+        if (a.length != b.length) {
+            throw new DimensionMismatchException(a.length, b.length);
+        }
+
+        final double[] result = a.clone();
+        for (int i = 0; i < a.length; i++) {
+            result[i] -= b[i];
+        }
+        return result;
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.analysis.differentiation.DSCompiler.linearCombination(double,double[],int,double,double[],int,double[],int)
+------------------------------------------------------------------------------------------
+public void linearCombination(final double a1, final double[] c1, final int offset1,
+                                  final double a2, final double[] c2, final int offset2,
+                                  final double[] result, final int resultOffset) {
+        for (int i = 0; i < getSize(); ++i) {
+            result[resultOffset + i] =
+                    MathArrays.linearCombination(a1, c1[offset1 + i], a2, c2[offset2 + i]);
+        }
+    }
+
+------------------------------------------------------------------------------------------
+
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.apache.commons.math3.util.MathArraysTest#testLinearCombinationWithSingleElementArray
+Runtime: 1271053
+------------------------------------------------------------------------------------------
+java.lang.ArrayIndexOutOfBoundsException: Index 1 out of bounds for length 1 at org.apache.commons.math3.util.MathArrays.linearCombination(MathArrays.java:846) at org.apache.commons.math3.util.MathArraysTest.testLinearCombinationWithSingleElementArray(MathArraysTest.java:591) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

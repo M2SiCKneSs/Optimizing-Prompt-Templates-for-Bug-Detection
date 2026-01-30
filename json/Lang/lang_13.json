@@ -1,0 +1,31 @@
+{
+  "project": "Lang",
+  "bug_id": 13,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.lang3.SerializationUtils.ClassLoaderAwareObjectInputStream.resolveClass(ObjectStreamClass)",
+      "score": 0.990065
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.lang3.SerializationException.SerializationException(String",
+      "score": 0.87372
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.lang3.ClassUtils.convertClassNamesToClasses(List)",
+      "score": 0.75789
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.lang3.SerializationUtils.deserialize(InputStream)",
+      "score": 0.635926
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.lang3.ClassUtils.getPublicMethod(Class<?>",
+      "score": 0.517492
+    }
+  ]
+}

@@ -1,0 +1,188 @@
+### BUG_REPORT
+Title: #90 DateTimeZone.getOffsetFromLocal error during DST transition
+
+Description:
+This may be a failure of my understanding, but the comments in DateTimeZone.getOffsetFromLocal lead me to believe that if an ambiguous local time is given, the offset corresponding to the later of the two possible UTC instants will be returned - i.e. the greater offset.
+This doesn't appear to tally with my experience. In fall 2009, America/Los_Angeles changed from -7 to -8 at 2am wall time on November 11. Thus 2am became 1am - so 1:30am is ambiguous. I would therefore expect that constructing a DateTime for November 11th, 1:30am would give an instant corresponding with the later value (i.e. 9:30am UTC). This appears not to be the case:
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+public class TzTest {
+public static void main(String[] args) throws Exception {
+DateTimeZone zone = DateTimeZone.forID("America/Los_Angeles");
+DateTime when1 = new DateTime(2009, 11, 1, 0, 30, 0, 0, zone);
+DateTime when2 = new DateTime(2009, 11, 1, 1, 30, 0, 0, zone);
+DateTime when3 = new DateTime(2009, 11, 1, 2, 30, 0, 0, zone);
+System.out.println(when1);
+System.out.println(when2);
+System.out.println(when3);
+}
+}
+Results:
+2009-11-01T00:30:00.000-07:00 // Correct
+2009-11-01T01:30:00.000-07:00 // Should be -08:00
+2009-11-01T02:30:00.000-08:00 // Correct
+
+
+### FAILING_TEST
+org.joda.time.DateTime.DateTime(long,DateTimeZone)
+org.joda.time.tz.ZoneInfoCompiler.printUsage()
+org.joda.time.chrono.BasicGJChronology.setYear(long,int)
+org.joda.time.tz.DateTimeZoneBuilder.readFrom(DataInput,String)
+org.joda.time.DateTimeZone.parseOffset(String)
+org.joda.time.DateTime.DateTime(long,DateTimeZone)
+org.joda.time.DateTime.DateTime(int,int,int,int,int,DateTimeZone)
+org.joda.time.base.BaseDateTime.BaseDateTime(long,DateTimeZone)
+org.joda.time.tz.CachedDateTimeZone.nextTransition(long)
+org.joda.time.base.AbstractInstant.toString()
+
+### CODE_SNIPPETS
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.DateTime.DateTime(long,DateTimeZone)
+------------------------------------------------------------------------------------------
+public DateTime() {
+        super();
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.tz.ZoneInfoCompiler.printUsage()
+------------------------------------------------------------------------------------------
+private static void printUsage() {
+        System.out.println("Usage: java org.joda.time.tz.ZoneInfoCompiler <options> <source files>");
+        System.out.println("where possible options include:");
+        System.out.println("  -src <directory>    Specify where to read source files");
+        System.out.println("  -dst <directory>    Specify where to write generated files");
+        System.out.println("  -verbose            Output verbosely (default false)");
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.chrono.BasicGJChronology.setYear(long,int)
+------------------------------------------------------------------------------------------
+long setYear(long instant, int year) {
+        int thisYear = getYear(instant);
+        int dayOfYear = getDayOfYear(instant, thisYear);
+        int millisOfDay = getMillisOfDay(instant);
+
+        if (dayOfYear > (31 + 28)) { // after Feb 28
+            if (isLeapYear(thisYear)) {
+                // Current date is Feb 29 or later.
+                if (!isLeapYear(year)) {
+                    // Moving to a non-leap year, Feb 29 does not exist.
+                    dayOfYear--;
+                }
+            } else {
+                // Current date is Mar 01 or later.
+                if (isLeapYear(year)) {
+                    // Moving to a leap year, account for Feb 29.
+                    dayOfYear++;
+                }
+            }
+        }
+
+        instant = getYearMonthDayMillis(year, 1, dayOfYear);
+        instant += millisOfDay;
+
+        return instant;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.tz.DateTimeZoneBuilder.readFrom(DataInput,String)
+------------------------------------------------------------------------------------------
+public static DateTimeZone readFrom(InputStream in, String id) throws IOException {
+        if (in instanceof DataInput) {
+            return readFrom((DataInput)in, id);
+        } else {
+            return readFrom((DataInput)new DataInputStream(in), id);
+        }
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.DateTimeZone.parseOffset(String)
+------------------------------------------------------------------------------------------
+private static int parseOffset(String str) {
+        // Can't use a real chronology if called during class
+        // initialization. Offset parser doesn't need it anyhow.
+        Chronology chrono = new BaseChronology() {
+            private static final long serialVersionUID = -3128740902654445468L;
+            public DateTimeZone getZone() {
+                return null;
+            }
+            public Chronology withUTC() {
+                return this;
+            }
+            public Chronology withZone(DateTimeZone zone) {
+                return this;
+            }
+            public String toString() {
+                return getClass().getName();
+            }
+        };
+        return -(int) offsetFormatter().withChronology(chrono).parseMillis(str);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.DateTime.DateTime(long,DateTimeZone)
+------------------------------------------------------------------------------------------
+public DateTime() {
+        super();
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.DateTime.DateTime(int,int,int,int,int,DateTimeZone)
+------------------------------------------------------------------------------------------
+public DateTime() {
+        super();
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.base.BaseDateTime.BaseDateTime(long,DateTimeZone)
+------------------------------------------------------------------------------------------
+public BaseDateTime() {
+        this(DateTimeUtils.currentTimeMillis(), ISOChronology.getInstance());
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.tz.CachedDateTimeZone.nextTransition(long)
+------------------------------------------------------------------------------------------
+public long nextTransition(long instant) {
+        return iZone.nextTransition(instant);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.base.AbstractInstant.toString()
+------------------------------------------------------------------------------------------
+@ToString
+    public String toString() {
+        return ISODateTimeFormat.dateTime().print(this);
+    }
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.joda.time.TestDateTimeZoneCutover#test_DateTime_constructor_Moscow_Autumn
+Runtime: 7708618
+------------------------------------------------------------------------------------------
+junit.framework.ComparisonFailure: expected:<...10-28T02:30:00.000+0[4]:00> but was:<...10-28T02:30:00.000+0[3]:00> at junit.framework.Assert.assertEquals(Assert.java:100) at junit.framework.Assert.assertEquals(Assert.java:107) at junit.framework.TestCase.assertEquals(TestCase.java:269) at org.joda.time.TestDateTimeZoneCutover.test_DateTime_constructor_Moscow_Autumn(TestDateTimeZoneCutover.java:922) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #2
+Test: org.joda.time.TestDateTimeZoneCutover#test_getOffsetFromLocal_Moscow_Autumn
+Runtime: 6418516
+------------------------------------------------------------------------------------------
+junit.framework.ComparisonFailure: 2007-10-28T02:00:00.000+03:00 expected:<...10-28T02:00:00.000+0[4]:00> but was:<...10-28T02:00:00.000+0[3]:00> at junit.framework.Assert.assertEquals(Assert.java:100) at junit.framework.TestCase.assertEquals(TestCase.java:261) at org.joda.time.TestDateTimeZoneCutover.doTest_getOffsetFromLocal(TestDateTimeZoneCutover.java:1232) at org.joda.time.TestDateTimeZoneCutover.doTest_getOffsetFromLocal(TestDateTimeZoneCutover.java:1217) at org.joda.time.TestDateTimeZoneCutover.test_getOffsetFromLocal_Moscow_Autumn(TestDateTimeZoneCutover.java:895) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #3
+Test: org.joda.time.TestDateTimeZoneCutover#test_getOffsetFromLocal_Moscow_Autumn_overlap_mins
+Runtime: 15231135
+------------------------------------------------------------------------------------------
+junit.framework.ComparisonFailure: 2007-10-28T02:00:00.000+03:00 expected:<...10-28T02:00:00.000+0[4]:00> but was:<...10-28T02:00:00.000+0[3]:00> at junit.framework.Assert.assertEquals(Assert.java:100) at junit.framework.TestCase.assertEquals(TestCase.java:261) at org.joda.time.TestDateTimeZoneCutover.doTest_getOffsetFromLocal(TestDateTimeZoneCutover.java:1232) at org.joda.time.TestDateTimeZoneCutover.doTest_getOffsetFromLocal(TestDateTimeZoneCutover.java:1217) at org.joda.time.TestDateTimeZoneCutover.test_getOffsetFromLocal_Moscow_Autumn_overlap_mins(TestDateTimeZoneCutover.java:913) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #4
+Test: org.joda.time.TestPeriodType#testForFields4
+Runtime: 805041
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<true> but was:<false> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:174) at junit.framework.Assert.assertEquals(Assert.java:181) at junit.framework.TestCase.assertEquals(TestCase.java:341) at org.joda.time.TestPeriodType.testForFields4(TestPeriodType.java:534) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

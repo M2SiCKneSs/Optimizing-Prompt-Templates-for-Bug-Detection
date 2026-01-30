@@ -1,0 +1,31 @@
+{
+  "project": "Time",
+  "bug_id": 4,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.joda.time.Partial.with(org.joda.time.DateTimeFieldType",
+      "score": 0.998377
+    },
+    {
+      "rank": 2,
+      "method": "org.joda.time.Partial.withField(DateTimeFieldType",
+      "score": 0.871009
+    },
+    {
+      "rank": 3,
+      "method": "org.joda.time.Partial.Partial()",
+      "score": 0.752143
+    },
+    {
+      "rank": 4,
+      "method": "org.joda.time.Partial.withPeriodAdded(ReadablePeriod",
+      "score": 0.633276
+    },
+    {
+      "rank": 5,
+      "method": "org.joda.time.Partial.Partial(Chronology)",
+      "score": 0.515338
+    }
+  ]
+}

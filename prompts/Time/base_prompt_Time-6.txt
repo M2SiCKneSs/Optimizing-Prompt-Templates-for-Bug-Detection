@@ -1,0 +1,158 @@
+### BUG_REPORT
+Title: Questionable behaviour of GJChronology when dates pass 1BC
+
+Description:
+I expect the following test to pass:
+Chronology chronology = GJChronology.getInstance();
+
+LocalDate start = new LocalDate(2013, 5, 31, chronology);
+LocalDate expectedEnd = new LocalDate(-1, 5, 31, chronology); // 1 BC
+assertThat(start.minusYears(2013), is(equalTo(expectedEnd)));
+assertThat(start.plus(Period.years(-2013)), is(equalTo(expectedEnd)));
+
+The error it gives is:
+org.joda.time.IllegalFieldValueException: Value 0 for year is not supported
+
+However, I never provided "0" for the year myself. I thought it was the job of the framework to skip over non-existent year 0 for me to return 1 BC?
+
+
+### FAILING_TEST
+org.joda.time.chrono.GJChronology.getInstance(DateTimeZone,ReadableInstant,int)
+org.joda.time.DateTimeZone.getDefaultProvider()
+org.joda.time.chrono.GJChronology.equals(Object)
+org.joda.time.LocalDate.withDayOfWeek(int)
+org.joda.time.chrono.GJChronology.toString()
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.chrono.GJChronology.getInstance(DateTimeZone,ReadableInstant,int)
+------------------------------------------------------------------------------------------
+public static GJChronology getInstance() {
+        return getInstance(DateTimeZone.getDefault(), DEFAULT_CUTOVER, 4);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.DateTimeZone.getDefaultProvider()
+------------------------------------------------------------------------------------------
+private static Provider getDefaultProvider() {
+        Provider provider = null;
+
+        try {
+            String providerClass = System.getProperty("org.joda.time.DateTimeZone.Provider");
+            if (providerClass != null) {
+                try {
+                    provider = (Provider) Class.forName(providerClass).newInstance();
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        } catch (SecurityException ex) {
+            // ignored
+        }
+
+        if (provider == null) {
+            try {
+                provider = new ZoneInfoProvider("org/joda/time/tz/data");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        if (provider == null) {
+            provider = new UTCProvider();
+        }
+
+        return provider;
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.chrono.GJChronology.equals(Object)
+------------------------------------------------------------------------------------------
+cutoverInstant.equals(chrono.getGregorianCutover())) {
+                        
+                        return chrono;
+                    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.LocalDate.withDayOfWeek(int)
+------------------------------------------------------------------------------------------
+public LocalDate withDayOfWeek(int dayOfWeek) {
+        return withLocalMillis(getChronology().dayOfWeek().set(getLocalMillis(), dayOfWeek));
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.chrono.GJChronology.toString()
+------------------------------------------------------------------------------------------
+public String toString() {
+        StringBuffer sb = new StringBuffer(60);
+        sb.append("GJChronology");
+        sb.append('[');
+        sb.append(getZone().getID());
+        
+        if (iCutoverMillis != DEFAULT_CUTOVER.getMillis()) {
+            sb.append(",cutover=");
+            DateTimeFormatter printer;
+            if (withUTC().dayOfYear().remainder(iCutoverMillis) == 0) {
+                printer = ISODateTimeFormat.date();
+            } else {
+                printer = ISODateTimeFormat.dateTime();
+            }
+            printer.withChronology(withUTC()).printTo(sb, iCutoverMillis);
+        }
+        
+        if (getMinimumDaysInFirstWeek() != 4) {
+            sb.append(",mdfw=");
+            sb.append(getMinimumDaysInFirstWeek());
+        }
+        sb.append(']');
+        
+        return sb.toString();
+    }
+
+------------------------------------------------------------------------------------------
+
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.joda.time.chrono.TestGJDate#test_cutoverPreZero
+Runtime: 2239105
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError at junit.framework.Assert.fail(Assert.java:55) at junit.framework.Assert.fail(Assert.java:64) at junit.framework.TestCase.fail(TestCase.java:235) at org.joda.time.chrono.TestGJDate.test_cutoverPreZero(TestGJDate.java:132) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #2
+Test: org.joda.time.chrono.TestGJDate#test_plusWeekyears_positiveToNegative_crossCutover
+Runtime: 2726893
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<-0002-06-30> but was:<-0001-06-28> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:86) at junit.framework.TestCase.assertEquals(TestCase.java:253) at org.joda.time.chrono.TestGJDate.test_plusWeekyears_positiveToNegative_crossCutover(TestGJDate.java:124) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #3
+Test: org.joda.time.chrono.TestGJDate#test_plusWeekyears_positiveToZero_crossCutover
+Runtime: 1004972
+------------------------------------------------------------------------------------------
+org.joda.time.IllegalFieldValueException: Value 0 for year is not supported at org.joda.time.field.SkipDateTimeField.set(SkipDateTimeField.java:92) at org.joda.time.chrono.GJChronology.convertByWeekyear(GJChronology.java:96) at org.joda.time.chrono.GJChronology.gregorianToJulianByWeekyear(GJChronology.java:596) at org.joda.time.chrono.GJChronology$CutoverField.gregorianToJulian(GJChronology.java:922) at org.joda.time.chrono.GJChronology$ImpreciseCutoverField.add(GJChronology.java:979) at org.joda.time.LocalDate$Property.addToCopy(LocalDate.java:1965) at org.joda.time.chrono.TestGJDate.test_plusWeekyears_positiveToZero_crossCutover(TestGJDate.java:118) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #4
+Test: org.joda.time.chrono.TestGJDate#test_plusYears_positiveToNegative_crossCutover
+Runtime: 2492221
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<-0002-06-30> but was:<-0001-06-30> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:86) at junit.framework.TestCase.assertEquals(TestCase.java:253) at org.joda.time.chrono.TestGJDate.test_plusYears_positiveToNegative_crossCutover(TestGJDate.java:105) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #5
+Test: org.joda.time.chrono.TestGJDate#test_plusYears_positiveToZero_crossCutover
+Runtime: 811488
+------------------------------------------------------------------------------------------
+org.joda.time.IllegalFieldValueException: Value 0 for year is not supported at org.joda.time.chrono.JulianChronology.adjustYearForSet(JulianChronology.java:81) at org.joda.time.chrono.JulianChronology.getDateMidnightMillis(JulianChronology.java:207) at org.joda.time.chrono.BasicChronology.getDateTimeMillis(BasicChronology.java:159) at org.joda.time.chrono.JulianChronology.getDateTimeMillis(JulianChronology.java:50) at org.joda.time.chrono.GJChronology.convertByYear(GJChronology.java:85) at org.joda.time.chrono.GJChronology.gregorianToJulianByYear(GJChronology.java:588) at org.joda.time.chrono.GJChronology$CutoverField.gregorianToJulian(GJChronology.java:924) at org.joda.time.chrono.GJChronology$ImpreciseCutoverField.add(GJChronology.java:979) at org.joda.time.chrono.GJChronology$LinkedDurationField.add(GJChronology.java:1099) at org.joda.time.LocalDate.plusYears(LocalDate.java:1205) at org.joda.time.chrono.TestGJDate.test_plusYears_positiveToZero_crossCutover(TestGJDate.java:99) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

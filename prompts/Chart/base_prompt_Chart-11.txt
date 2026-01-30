@@ -1,0 +1,202 @@
+### BUG_REPORT
+Title: #868 JCommon 1.0.12 ShapeUtilities.equal(path1,path2)
+
+Description:
+The comparison of two GeneralPath objects uses the same PathIterator for both objects. equal(GeneralPath path1, GeneralPath path2) will thus return true for any pair of non-null GeneralPath instances having the same windingRule.
+
+
+### FAILING_TEST
+org.jfree.chart.util.ShapeUtilities.equal(Shape,Shape)
+org.jfree.chart.util.ShapeUtilities.equal(GeneralPath,GeneralPath)
+org.jfree.chart.renderer.xy.XYLineAndShapeRenderer.drawPrimaryLineAsPath(XYItemRendererState,Graphics2D,XYPlot,XYDataset,int,int,int,ValueAxis,ValueAxis,Rectangle2D)
+org.jfree.chart.renderer.xy.XYLineAndShapeRenderer.drawItem(Graphics2D,XYItemRendererState,Rectangle2D,PlotRenderingInfo,XYPlot,ValueAxis,ValueAxis,XYDataset,int,int,CrosshairState,int)
+org.jfree.chart.renderer.xy.XYLineAndShapeRenderer.setDrawSeriesLineAsPath(boolean)
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.jfree.chart.util.ShapeUtilities.equal(Shape,Shape)
+------------------------------------------------------------------------------------------
+public static boolean equal(Shape s1, Shape s2) {
+        if (s1 instanceof Line2D && s2 instanceof Line2D) {
+            return equal((Line2D) s1, (Line2D) s2);
+        }
+        else if (s1 instanceof Ellipse2D && s2 instanceof Ellipse2D) {
+            return equal((Ellipse2D) s1, (Ellipse2D) s2);
+        }
+        else if (s1 instanceof Arc2D && s2 instanceof Arc2D) {
+            return equal((Arc2D) s1, (Arc2D) s2);
+        }
+        else if (s1 instanceof Polygon && s2 instanceof Polygon) {
+            return equal((Polygon) s1, (Polygon) s2);
+        }
+        else if (s1 instanceof GeneralPath && s2 instanceof GeneralPath) {
+            return equal((GeneralPath) s1, (GeneralPath) s2);
+        }
+        else {
+            // this will handle Rectangle2D...
+            return ObjectUtilities.equal(s1, s2);
+        }
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.jfree.chart.util.ShapeUtilities.equal(GeneralPath,GeneralPath)
+------------------------------------------------------------------------------------------
+public static boolean equal(Shape s1, Shape s2) {
+        if (s1 instanceof Line2D && s2 instanceof Line2D) {
+            return equal((Line2D) s1, (Line2D) s2);
+        }
+        else if (s1 instanceof Ellipse2D && s2 instanceof Ellipse2D) {
+            return equal((Ellipse2D) s1, (Ellipse2D) s2);
+        }
+        else if (s1 instanceof Arc2D && s2 instanceof Arc2D) {
+            return equal((Arc2D) s1, (Arc2D) s2);
+        }
+        else if (s1 instanceof Polygon && s2 instanceof Polygon) {
+            return equal((Polygon) s1, (Polygon) s2);
+        }
+        else if (s1 instanceof GeneralPath && s2 instanceof GeneralPath) {
+            return equal((GeneralPath) s1, (GeneralPath) s2);
+        }
+        else {
+            // this will handle Rectangle2D...
+            return ObjectUtilities.equal(s1, s2);
+        }
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.jfree.chart.renderer.xy.XYLineAndShapeRenderer.drawPrimaryLineAsPath(XYItemRendererState,Graphics2D,XYPlot,XYDataset,int,int,int,ValueAxis,ValueAxis,Rectangle2D)
+------------------------------------------------------------------------------------------
+protected void drawPrimaryLineAsPath(XYItemRendererState state,
+            Graphics2D g2, XYPlot plot, XYDataset dataset, int pass,
+            int series, int item, boolean selected, ValueAxis domainAxis,
+            ValueAxis rangeAxis, Rectangle2D dataArea) {
+
+
+        RectangleEdge xAxisLocation = plot.getDomainAxisEdge();
+        RectangleEdge yAxisLocation = plot.getRangeAxisEdge();
+
+        // get the data point...
+        double x1 = dataset.getXValue(series, item);
+        double y1 = dataset.getYValue(series, item);
+        double transX1 = domainAxis.valueToJava2D(x1, dataArea, xAxisLocation);
+        double transY1 = rangeAxis.valueToJava2D(y1, dataArea, yAxisLocation);
+
+        State s = (State) state;
+        // update path to reflect latest point
+        if (!Double.isNaN(transX1) && !Double.isNaN(transY1)) {
+            float x = (float) transX1;
+            float y = (float) transY1;
+            PlotOrientation orientation = plot.getOrientation();
+            if (orientation == PlotOrientation.HORIZONTAL) {
+                x = (float) transY1;
+                y = (float) transX1;
+            }
+            if (s.isLastPointGood()) {
+                s.seriesPath.lineTo(x, y);
+            }
+            else {
+                s.seriesPath.moveTo(x, y);
+            }
+            s.setLastPointGood(true);
+        }
+        else {
+            s.setLastPointGood(false);
+        }
+        // if this is the last item, draw the path ...
+        if (item == s.getLastItemIndex()) {
+            // draw path
+            drawShape1(g2, pass, series, item, selected, s.seriesPath);
+        }
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.jfree.chart.renderer.xy.XYLineAndShapeRenderer.drawItem(Graphics2D,XYItemRendererState,Rectangle2D,PlotRenderingInfo,XYPlot,ValueAxis,ValueAxis,XYDataset,int,int,CrosshairState,int)
+------------------------------------------------------------------------------------------
+public void drawItem(Graphics2D g2, XYItemRendererState state,
+            Rectangle2D dataArea, XYPlot plot, ValueAxis domainAxis,
+            ValueAxis rangeAxis, XYDataset dataset, int series, int item,
+            boolean selected, int pass) {
+
+        // do nothing if item is not visible
+        if (!getItemVisible(series, item)) {
+            return;
+        }
+
+        // first pass draws the background (lines, for instance)
+        if (isLinePass(pass)) {
+            if (getItemLineVisible(series, item)) {
+                if (this.drawSeriesLineAsPath) {
+                    drawPrimaryLineAsPath(state, g2, plot, dataset, pass,
+                            series, item, selected, domainAxis, rangeAxis,
+                            dataArea);
+                }
+                else {
+                    drawPrimaryLine(state, g2, plot, dataset, pass, series,
+                            item, selected, domainAxis, rangeAxis, dataArea);
+                }
+            }
+        }
+        // second pass adds shapes where the items are ..
+        else if (isItemPass(pass)) {
+
+            // setup for collecting optional entity info...
+            EntityCollection entities = null;
+            if (state.getInfo() != null) {
+                entities = state.getInfo().getOwner().getEntityCollection();
+            }
+
+            drawShape2(g2, dataArea, plot, dataset, pass, series, item,
+                    selected, domainAxis, rangeAxis, null, entities);
+        }
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.jfree.chart.renderer.xy.XYLineAndShapeRenderer.setDrawSeriesLineAsPath(boolean)
+------------------------------------------------------------------------------------------
+public void setDrawSeriesLineAsPath(boolean flag) {
+        if (this.drawSeriesLineAsPath != flag) {
+            this.drawSeriesLineAsPath = flag;
+            fireChangeEvent();
+        }
+    }
+
+------------------------------------------------------------------------------------------
+
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.jfree.chart.plot.junit.CategoryPlotTests#testSerialization4
+Runtime: 19503281
+------------------------------------------------------------------------------------------
+java.lang.NoClassDefFoundError: Could not initialize class sun.font.SunFontManager at java.desktop/sun.font.FontDesignMetrics.getMetrics(FontDesignMetrics.java:265) at java.desktop/sun.java2d.SunGraphics2D.getFontMetrics(SunGraphics2D.java:861) at org.jfree.chart.text.G2TextMeasurer.getStringWidth(G2TextMeasurer.java:75) at org.jfree.chart.text.TextUtilities.nextLineBreak(TextUtilities.java:251) at org.jfree.chart.text.TextUtilities.createTextBlock(TextUtilities.java:193) at org.jfree.chart.text.TextUtilities.createTextBlock(TextUtilities.java:165) at org.jfree.chart.title.TextTitle.arrangeRR(TextTitle.java:498) at org.jfree.chart.title.TextTitle.arrange(TextTitle.java:459) at org.jfree.chart.JFreeChart.drawTitle(JFreeChart.java:1305) at org.jfree.chart.JFreeChart.draw(JFreeChart.java:1195) at org.jfree.chart.JFreeChart.createBufferedImage(JFreeChart.java:1393) at org.jfree.chart.JFreeChart.createBufferedImage(JFreeChart.java:1373) at org.jfree.chart.JFreeChart.createBufferedImage(JFreeChart.java:1358) at org.jfree.chart.plot.junit.CategoryPlotTests.testSerialization4(CategoryPlotTests.java:566) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #2
+Test: org.jfree.chart.plot.junit.XYPlotTests#testSerialization3
+Runtime: 18500114
+------------------------------------------------------------------------------------------
+java.lang.NoClassDefFoundError: Could not initialize class sun.font.SunFontManager at java.desktop/sun.font.FontDesignMetrics.getMetrics(FontDesignMetrics.java:265) at java.desktop/sun.java2d.SunGraphics2D.getFontMetrics(SunGraphics2D.java:861) at org.jfree.chart.text.G2TextMeasurer.getStringWidth(G2TextMeasurer.java:75) at org.jfree.chart.text.TextUtilities.nextLineBreak(TextUtilities.java:251) at org.jfree.chart.text.TextUtilities.createTextBlock(TextUtilities.java:193) at org.jfree.chart.text.TextUtilities.createTextBlock(TextUtilities.java:165) at org.jfree.chart.title.TextTitle.arrangeRR(TextTitle.java:498) at org.jfree.chart.title.TextTitle.arrange(TextTitle.java:459) at org.jfree.chart.JFreeChart.drawTitle(JFreeChart.java:1305) at org.jfree.chart.JFreeChart.draw(JFreeChart.java:1195) at org.jfree.chart.JFreeChart.createBufferedImage(JFreeChart.java:1393) at org.jfree.chart.JFreeChart.createBufferedImage(JFreeChart.java:1373) at org.jfree.chart.JFreeChart.createBufferedImage(JFreeChart.java:1358) at org.jfree.chart.plot.junit.XYPlotTests.testSerialization3(XYPlotTests.java:671) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #3
+Test: org.jfree.chart.plot.junit.XYPlotTests#testSerialization4
+Runtime: 18037364
+------------------------------------------------------------------------------------------
+java.lang.NoClassDefFoundError: Could not initialize class sun.font.SunFontManager at java.desktop/sun.font.FontDesignMetrics.getMetrics(FontDesignMetrics.java:265) at java.desktop/sun.java2d.SunGraphics2D.getFontMetrics(SunGraphics2D.java:861) at org.jfree.chart.text.G2TextMeasurer.getStringWidth(G2TextMeasurer.java:75) at org.jfree.chart.text.TextUtilities.nextLineBreak(TextUtilities.java:251) at org.jfree.chart.text.TextUtilities.createTextBlock(TextUtilities.java:193) at org.jfree.chart.text.TextUtilities.createTextBlock(TextUtilities.java:165) at org.jfree.chart.title.TextTitle.arrangeRR(TextTitle.java:498) at org.jfree.chart.title.TextTitle.arrange(TextTitle.java:459) at org.jfree.chart.JFreeChart.drawTitle(JFreeChart.java:1305) at org.jfree.chart.JFreeChart.draw(JFreeChart.java:1195) at org.jfree.chart.JFreeChart.createBufferedImage(JFreeChart.java:1393) at org.jfree.chart.JFreeChart.createBufferedImage(JFreeChart.java:1373) at org.jfree.chart.JFreeChart.createBufferedImage(JFreeChart.java:1358) at org.jfree.chart.plot.junit.XYPlotTests.testSerialization4(XYPlotTests.java:724) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #4
+Test: org.jfree.chart.util.junit.ShapeUtilitiesTests#testEqualGeneralPaths
+Runtime: 413487
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError at junit.framework.Assert.fail(Assert.java:55) at junit.framework.Assert.assertTrue(Assert.java:22) at junit.framework.Assert.assertFalse(Assert.java:39) at junit.framework.Assert.assertFalse(Assert.java:47) at junit.framework.TestCase.assertFalse(TestCase.java:219) at org.jfree.chart.util.junit.ShapeUtilitiesTests.testEqualGeneralPaths(ShapeUtilitiesTests.java:212) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

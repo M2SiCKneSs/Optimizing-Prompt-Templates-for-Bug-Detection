@@ -1,0 +1,125 @@
+### TOP_METHODS (Ochiai)
+Source CSV: C:\Users\user\Desktop\uni\mark\FAILING_TEST\Thefuck\thefuck_22_ochiai_top_10.csv
+
+1. thefuck.main##print_alias(entry_point) | score=0.31622776601683794
+2. thefuck.main##run_command(old_cmd,command,settings) | score=0.31622776601683794
+3. thefuck.main##get_command(settings,args) | score=0.31622776601683794
+4. thefuck.main##setup_user_dir() | score=0.31622776601683794
+5. thefuck.main##main() | score=0.31622776601683794
+6. thefuck.main##fix_command() | score=0.31622776601683794
+7. thefuck.main##wait_output(settings,popen) | score=0.31622776601683794
+8. thefuck.corrector##get_loaded_rules(rules,settings) | score=0.1889822365046136
+9. thefuck.corrector##load_rule(rule,settings) | score=0.1889822365046136
+10. thefuck.corrector##get_rules(user_dir,settings) | score=0.1889822365046136
+
+### CODE_SNIPPETS
+
+---
+Rank: 1
+Method: thefuck.main##print_alias(entry_point)
+Ochiai_Score: 0.31622776601683794
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\main.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+---
+Rank: 2
+Method: thefuck.main##run_command(old_cmd,command,settings)
+Ochiai_Score: 0.31622776601683794
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\main.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+---
+Rank: 3
+Method: thefuck.main##get_command(settings,args)
+Ochiai_Score: 0.31622776601683794
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\main.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+---
+Rank: 4
+Method: thefuck.main##setup_user_dir()
+Ochiai_Score: 0.31622776601683794
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\main.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+---
+Rank: 5
+Method: thefuck.main##main()
+Ochiai_Score: 0.31622776601683794
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\main.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+---
+Rank: 6
+Method: thefuck.main##fix_command()
+Ochiai_Score: 0.31622776601683794
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\main.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+---
+Rank: 7
+Method: thefuck.main##wait_output(settings,popen)
+Ochiai_Score: 0.31622776601683794
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\main.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+---
+Rank: 8
+Method: thefuck.corrector##get_loaded_rules(rules,settings)
+Ochiai_Score: 0.1889822365046136
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\corrector.py
+Status: OK
+Snippet:
+def get_loaded_rules(rules_paths):
+    """Yields all available rules.
+
+    :type rules_paths: [Path]
+    :rtype: Iterable[Rule]
+
+    """
+    for path in rules_paths:
+        if path.name != '__init__.py':
+            rule = Rule.from_path(path)
+            if rule.is_enabled:
+                yield rule
+
+---
+Rank: 9
+Method: thefuck.corrector##load_rule(rule,settings)
+Ochiai_Score: 0.1889822365046136
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\corrector.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+---
+Rank: 10
+Method: thefuck.corrector##get_rules(user_dir,settings)
+Ochiai_Score: 0.1889822365046136
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\corrector.py
+Status: OK
+Snippet:
+def get_rules():
+    """Returns all enabled rules.
+
+    :rtype: [Rule]
+
+    """
+    paths = [rule_path for path in get_rules_import_paths()
+             for rule_path in sorted(path.glob('*.py'))]
+    return sorted(get_loaded_rules(paths),
+                  key=lambda rule: rule.priority)

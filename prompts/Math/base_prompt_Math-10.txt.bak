@@ -1,0 +1,332 @@
+### BUG_REPORT
+Title: DerivativeStructure.atan2(y,x) does not handle special cases properly
+
+Description:
+The four special cases +/-0 for both x and y should give the same values as Math.atan2 and FastMath.atan2. However, they give NaN for the value in all cases.
+
+
+### FAILING_TEST
+org.apache.commons.math3.analysis.differentiation.DerivativeStructure.atan2(DerivativeStructure,DerivativeStructure)
+org.apache.commons.math3.analysis.differentiation.DSCompiler.atan2(double[],int,double[],int,double[],int)
+org.apache.commons.math3.util.FastMath.cos(double)
+org.apache.commons.math3.util.FastMath.sin(double)
+org.apache.commons.math3.util.FastMath.atan(double,double,boolean)
+org.apache.commons.math3.analysis.differentiation.DerivativeStructure.atan2(DerivativeStructure,DerivativeStructure)
+org.apache.commons.math3.analysis.differentiation.DSCompiler.atan2(double[],int,double[],int,double[],int)
+org.apache.commons.math3.analysis.differentiation.DSCompiler.atan(double[],int,double[],int)
+org.apache.commons.math3.analysis.differentiation.DSCompiler.divide(double[],int,double[],int,double[],int)
+org.apache.commons.math3.util.FastMath.atan(double)
+
+### CODE_SNIPPETS
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.analysis.differentiation.DerivativeStructure.atan2(DerivativeStructure,DerivativeStructure)
+------------------------------------------------------------------------------------------
+public DerivativeStructure atan2(final DerivativeStructure x)
+        throws DimensionMismatchException {
+        compiler.checkCompatibility(x.compiler);
+        final DerivativeStructure result = new DerivativeStructure(compiler);
+        compiler.atan2(data, 0, x.data, 0, result.data, 0);
+        return result;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.analysis.differentiation.DSCompiler.atan2(double[],int,double[],int,double[],int)
+------------------------------------------------------------------------------------------
+public void atan2(final double[] y, final int yOffset,
+                      final double[] x, final int xOffset,
+                      final double[] result, final int resultOffset) {
+
+        // compute r = sqrt(x^2+y^2)
+        double[] tmp1 = new double[getSize()];
+        multiply(x, xOffset, x, xOffset, tmp1, 0);      // x^2
+        double[] tmp2 = new double[getSize()];
+        multiply(y, yOffset, y, yOffset, tmp2, 0);      // y^2
+        add(tmp1, 0, tmp2, 0, tmp2, 0);                 // x^2 + y^2
+        rootN(tmp2, 0, 2, tmp1, 0);                     // r = sqrt(x^2 + y^2)
+
+        if (x[xOffset] >= 0) {
+
+            // compute atan2(y, x) = 2 atan(y / (r + x))
+            add(tmp1, 0, x, xOffset, tmp2, 0);          // r + x
+            divide(y, yOffset, tmp2, 0, tmp1, 0);       // y /(r + x)
+            atan(tmp1, 0, tmp2, 0);                     // atan(y / (r + x))
+            for (int i = 0; i < tmp2.length; ++i) {
+                result[resultOffset + i] = 2 * tmp2[i]; // 2 * atan(y / (r + x))
+            }
+
+        } else {
+
+            // compute atan2(y, x) = +/- pi - 2 atan(y / (r - x))
+            subtract(tmp1, 0, x, xOffset, tmp2, 0);     // r - x
+            divide(y, yOffset, tmp2, 0, tmp1, 0);       // y /(r - x)
+            atan(tmp1, 0, tmp2, 0);                     // atan(y / (r - x))
+            result[resultOffset] =
+                    ((tmp2[0] <= 0) ? -FastMath.PI : FastMath.PI) - 2 * tmp2[0]; // +/-pi - 2 * atan(y / (r - x))
+            for (int i = 1; i < tmp2.length; ++i) {
+                result[resultOffset + i] = -2 * tmp2[i]; // +/-pi - 2 * atan(y / (r - x))
+            }
+
+        }
+
+        // fix value to take special cases (+0/+0, +0/-0, -0/+0, -0/-0, +/-infinity) correctly
+        result[resultOffset] = FastMath.atan2(y[yOffset], x[xOffset]);
+
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.util.FastMath.cos(double)
+------------------------------------------------------------------------------------------
+public static double cos(double x) {
+        int quadrant = 0;
+
+        /* Take absolute value of the input */
+        double xa = x;
+        if (x < 0) {
+            xa = -xa;
+        }
+
+        if (xa != xa || xa == Double.POSITIVE_INFINITY) {
+            return Double.NaN;
+        }
+
+        /* Perform any argument reduction */
+        double xb = 0;
+        if (xa > 3294198.0) {
+            // PI * (2**20)
+            // Argument too big for CodyWaite reduction.  Must use
+            // PayneHanek.
+            double reduceResults[] = new double[3];
+            reducePayneHanek(xa, reduceResults);
+            quadrant = ((int) reduceResults[0]) & 3;
+            xa = reduceResults[1];
+            xb = reduceResults[2];
+        } else if (xa > 1.5707963267948966) {
+            final CodyWaite cw = new CodyWaite(xa);
+            quadrant = cw.getK() & 3;
+            xa = cw.getRemA();
+            xb = cw.getRemB();
+        }
+
+        //if (negative)
+        //  quadrant = (quadrant + 2) % 4;
+
+        switch (quadrant) {
+            case 0:
+                return cosQ(xa, xb);
+            case 1:
+                return -sinQ(xa, xb);
+            case 2:
+                return -cosQ(xa, xb);
+            case 3:
+                return sinQ(xa, xb);
+            default:
+                return Double.NaN;
+        }
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.util.FastMath.sin(double)
+------------------------------------------------------------------------------------------
+public static double sin(double x) {
+        boolean negative = false;
+        int quadrant = 0;
+        double xa;
+        double xb = 0.0;
+
+        /* Take absolute value of the input */
+        xa = x;
+        if (x < 0) {
+            negative = true;
+            xa = -xa;
+        }
+
+        /* Check for zero and negative zero */
+        if (xa == 0.0) {
+            long bits = Double.doubleToRawLongBits(x);
+            if (bits < 0) {
+                return -0.0;
+            }
+            return 0.0;
+        }
+
+        if (xa != xa || xa == Double.POSITIVE_INFINITY) {
+            return Double.NaN;
+        }
+
+        /* Perform any argument reduction */
+        if (xa > 3294198.0) {
+            // PI * (2**20)
+            // Argument too big for CodyWaite reduction.  Must use
+            // PayneHanek.
+            double reduceResults[] = new double[3];
+            reducePayneHanek(xa, reduceResults);
+            quadrant = ((int) reduceResults[0]) & 3;
+            xa = reduceResults[1];
+            xb = reduceResults[2];
+        } else if (xa > 1.5707963267948966) {
+            final CodyWaite cw = new CodyWaite(xa);
+            quadrant = cw.getK() & 3;
+            xa = cw.getRemA();
+            xb = cw.getRemB();
+        }
+
+        if (negative) {
+            quadrant ^= 2;  // Flip bit 1
+        }
+
+        switch (quadrant) {
+            case 0:
+                return sinQ(xa, xb);
+            case 1:
+                return cosQ(xa, xb);
+            case 2:
+                return -sinQ(xa, xb);
+            case 3:
+                return -cosQ(xa, xb);
+            default:
+                return Double.NaN;
+        }
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.util.FastMath.atan(double,double,boolean)
+------------------------------------------------------------------------------------------
+public static double atan(double x) {
+        return atan(x, 0.0, false);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.analysis.differentiation.DerivativeStructure.atan2(DerivativeStructure,DerivativeStructure)
+------------------------------------------------------------------------------------------
+public DerivativeStructure atan2(final DerivativeStructure x)
+        throws DimensionMismatchException {
+        compiler.checkCompatibility(x.compiler);
+        final DerivativeStructure result = new DerivativeStructure(compiler);
+        compiler.atan2(data, 0, x.data, 0, result.data, 0);
+        return result;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.analysis.differentiation.DSCompiler.atan2(double[],int,double[],int,double[],int)
+------------------------------------------------------------------------------------------
+public void atan2(final double[] y, final int yOffset,
+                      final double[] x, final int xOffset,
+                      final double[] result, final int resultOffset) {
+
+        // compute r = sqrt(x^2+y^2)
+        double[] tmp1 = new double[getSize()];
+        multiply(x, xOffset, x, xOffset, tmp1, 0);      // x^2
+        double[] tmp2 = new double[getSize()];
+        multiply(y, yOffset, y, yOffset, tmp2, 0);      // y^2
+        add(tmp1, 0, tmp2, 0, tmp2, 0);                 // x^2 + y^2
+        rootN(tmp2, 0, 2, tmp1, 0);                     // r = sqrt(x^2 + y^2)
+
+        if (x[xOffset] >= 0) {
+
+            // compute atan2(y, x) = 2 atan(y / (r + x))
+            add(tmp1, 0, x, xOffset, tmp2, 0);          // r + x
+            divide(y, yOffset, tmp2, 0, tmp1, 0);       // y /(r + x)
+            atan(tmp1, 0, tmp2, 0);                     // atan(y / (r + x))
+            for (int i = 0; i < tmp2.length; ++i) {
+                result[resultOffset + i] = 2 * tmp2[i]; // 2 * atan(y / (r + x))
+            }
+
+        } else {
+
+            // compute atan2(y, x) = +/- pi - 2 atan(y / (r - x))
+            subtract(tmp1, 0, x, xOffset, tmp2, 0);     // r - x
+            divide(y, yOffset, tmp2, 0, tmp1, 0);       // y /(r - x)
+            atan(tmp1, 0, tmp2, 0);                     // atan(y / (r - x))
+            result[resultOffset] =
+                    ((tmp2[0] <= 0) ? -FastMath.PI : FastMath.PI) - 2 * tmp2[0]; // +/-pi - 2 * atan(y / (r - x))
+            for (int i = 1; i < tmp2.length; ++i) {
+                result[resultOffset + i] = -2 * tmp2[i]; // +/-pi - 2 * atan(y / (r - x))
+            }
+
+        }
+
+        // fix value to take special cases (+0/+0, +0/-0, -0/+0, -0/-0, +/-infinity) correctly
+        result[resultOffset] = FastMath.atan2(y[yOffset], x[xOffset]);
+
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.analysis.differentiation.DSCompiler.atan(double[],int,double[],int)
+------------------------------------------------------------------------------------------
+public void atan(final double[] operand, final int operandOffset,
+                     final double[] result, final int resultOffset) {
+
+        // create the function value and derivatives
+        double[] function = new double[1 + order];
+        final double x = operand[operandOffset];
+        function[0] = FastMath.atan(x);
+        if (order > 0) {
+            // the nth order derivative of atan has the form:
+            // dn(atan(x)/dxn = Q_n(x) / (1 + x^2)^n
+            // where Q_n(x) is a degree n-1 polynomial with same parity as n-1
+            // Q_1(x) = 1, Q_2(x) = -2x, Q_3(x) = 6x^2 - 2 ...
+            // the general recurrence relation for Q_n is:
+            // Q_n(x) = (1+x^2) Q_(n-1)'(x) - 2(n-1) x Q_(n-1)(x)
+            // as per polynomial parity, we can store coefficients of both Q_(n-1) and Q_n in the same array
+            final double[] q = new double[order];
+            q[0] = 1;
+            final double x2    = x * x;
+            final double f     = 1.0 / (1 + x2);
+            double coeff = f;
+            function[1] = coeff * q[0];
+            for (int n = 2; n <= order; ++n) {
+
+                // update and evaluate polynomial Q_n(x)
+                double v = 0;
+                q[n - 1] = -n * q[n - 2];
+                for (int k = n - 1; k >= 0; k -= 2) {
+                    v = v * x2 + q[k];
+                    if (k > 2) {
+                        q[k - 2] = (k - 1) * q[k - 1] + (k - 1 - 2 * n) * q[k - 3];
+                    } else if (k == 2) {
+                        q[0] = q[1];
+                    }
+                }
+                if ((n & 0x1) == 0) {
+                    v *= x;
+                }
+
+                coeff *= f;
+                function[n] = coeff * v;
+
+            }
+        }
+
+        // apply function composition
+        compose(operand, operandOffset, function, result, resultOffset);
+
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.analysis.differentiation.DSCompiler.divide(double[],int,double[],int,double[],int)
+------------------------------------------------------------------------------------------
+public void divide(final double[] lhs, final int lhsOffset,
+                       final double[] rhs, final int rhsOffset,
+                       final double[] result, final int resultOffset) {
+        final double[] reciprocal = new double[getSize()];
+        pow(rhs, lhsOffset, -1, reciprocal, 0);
+        multiply(lhs, lhsOffset, reciprocal, 0, result, resultOffset);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.util.FastMath.atan(double)
+------------------------------------------------------------------------------------------
+public static double atan(double x) {
+        return atan(x, 0.0, false);
+    }
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.apache.commons.math3.analysis.differentiation.DerivativeStructureTest#testAtan2SpecialCases
+Runtime: 2519296
+------------------------------------------------------------------------------------------
+java.lang.AssertionError: expected:<0.0> but was:<NaN> at org.junit.Assert.fail(Assert.java:88) at org.junit.Assert.failNotEquals(Assert.java:834) at org.junit.Assert.assertEquals(Assert.java:553) at org.junit.Assert.assertEquals(Assert.java:683) at org.apache.commons.math3.analysis.differentiation.DerivativeStructureTest.testAtan2SpecialCases(DerivativeStructureTest.java:816) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

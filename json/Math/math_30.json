@@ -1,0 +1,31 @@
+{
+  "project": "Math",
+  "bug_id": 30,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.math3.stat.inference.MannWhitneyUTest.calculateAsymptoticPValue(double",
+      "score": 0.991169
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.math3.stat.inference.MannWhitneyUTest.ensureDataConformance(double[]",
+      "score": 0.870456
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.math3.special.Gamma.regularizedGammaP(double",
+      "score": 0.757294
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.math3.stat.inference.TestUtils.chiSquareTestDataSetsComparison(long[]",
+      "score": 0.632245
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.math3.stat.inference.MannWhitneyUTest.MannWhitneyUTest()",
+      "score": 0.519104
+    }
+  ]
+}

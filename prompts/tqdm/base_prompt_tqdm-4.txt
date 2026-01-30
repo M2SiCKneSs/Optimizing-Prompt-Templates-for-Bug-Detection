@@ -1,0 +1,66 @@
+### TOP_METHODS (Ochiai)
+1. ..tqdm._tqdm$tqdm#fp_write(s) | score=0.16222142113076254
+2. ..tqdm._tqdm$tqdm#print_status(s) | score=0.16222142113076254
+3. ..tqdm._main##cast(val,typ) | score=0.1386750490563073
+4. ..tqdm._main##main(fp,argv) | score=0.1386750490563073
+5. ..tqdm._main##posix_pipe(fin,fout,delim,buf_size,callback) | score=0.1386750490563073
+
+
+### CODE_SNIPPETS
+
+
+
+---
+Rank: 1
+Method: ..tqdm._tqdm$tqdm#fp_write(s)
+Ochiai_Score: 0.16222142113076254
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\tqdm\_tqdm.py
+Resolved_Symbol: class tqdm.fp_write
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in _tqdm.py)
+
+
+---
+Rank: 2
+Method: ..tqdm._tqdm$tqdm#print_status(s)
+Ochiai_Score: 0.16222142113076254
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\tqdm\_tqdm.py
+Resolved_Symbol: class tqdm.print_status
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in _tqdm.py)
+
+
+---
+Rank: 3
+Method: ..tqdm._main##cast(val,typ)
+Ochiai_Score: 0.1386750490563073
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\tqdm\_tqdm.py
+Resolved_Symbol: class ..tqdm._main.cast
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in _tqdm.py)
+
+
+---
+Rank: 4
+Method: ..tqdm._main##main(fp,argv)
+Ochiai_Score: 0.1386750490563073
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\tqdm\_tqdm.py
+Resolved_Symbol: class ..tqdm._main.main
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in _tqdm.py)
+
+
+---
+Rank: 5
+Method: ..tqdm._main##posix_pipe(fin,fout,delim,buf_size,callback)
+Ochiai_Score: 0.1386750490563073
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\tqdm\_tqdm.py
+Resolved_Symbol: class ..tqdm._main.posix_pipe
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in _tqdm.py)
+

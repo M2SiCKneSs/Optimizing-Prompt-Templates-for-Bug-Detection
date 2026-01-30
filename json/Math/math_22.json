@@ -1,0 +1,31 @@
+{
+  "project": "Math",
+  "bug_id": 22,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.math3.distribution.FDistribution.isSupportLowerBoundInclusive()",
+      "score": 0.999105
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.math3.distribution.FDistribution.density(double)",
+      "score": 0.878171
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.math3.distribution.GammaDistribution.density(double)",
+      "score": 0.757416
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.math3.distribution.FDistribution.isSupportUpperBoundInclusive()",
+      "score": 0.636493
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.math3.optimization.direct.BOBYQAOptimizer.trsbox(double",
+      "score": 0.518445
+    }
+  ]
+}

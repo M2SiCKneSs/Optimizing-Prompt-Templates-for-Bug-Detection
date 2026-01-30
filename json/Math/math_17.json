@@ -1,0 +1,31 @@
+{
+  "project": "Math",
+  "bug_id": 17,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.math3.dfp.Dfp.multiply(Dfp)",
+      "score": 0.99572
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.math3.dfp.Dfp.multiply(int)",
+      "score": 0.871803
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.math3.dfp.DfpMath.pow(Dfp",
+      "score": 0.750976
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.math3.dfp.Dfp.multiplyFast(int)",
+      "score": 0.638017
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.math3.dfp.Dfp.toDouble()",
+      "score": 0.51738
+    }
+  ]
+}

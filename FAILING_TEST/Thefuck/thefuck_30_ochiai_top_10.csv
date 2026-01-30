@@ -1,0 +1,11 @@
+Method,Ochiai_Score
+"thefuck.rules.fix_file##get_new_command(command,settings)",0.4879500364742666
+"thefuck.rules.fix_file##match(command,settings)",0.4879500364742666
+thefuck.rules.fix_file##_search(stderr),0.4879500364742666
+thefuck.rules.fix_file##_make_pattern(pattern),0.4879500364742666
+thefuck.conf$_DefaultRulesNames#__add__(items),0.21004201260420147
+thefuck.conf$_DefaultRulesNames#__eq__(other),0.21004201260420147
+thefuck.conf##_settings_from_file(user_dir),0.21004201260420147
+thefuck.conf##_rules_from_env(val),0.21004201260420147
+thefuck.conf##_priority_from_env(val),0.21004201260420147
+"thefuck.conf##_val_from_env(env,attr)",0.21004201260420147

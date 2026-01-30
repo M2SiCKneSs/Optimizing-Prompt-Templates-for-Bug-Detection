@@ -1,0 +1,49 @@
+Fault Localization Evaluation (K=5)
+========================================
+
+Project: Time (24 bugs)
+  Top-1 Hits: 6
+  Top-3 Hits: 13
+  Top-5 Hits: 18
+  Mean Precision: 0.1750
+  Mean Recall:    0.4865
+  Mean F1:        0.2265
+  Mean Accuracy:  0.9882
+
+Project: Math (41 bugs)
+  Top-1 Hits: 20
+  Top-3 Hits: 31
+  Top-5 Hits: 35
+  Mean Precision: 0.2488
+  Mean Recall:    0.7128
+  Mean F1:        0.3392
+  Mean Accuracy:  0.9588
+
+Project: Lang (34 bugs)
+  Top-1 Hits: 25
+  Top-3 Hits: 28
+  Top-5 Hits: 30
+  Mean Precision: 0.2882
+  Mean Recall:    0.6554
+  Mean F1:        0.3243
+  Mean Accuracy:  0.9003
+
+Project: Chart (22 bugs)
+  Top-1 Hits: 11
+  Top-3 Hits: 16
+  Top-5 Hits: 16
+  Mean Precision: 0.2500
+  Mean Recall:    0.5699
+  Mean F1:        0.3026
+  Mean Accuracy:  0.9005
+
+OVERALL TOTALS
+---------------
+Total Bugs Analyzed: 121
+Total Top-1: 62
+Total Top-3: 88
+Total Top-5: 99
+Average Precision: 0.2455
+Average Recall:    0.6258
+Average F1:        0.3060
+Average Accuracy:  0.9376

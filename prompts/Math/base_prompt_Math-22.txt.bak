@@ -1,0 +1,195 @@
+### BUG_REPORT
+Title: Fix and then deprecate isSupportXxxInclusive in RealDistribution interface
+
+Description:
+The conclusion from [1] was never implemented. We should deprecate these
+properties from the RealDistribution interface, but since removal
+will have to wait until 4.0, we should agree on a precise
+definition and fix the code to match it in the mean time.
+The definition that I propose is that isSupportXxxInclusive means
+that when the density function is applied to the upper or lower
+bound of support returned by getSupportXxxBound, a finite (i.e. not
+infinite), not NaN value is returned.
+[1] http://markmail.org/message/dxuxh7eybl7xejde
+
+
+### FAILING_TEST
+org.apache.commons.math3.distribution.UniformRealDistribution.isSupportUpperBoundInclusive()
+org.apache.commons.math3.distribution.FDistribution.isSupportLowerBoundInclusive()
+org.apache.commons.math3.distribution.GammaDistribution.density(double)
+org.apache.commons.math3.util.FastMath.log(double,double[])
+org.apache.commons.math3.distribution.UniformRealDistribution.density(double)
+org.apache.commons.math3.distribution.UniformRealDistribution.isSupportUpperBoundInclusive()
+org.apache.commons.math3.distribution.FDistribution.isSupportLowerBoundInclusive()
+org.apache.commons.math3.distribution.UniformRealDistribution.density(double)
+org.apache.commons.math3.distribution.UniformRealDistribution.getSupportUpperBound()
+org.apache.commons.math3.distribution.FDistribution.density(double)
+
+### CODE_SNIPPETS
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.distribution.UniformRealDistribution.isSupportUpperBoundInclusive()
+------------------------------------------------------------------------------------------
+public boolean isSupportUpperBoundInclusive() {
+        return true;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.distribution.FDistribution.isSupportLowerBoundInclusive()
+------------------------------------------------------------------------------------------
+public boolean isSupportLowerBoundInclusive() {
+        return false;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.distribution.GammaDistribution.density(double)
+------------------------------------------------------------------------------------------
+public double density(double x) {
+       /* The present method must return the value of
+        *
+        *     1       x a     - x
+        * ---------- (-)  exp(---)
+        * x Gamma(a)  b        b
+        *
+        * where a is the shape parameter, and b the scale parameter.
+        * Substituting the Lanczos approximation of Gamma(a) leads to the
+        * following expression of the density
+        *
+        * a              e            1         y      a
+        * - sqrt(------------------) ---- (-----------)  exp(a - y + g),
+        * x      2 pi (a + g + 0.5)  L(a)  a + g + 0.5
+        *
+        * where y = x / b. The above formula is the "natural" computation, which
+        * is implemented when no overflow is likely to occur. If overflow occurs
+        * with the natural computation, the following identity is used. It is
+        * based on the BOOST library
+        * http://www.boost.org/doc/libs/1_35_0/libs/math/doc/sf_and_dist/html/math_toolkit/special/sf_gamma/igamma.html
+        * Formula (15) needs adaptations, which are detailed below.
+        *
+        *       y      a
+        * (-----------)  exp(a - y + g)
+        *  a + g + 0.5
+        *                              y - a - g - 0.5    y (g + 0.5)
+        *               = exp(a log1pm(---------------) - ----------- + g),
+        *                                a + g + 0.5      a + g + 0.5
+        *
+        *  where log1pm(z) = log(1 + z) - z. Therefore, the value to be
+        *  returned is
+        *
+        * a              e            1
+        * - sqrt(------------------) ----
+        * x      2 pi (a + g + 0.5)  L(a)
+        *                              y - a - g - 0.5    y (g + 0.5)
+        *               * exp(a log1pm(---------------) - ----------- + g).
+        *                                a + g + 0.5      a + g + 0.5
+        */
+        if (x < 0) {
+            return 0;
+        }
+        final double y = x / scale;
+        if ((y <= minY) || (FastMath.log(y) >= maxLogY)) {
+            /*
+             * Overflow.
+             */
+            final double aux1 = (y - shiftedShape) / shiftedShape;
+            final double aux2 = shape * (FastMath.log1p(aux1) - aux1);
+            final double aux3 = -y * (Gamma.LANCZOS_G + 0.5) / shiftedShape +
+                    Gamma.LANCZOS_G + aux2;
+            return densityPrefactor2 / x * FastMath.exp(aux3);
+        }
+        /*
+         * Natural calculation.
+         */
+        return densityPrefactor1  * FastMath.exp(-y) *
+                FastMath.pow(y, shape - 1);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.util.FastMath.log(double,double[])
+------------------------------------------------------------------------------------------
+private static final double LOG_MAX_VALUE = StrictMath.log(Double.MAX_VALUE);
+
+    /** Indicator for tables initialization.
+     * <p>
+     * This compile-time constant should be set to true only if one explicitly
+     * wants to compute the tables at class loading time instead of using the
+     * already computed ones provided as literal arrays below.
+     * </p>
+     */
+    private static final boolean RECOMPUTE_TABLES_AT_RUNTIME = false;
+
+    /** log(2) (high bits). */
+    private static final double LN_2_A = 0.693147063255310059;
+
+    /** log(2) (low bits). */
+    private static final double LN_2_B = 1.17304635250823482e-7;
+
+    /** Coefficients for log, when input 0.99 < x < 1.01. */
+    private static final double LN_QUICK_COEF[][] = {
+        {1.0, 5.669184079525E-24},
+        {-0.25, -0.25},
+        {0.3333333134651184, 1.986821492305628E-8},
+        {-0.25, -6.663542893624021E-14},
+        {0.19999998807907104, 1.1921056801463227E-8},
+        {-0.1666666567325592, -7.800414592973399E-9},
+        {0.1428571343421936, 5.650007086920087E-9},
+        {-0.12502530217170715, -7.44321345601866E-11},
+        {0.11113807559013367, 9.219544613762692E-9},
+    };
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.distribution.UniformRealDistribution.density(double)
+------------------------------------------------------------------------------------------
+public double density(double x) {
+        if (x < lower || x > upper) {
+            return 0.0;
+        }
+        return 1 / (upper - lower);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.distribution.UniformRealDistribution.isSupportUpperBoundInclusive()
+------------------------------------------------------------------------------------------
+public boolean isSupportUpperBoundInclusive() {
+        return true;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.distribution.FDistribution.isSupportLowerBoundInclusive()
+------------------------------------------------------------------------------------------
+public boolean isSupportLowerBoundInclusive() {
+        return false;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.distribution.UniformRealDistribution.density(double)
+------------------------------------------------------------------------------------------
+public double density(double x) {
+        if (x < lower || x > upper) {
+            return 0.0;
+        }
+        return 1 / (upper - lower);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.distribution.UniformRealDistribution.getSupportUpperBound()
+------------------------------------------------------------------------------------------
+public double getSupportUpperBound() {
+        return upper;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.distribution.FDistribution.density(double)
+------------------------------------------------------------------------------------------
+public double density(double x) {
+        final double nhalf = numeratorDegreesOfFreedom / 2;
+        final double mhalf = denominatorDegreesOfFreedom / 2;
+        final double logx = FastMath.log(x);
+        final double logn = FastMath.log(numeratorDegreesOfFreedom);
+        final double logm = FastMath.log(denominatorDegreesOfFreedom);
+        final double lognxm = FastMath.log(numeratorDegreesOfFreedom * x +
+                                           denominatorDegreesOfFreedom);
+        return FastMath.exp(nhalf * logn + nhalf * logx - logx +
+                            mhalf * logm - nhalf * lognxm - mhalf * lognxm -
+                            Beta.logBeta(nhalf, mhalf));
+    }

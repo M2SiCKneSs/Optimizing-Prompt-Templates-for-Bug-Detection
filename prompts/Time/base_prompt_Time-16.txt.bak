@@ -1,0 +1,269 @@
+### BUG_REPORT
+Title: #148 DateTimeFormatter.parseInto broken when no year in format
+
+Description:
+In Joda Time 2.0, the default year was set to 2000 so that Feb 29 could be parsed correctly. However, parseInto now overwrites the given instant's year with 2000 (or whatever iDefaultYear is set to). The correct behavior would seem to be to use the given instant's year instead of iDefaultYear.
+This does mean that Feb 29 might not be parseable if the instant's year is not a leap year, but in this case the caller asked for that in a sense.
+
+
+### FAILING_TEST
+org.joda.time.format.DateTimeFormatter.parseInto(ReadWritableInstant,String,int)
+org.joda.time.chrono.BasicGJChronology.getYearDifference(long,long)
+org.joda.time.format.DateTimeFormatter.withDefaultYear(int)
+org.joda.time.chrono.BasicGJChronology.setYear(long,int)
+org.joda.time.chrono.BasicGJChronology.getMonthOfYear(long,int)
+org.joda.time.format.DateTimeFormatter.parseInto(ReadWritableInstant,String,int)
+org.joda.time.base.BaseDateTime.setChronology(Chronology)
+org.joda.time.MutableDateTime.setChronology(Chronology)
+org.joda.time.MutableDateTime.MutableDateTime(int,int,int,int,int,int,int,DateTimeZone)
+org.joda.time.format.ISODateTimeFormat.dateTimeNoMillis()
+
+### CODE_SNIPPETS
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.format.DateTimeFormatter.parseInto(ReadWritableInstant,String,int)
+------------------------------------------------------------------------------------------
+public int parseInto(ReadWritableInstant instant, String text, int position) {
+        DateTimeParser parser = requireParser();
+        if (instant == null) {
+            throw new IllegalArgumentException("Instant must not be null");
+        }
+        
+        long instantMillis = instant.getMillis();
+        Chronology chrono = instant.getChronology();
+        int defaultYear = DateTimeUtils.getChronology(chrono).year().get(instantMillis);
+        long instantLocal = instantMillis + chrono.getZone().getOffset(instantMillis);
+        chrono = selectChronology(chrono);
+        
+        DateTimeParserBucket bucket = new DateTimeParserBucket(
+            instantLocal, chrono, iLocale, iPivotYear, defaultYear);
+        int newPos = parser.parseInto(bucket, text, position);
+        instant.setMillis(bucket.computeMillis(false, text));
+        if (iOffsetParsed && bucket.getOffsetInteger() != null) {
+            int parsedOffset = bucket.getOffsetInteger();
+            DateTimeZone parsedZone = DateTimeZone.forOffsetMillis(parsedOffset);
+            chrono = chrono.withZone(parsedZone);
+        } else if (bucket.getZone() != null) {
+            chrono = chrono.withZone(bucket.getZone());
+        }
+        instant.setChronology(chrono);
+        if (iZone != null) {
+            instant.setZone(iZone);
+        }
+        return newPos;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.chrono.BasicGJChronology.getYearDifference(long,long)
+------------------------------------------------------------------------------------------
+long getYearDifference(long minuendInstant, long subtrahendInstant) {
+        int minuendYear = getYear(minuendInstant);
+        int subtrahendYear = getYear(subtrahendInstant);
+    
+        // Inlined remainder method to avoid duplicate calls to get.
+        long minuendRem = minuendInstant - getYearMillis(minuendYear);
+        long subtrahendRem = subtrahendInstant - getYearMillis(subtrahendYear);
+    
+        // Balance leap year differences on remainders.
+        if (subtrahendRem >= FEB_29) {
+            if (isLeapYear(subtrahendYear)) {
+                if (!isLeapYear(minuendYear)) {
+                    subtrahendRem -= DateTimeConstants.MILLIS_PER_DAY;
+                }
+            } else if (minuendRem >= FEB_29 && isLeapYear(minuendYear)) {
+                minuendRem -= DateTimeConstants.MILLIS_PER_DAY;
+            }
+        }
+    
+        int difference = minuendYear - subtrahendYear;
+        if (minuendRem < subtrahendRem) {
+            difference--;
+        }
+        return difference;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.format.DateTimeFormatter.withDefaultYear(int)
+------------------------------------------------------------------------------------------
+public DateTimeFormatter withDefaultYear(int defaultYear) {
+        return new DateTimeFormatter(iPrinter, iParser, iLocale,
+                iOffsetParsed, iChrono, iZone, iPivotYear, defaultYear);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.chrono.BasicGJChronology.setYear(long,int)
+------------------------------------------------------------------------------------------
+long setYear(long instant, int year) {
+        int thisYear = getYear(instant);
+        int dayOfYear = getDayOfYear(instant, thisYear);
+        int millisOfDay = getMillisOfDay(instant);
+
+        if (dayOfYear > (31 + 28)) { // after Feb 28
+            if (isLeapYear(thisYear)) {
+                // Current date is Feb 29 or later.
+                if (!isLeapYear(year)) {
+                    // Moving to a non-leap year, Feb 29 does not exist.
+                    dayOfYear--;
+                }
+            } else {
+                // Current date is Mar 01 or later.
+                if (isLeapYear(year)) {
+                    // Moving to a leap year, account for Feb 29.
+                    dayOfYear++;
+                }
+            }
+        }
+
+        instant = getYearMonthDayMillis(year, 1, dayOfYear);
+        instant += millisOfDay;
+
+        return instant;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.chrono.BasicGJChronology.getMonthOfYear(long,int)
+------------------------------------------------------------------------------------------
+int getMonthOfYear(long millis, int year) {
+        // Perform a binary search to get the month. To make it go even faster,
+        // compare using ints instead of longs. The number of milliseconds per
+        // year exceeds the limit of a 32-bit int's capacity, so divide by
+        // 1024. No precision is lost (except time of day) since the number of
+        // milliseconds per day contains 1024 as a factor. After the division,
+        // the instant isn't measured in milliseconds, but in units of
+        // (128/125)seconds.
+
+        int i = (int)((millis - getYearMillis(year)) >> 10);
+
+        // There are 86400000 milliseconds per day, but divided by 1024 is
+        // 84375. There are 84375 (128/125)seconds per day.
+
+        return
+            (isLeapYear(year))
+            ? ((i < 182 * 84375)
+               ? ((i < 91 * 84375)
+                  ? ((i < 31 * 84375) ? 1 : (i < 60 * 84375) ? 2 : 3)
+                  : ((i < 121 * 84375) ? 4 : (i < 152 * 84375) ? 5 : 6))
+               : ((i < 274 * 84375)
+                  ? ((i < 213 * 84375) ? 7 : (i < 244 * 84375) ? 8 : 9)
+                  : ((i < 305 * 84375) ? 10 : (i < 335 * 84375) ? 11 : 12)))
+            : ((i < 181 * 84375)
+               ? ((i < 90 * 84375)
+                  ? ((i < 31 * 84375) ? 1 : (i < 59 * 84375) ? 2 : 3)
+                  : ((i < 120 * 84375) ? 4 : (i < 151 * 84375) ? 5 : 6))
+               : ((i < 273 * 84375)
+                  ? ((i < 212 * 84375) ? 7 : (i < 243 * 84375) ? 8 : 9)
+                  : ((i < 304 * 84375) ? 10 : (i < 334 * 84375) ? 11 : 12)));
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.format.DateTimeFormatter.parseInto(ReadWritableInstant,String,int)
+------------------------------------------------------------------------------------------
+public int parseInto(ReadWritableInstant instant, String text, int position) {
+        DateTimeParser parser = requireParser();
+        if (instant == null) {
+            throw new IllegalArgumentException("Instant must not be null");
+        }
+        
+        long instantMillis = instant.getMillis();
+        Chronology chrono = instant.getChronology();
+        int defaultYear = DateTimeUtils.getChronology(chrono).year().get(instantMillis);
+        long instantLocal = instantMillis + chrono.getZone().getOffset(instantMillis);
+        chrono = selectChronology(chrono);
+        
+        DateTimeParserBucket bucket = new DateTimeParserBucket(
+            instantLocal, chrono, iLocale, iPivotYear, defaultYear);
+        int newPos = parser.parseInto(bucket, text, position);
+        instant.setMillis(bucket.computeMillis(false, text));
+        if (iOffsetParsed && bucket.getOffsetInteger() != null) {
+            int parsedOffset = bucket.getOffsetInteger();
+            DateTimeZone parsedZone = DateTimeZone.forOffsetMillis(parsedOffset);
+            chrono = chrono.withZone(parsedZone);
+        } else if (bucket.getZone() != null) {
+            chrono = chrono.withZone(bucket.getZone());
+        }
+        instant.setChronology(chrono);
+        if (iZone != null) {
+            instant.setZone(iZone);
+        }
+        return newPos;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.base.BaseDateTime.setChronology(Chronology)
+------------------------------------------------------------------------------------------
+protected void setChronology(Chronology chronology) {
+        iChronology = checkChronology(chronology);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.MutableDateTime.setChronology(Chronology)
+------------------------------------------------------------------------------------------
+public void setChronology(Chronology chronology) {
+        super.setChronology(chronology);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.MutableDateTime.MutableDateTime(int,int,int,int,int,int,int,DateTimeZone)
+------------------------------------------------------------------------------------------
+public MutableDateTime() {
+        super();
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.format.ISODateTimeFormat.dateTimeNoMillis()
+------------------------------------------------------------------------------------------
+public static DateTimeFormatter dateTimeNoMillis() {
+        return Constants.dtx;
+    }
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.joda.time.format.TestDateTimeFormatter#testParseInto_monthDay_feb29
+Runtime: 4662236
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<2004-02-29T12:20:30.000Z> but was:<2000-02-29T12:20:30.000Z> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:86) at junit.framework.TestCase.assertEquals(TestCase.java:253) at org.joda.time.format.TestDateTimeFormatter.testParseInto_monthDay_feb29(TestDateTimeFormatter.java:905) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #2
+Test: org.joda.time.format.TestDateTimeFormatter#testParseInto_monthDay_withDefaultYear_feb29
+Runtime: 3789566
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<2004-02-29T12:20:30.000Z> but was:<2012-02-29T12:20:30.000Z> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:86) at junit.framework.TestCase.assertEquals(TestCase.java:253) at org.joda.time.format.TestDateTimeFormatter.testParseInto_monthDay_withDefaultYear_feb29(TestDateTimeFormatter.java:912) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #3
+Test: org.joda.time.format.TestDateTimeFormatter#testParseInto_monthOnly
+Runtime: 4062519
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<2004-05-09T12:20:30.000+01:00> but was:<2000-05-09T12:20:30.000+01:00> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:86) at junit.framework.TestCase.assertEquals(TestCase.java:253) at org.joda.time.format.TestDateTimeFormatter.testParseInto_monthOnly(TestDateTimeFormatter.java:870) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #4
+Test: org.joda.time.format.TestDateTimeFormatter#testParseInto_monthOnly_baseEndYear
+Runtime: 3081798
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<2004-05-31T12:20:30.000+09:00> but was:<2000-05-31T12:20:30.000+09:00> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:86) at junit.framework.TestCase.assertEquals(TestCase.java:253) at org.joda.time.format.TestDateTimeFormatter.testParseInto_monthOnly_baseEndYear(TestDateTimeFormatter.java:891) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #5
+Test: org.joda.time.format.TestDateTimeFormatter#testParseInto_monthOnly_baseStartYear
+Runtime: 3017116
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<2004-05-01T12:20:30.000+09:00> but was:<2000-05-01T12:20:30.000+09:00> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:86) at junit.framework.TestCase.assertEquals(TestCase.java:253) at org.joda.time.format.TestDateTimeFormatter.testParseInto_monthOnly_baseStartYear(TestDateTimeFormatter.java:877) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #6
+Test: org.joda.time.format.TestDateTimeFormatter#testParseInto_monthOnly_parseEndYear
+Runtime: 3065897
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<2004-12-31T12:20:30.000+09:00> but was:<2000-12-31T12:20:30.000+09:00> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:86) at junit.framework.TestCase.assertEquals(TestCase.java:253) at org.joda.time.format.TestDateTimeFormatter.testParseInto_monthOnly_parseEndYear(TestDateTimeFormatter.java:898) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #7
+Test: org.joda.time.format.TestDateTimeFormatter#testParseInto_monthOnly_parseStartYear
+Runtime: 2974566
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<2004-01-01T12:20:30.000+09:00> but was:<2000-01-01T12:20:30.000+09:00> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:86) at junit.framework.TestCase.assertEquals(TestCase.java:253) at org.joda.time.format.TestDateTimeFormatter.testParseInto_monthOnly_parseStartYear(TestDateTimeFormatter.java:884) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

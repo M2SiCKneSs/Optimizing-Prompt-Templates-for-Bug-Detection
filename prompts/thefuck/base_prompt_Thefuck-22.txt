@@ -1,0 +1,61 @@
+### TOP_METHODS (Ochiai)
+1. thefuck.main##print_alias(entry_point) | score=0.31622776601683794
+2. thefuck.main##run_command(old_cmd,command,settings) | score=0.31622776601683794
+3. thefuck.main##get_command(settings,args) | score=0.31622776601683794
+4. thefuck.main##setup_user_dir() | score=0.31622776601683794
+5. thefuck.main##main() | score=0.31622776601683794
+
+
+### CODE_SNIPPETS
+
+
+
+---
+Rank: 1
+Method: thefuck.main##print_alias(entry_point)
+Ochiai_Score: 0.31622776601683794
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\main.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+
+---
+Rank: 2
+Method: thefuck.main##run_command(old_cmd,command,settings)
+Ochiai_Score: 0.31622776601683794
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\main.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+
+---
+Rank: 3
+Method: thefuck.main##get_command(settings,args)
+Ochiai_Score: 0.31622776601683794
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\main.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+
+---
+Rank: 4
+Method: thefuck.main##setup_user_dir()
+Ochiai_Score: 0.31622776601683794
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\main.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+
+---
+Rank: 5
+Method: thefuck.main##main()
+Ochiai_Score: 0.31622776601683794
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\main.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+

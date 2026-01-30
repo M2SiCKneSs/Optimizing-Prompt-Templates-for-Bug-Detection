@@ -1,0 +1,401 @@
+### BUG_REPORT
+Title: Fraction percentageValue rare overflow
+
+Description:
+The percentageValue() method of the Fraction class works by first multiplying the Fraction by 100, then converting the Fraction to a double. This causes overflows when the numerator is greater than Integer.MAX_VALUE/100, even when the value of the fraction is far below this value.
+The patch changes the method to first convert to a double value, and then multiply this value by 100 - the result should be the same, but with less overflows. An addition to the test for the method that covers this bug is also included.
+
+
+### FAILING_TEST
+org.apache.commons.math3.fraction.Fraction.Fraction(int,int)
+org.apache.commons.math3.fraction.Fraction.Fraction(double,double,int,int)
+org.apache.commons.math3.fraction.Fraction.multiply(int)
+org.apache.commons.math3.fraction.Fraction.percentageValue()
+org.apache.commons.math3.fraction.BigFraction.BigFraction(double,double,int,int)
+org.apache.commons.math3.fraction.Fraction.percentageValue()
+org.apache.commons.math3.fraction.Fraction.multiply(int)
+org.apache.commons.math3.fraction.Fraction.doubleValue()
+org.apache.commons.math3.fraction.Fraction.Fraction(int,int)
+org.apache.commons.math3.util.ArithmeticUtils.gcd(int,int)
+
+### CODE_SNIPPETS
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.fraction.Fraction.Fraction(int,int)
+------------------------------------------------------------------------------------------
+public static final Fraction TWO = new Fraction(2, 1);
+
+    /** A fraction representing "1". */
+    public static final Fraction ONE = new Fraction(1, 1);
+
+    /** A fraction representing "0". */
+    public static final Fraction ZERO = new Fraction(0, 1);
+
+    /** A fraction representing "4/5". */
+    public static final Fraction FOUR_FIFTHS = new Fraction(4, 5);
+
+    /** A fraction representing "1/5". */
+    public static final Fraction ONE_FIFTH = new Fraction(1, 5);
+
+    /** A fraction representing "1/2". */
+    public static final Fraction ONE_HALF = new Fraction(1, 2);
+
+    /** A fraction representing "1/4". */
+    public static final Fraction ONE_QUARTER = new Fraction(1, 4);
+
+    /** A fraction representing "1/3". */
+    public static final Fraction ONE_THIRD = new Fraction(1, 3);
+
+    /** A fraction representing "3/5". */
+    public static final Fraction THREE_FIFTHS = new Fraction(3, 5);
+
+    /** A fraction representing "3/4". */
+    public static final Fraction THREE_QUARTERS = new Fraction(3, 4);
+
+    /** A fraction representing "2/5". */
+    public static final Fraction TWO_FIFTHS = new Fraction(2, 5);
+
+    /** A fraction representing "2/4". */
+    public static final Fraction TWO_QUARTERS = new Fraction(2, 4);
+
+    /** A fraction representing "2/3". */
+    public static final Fraction TWO_THIRDS = new Fraction(2, 3);
+
+    /** A fraction representing "-1 / 1". */
+    public static final Fraction MINUS_ONE = new Fraction(-1, 1);
+
+    /** Serializable version identifier */
+    private static final long serialVersionUID = 3698073679419233275L;
+
+    /** The default epsilon used for convergence. */
+    private static final double DEFAULT_EPSILON = 1e-5;
+
+    /** The denominator. */
+    private final int denominator;
+
+    /** The numerator. */
+    private final int numerator;
+
+    /**
+     * Create a fraction given the double value.
+     * @param value the double value to convert to a fraction.
+     * @throws FractionConversionException if the continued fraction failed to
+     *         converge.
+     */
+    public Fraction(double value) throws FractionConversionException {
+        this(value, DEFAULT_EPSILON, 100);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.fraction.Fraction.Fraction(double,double,int,int)
+------------------------------------------------------------------------------------------
+public static final Fraction TWO = new Fraction(2, 1);
+
+    /** A fraction representing "1". */
+    public static final Fraction ONE = new Fraction(1, 1);
+
+    /** A fraction representing "0". */
+    public static final Fraction ZERO = new Fraction(0, 1);
+
+    /** A fraction representing "4/5". */
+    public static final Fraction FOUR_FIFTHS = new Fraction(4, 5);
+
+    /** A fraction representing "1/5". */
+    public static final Fraction ONE_FIFTH = new Fraction(1, 5);
+
+    /** A fraction representing "1/2". */
+    public static final Fraction ONE_HALF = new Fraction(1, 2);
+
+    /** A fraction representing "1/4". */
+    public static final Fraction ONE_QUARTER = new Fraction(1, 4);
+
+    /** A fraction representing "1/3". */
+    public static final Fraction ONE_THIRD = new Fraction(1, 3);
+
+    /** A fraction representing "3/5". */
+    public static final Fraction THREE_FIFTHS = new Fraction(3, 5);
+
+    /** A fraction representing "3/4". */
+    public static final Fraction THREE_QUARTERS = new Fraction(3, 4);
+
+    /** A fraction representing "2/5". */
+    public static final Fraction TWO_FIFTHS = new Fraction(2, 5);
+
+    /** A fraction representing "2/4". */
+    public static final Fraction TWO_QUARTERS = new Fraction(2, 4);
+
+    /** A fraction representing "2/3". */
+    public static final Fraction TWO_THIRDS = new Fraction(2, 3);
+
+    /** A fraction representing "-1 / 1". */
+    public static final Fraction MINUS_ONE = new Fraction(-1, 1);
+
+    /** Serializable version identifier */
+    private static final long serialVersionUID = 3698073679419233275L;
+
+    /** The default epsilon used for convergence. */
+    private static final double DEFAULT_EPSILON = 1e-5;
+
+    /** The denominator. */
+    private final int denominator;
+
+    /** The numerator. */
+    private final int numerator;
+
+    /**
+     * Create a fraction given the double value.
+     * @param value the double value to convert to a fraction.
+     * @throws FractionConversionException if the continued fraction failed to
+     *         converge.
+     */
+    public Fraction(double value) throws FractionConversionException {
+        this(value, DEFAULT_EPSILON, 100);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.fraction.Fraction.multiply(int)
+------------------------------------------------------------------------------------------
+public Fraction multiply(Fraction fraction) {
+        if (fraction == null) {
+            throw new NullArgumentException(LocalizedFormats.FRACTION);
+        }
+        if (numerator == 0 || fraction.numerator == 0) {
+            return ZERO;
+        }
+        // knuth 4.5.1
+        // make sure we don't overflow unless the result *must* overflow.
+        int d1 = ArithmeticUtils.gcd(numerator, fraction.denominator);
+        int d2 = ArithmeticUtils.gcd(fraction.numerator, denominator);
+        return getReducedFraction
+        (ArithmeticUtils.mulAndCheck(numerator/d1, fraction.numerator/d2),
+                ArithmeticUtils.mulAndCheck(denominator/d2, fraction.denominator/d1));
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.fraction.Fraction.percentageValue()
+------------------------------------------------------------------------------------------
+public double percentageValue() {
+        return 100 * doubleValue();
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.fraction.BigFraction.BigFraction(double,double,int,int)
+------------------------------------------------------------------------------------------
+public static final BigFraction TWO = new BigFraction(2);
+
+    /** A fraction representing "1". */
+    public static final BigFraction ONE = new BigFraction(1);
+
+    /** A fraction representing "0". */
+    public static final BigFraction ZERO = new BigFraction(0);
+
+    /** A fraction representing "-1 / 1". */
+    public static final BigFraction MINUS_ONE = new BigFraction(-1);
+
+    /** A fraction representing "4/5". */
+    public static final BigFraction FOUR_FIFTHS = new BigFraction(4, 5);
+
+    /** A fraction representing "1/5". */
+    public static final BigFraction ONE_FIFTH = new BigFraction(1, 5);
+
+    /** A fraction representing "1/2". */
+    public static final BigFraction ONE_HALF = new BigFraction(1, 2);
+
+    /** A fraction representing "1/4". */
+    public static final BigFraction ONE_QUARTER = new BigFraction(1, 4);
+
+    /** A fraction representing "1/3". */
+    public static final BigFraction ONE_THIRD = new BigFraction(1, 3);
+
+    /** A fraction representing "3/5". */
+    public static final BigFraction THREE_FIFTHS = new BigFraction(3, 5);
+
+    /** A fraction representing "3/4". */
+    public static final BigFraction THREE_QUARTERS = new BigFraction(3, 4);
+
+    /** A fraction representing "2/5". */
+    public static final BigFraction TWO_FIFTHS = new BigFraction(2, 5);
+
+    /** A fraction representing "2/4". */
+    public static final BigFraction TWO_QUARTERS = new BigFraction(2, 4);
+
+    /** A fraction representing "2/3". */
+    public static final BigFraction TWO_THIRDS = new BigFraction(2, 3);
+
+    /** Serializable version identifier. */
+    private static final long serialVersionUID = -5630213147331578515L;
+
+    /** <code>BigInteger</code> representation of 100. */
+    private static final BigInteger ONE_HUNDRED = BigInteger.valueOf(100);
+
+    /** The numerator. */
+    private final BigInteger numerator;
+
+    /** The denominator. */
+    private final BigInteger denominator;
+
+    /**
+     * <p>
+     * Create a {@link BigFraction} equivalent to the passed <tt>BigInteger</tt>, ie
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.fraction.Fraction.percentageValue()
+------------------------------------------------------------------------------------------
+public double percentageValue() {
+        return 100 * doubleValue();
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.fraction.Fraction.multiply(int)
+------------------------------------------------------------------------------------------
+public Fraction multiply(Fraction fraction) {
+        if (fraction == null) {
+            throw new NullArgumentException(LocalizedFormats.FRACTION);
+        }
+        if (numerator == 0 || fraction.numerator == 0) {
+            return ZERO;
+        }
+        // knuth 4.5.1
+        // make sure we don't overflow unless the result *must* overflow.
+        int d1 = ArithmeticUtils.gcd(numerator, fraction.denominator);
+        int d2 = ArithmeticUtils.gcd(fraction.numerator, denominator);
+        return getReducedFraction
+        (ArithmeticUtils.mulAndCheck(numerator/d1, fraction.numerator/d2),
+                ArithmeticUtils.mulAndCheck(denominator/d2, fraction.denominator/d1));
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.fraction.Fraction.doubleValue()
+------------------------------------------------------------------------------------------
+@Override
+    public double doubleValue() {
+        return (double)numerator / (double)denominator;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.fraction.Fraction.Fraction(int,int)
+------------------------------------------------------------------------------------------
+public static final Fraction TWO = new Fraction(2, 1);
+
+    /** A fraction representing "1". */
+    public static final Fraction ONE = new Fraction(1, 1);
+
+    /** A fraction representing "0". */
+    public static final Fraction ZERO = new Fraction(0, 1);
+
+    /** A fraction representing "4/5". */
+    public static final Fraction FOUR_FIFTHS = new Fraction(4, 5);
+
+    /** A fraction representing "1/5". */
+    public static final Fraction ONE_FIFTH = new Fraction(1, 5);
+
+    /** A fraction representing "1/2". */
+    public static final Fraction ONE_HALF = new Fraction(1, 2);
+
+    /** A fraction representing "1/4". */
+    public static final Fraction ONE_QUARTER = new Fraction(1, 4);
+
+    /** A fraction representing "1/3". */
+    public static final Fraction ONE_THIRD = new Fraction(1, 3);
+
+    /** A fraction representing "3/5". */
+    public static final Fraction THREE_FIFTHS = new Fraction(3, 5);
+
+    /** A fraction representing "3/4". */
+    public static final Fraction THREE_QUARTERS = new Fraction(3, 4);
+
+    /** A fraction representing "2/5". */
+    public static final Fraction TWO_FIFTHS = new Fraction(2, 5);
+
+    /** A fraction representing "2/4". */
+    public static final Fraction TWO_QUARTERS = new Fraction(2, 4);
+
+    /** A fraction representing "2/3". */
+    public static final Fraction TWO_THIRDS = new Fraction(2, 3);
+
+    /** A fraction representing "-1 / 1". */
+    public static final Fraction MINUS_ONE = new Fraction(-1, 1);
+
+    /** Serializable version identifier */
+    private static final long serialVersionUID = 3698073679419233275L;
+
+    /** The default epsilon used for convergence. */
+    private static final double DEFAULT_EPSILON = 1e-5;
+
+    /** The denominator. */
+    private final int denominator;
+
+    /** The numerator. */
+    private final int numerator;
+
+    /**
+     * Create a fraction given the double value.
+     * @param value the double value to convert to a fraction.
+     * @throws FractionConversionException if the continued fraction failed to
+     *         converge.
+     */
+    public Fraction(double value) throws FractionConversionException {
+        this(value, DEFAULT_EPSILON, 100);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.util.ArithmeticUtils.gcd(int,int)
+------------------------------------------------------------------------------------------
+public static int gcd(int p,
+                          int q)
+        throws MathArithmeticException {
+        int a = p;
+        int b = q;
+        if (a == 0 ||
+            b == 0) {
+            if (a == Integer.MIN_VALUE ||
+                b == Integer.MIN_VALUE) {
+                throw new MathArithmeticException(LocalizedFormats.GCD_OVERFLOW_32_BITS,
+                                                  p, q);
+            }
+            return FastMath.abs(a + b);
+        }
+
+        long al = a;
+        long bl = b;
+        boolean useLong = false;
+        if (a < 0) {
+            if(Integer.MIN_VALUE == a) {
+                useLong = true;
+            } else {
+                a = -a;
+            }
+            al = -al;
+        }
+        if (b < 0) {
+            if (Integer.MIN_VALUE == b) {
+                useLong = true;
+            } else {
+                b = -b;
+            }
+            bl = -bl;
+        }
+        if (useLong) {
+            if(al == bl) {
+                throw new MathArithmeticException(LocalizedFormats.GCD_OVERFLOW_32_BITS,
+                                                  p, q);
+            }
+            long blbu = bl;
+            bl = al;
+            al = blbu % al;
+            if (al == 0) {
+                if (bl > Integer.MAX_VALUE) {
+                    throw new MathArithmeticException(LocalizedFormats.GCD_OVERFLOW_32_BITS,
+                                                      p, q);
+                }
+                return (int) bl;
+            }
+            blbu = bl;
+
+            // Now "al" and "bl" fit in an "int".
+            b = (int) al;
+            a = (int) (blbu % al);
+        }
+
+        return gcdPositive(a, b);
+    }

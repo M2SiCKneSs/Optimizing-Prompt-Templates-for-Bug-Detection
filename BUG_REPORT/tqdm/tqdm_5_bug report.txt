@@ -1,0 +1,2 @@
+support bool() cast when disable=True
+fixes #574

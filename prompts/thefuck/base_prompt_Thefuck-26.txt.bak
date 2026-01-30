@@ -1,0 +1,117 @@
+### TOP_METHODS (Ochiai)
+Source CSV: C:\Users\user\Desktop\uni\mark\FAILING_TEST\Thefuck\thefuck_26_ochiai_top_10.csv
+
+1. thefuck.rules.vagrant_up##get_new_command(command,settings) | score=0.5163977794943222
+2. thefuck.rules.vagrant_up##match(command,settings) | score=0.5163977794943222
+3. thefuck.main##fix_command() | score=0.2
+4. thefuck.main##main() | score=0.2
+5. thefuck.main##wait_output(settings,popen) | score=0.2
+6. thefuck.main##setup_user_dir() | score=0.2
+7. thefuck.main##get_command(settings,args) | score=0.2
+8. thefuck.main##run_command(old_cmd,command,settings) | score=0.2
+9. thefuck.main##print_alias(entry_point) | score=0.2
+10. thefuck.corrector##load_rule(rule,settings) | score=0.11547005383792514
+
+### CODE_SNIPPETS
+
+---
+Rank: 1
+Method: thefuck.rules.vagrant_up##get_new_command(command,settings)
+Ochiai_Score: 0.5163977794943222
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\rules\vagrant_up.py
+Status: OK
+Snippet:
+def get_new_command(command):
+    cmds = command.script_parts
+    machine = None
+    if len(cmds) >= 3:
+        machine = cmds[2]
+
+    start_all_instances = shell.and_(u"vagrant up", command.script)
+    if machine is None:
+        return start_all_instances
+    else:
+        return [shell.and_(u"vagrant up {}".format(machine), command.script),
+                start_all_instances]
+
+---
+Rank: 2
+Method: thefuck.rules.vagrant_up##match(command,settings)
+Ochiai_Score: 0.5163977794943222
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\rules\vagrant_up.py
+Status: OK
+Snippet:
+def match(command):
+    return 'run `vagrant up`' in command.output.lower()
+
+---
+Rank: 3
+Method: thefuck.main##fix_command()
+Ochiai_Score: 0.2
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\main.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+---
+Rank: 4
+Method: thefuck.main##main()
+Ochiai_Score: 0.2
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\main.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+---
+Rank: 5
+Method: thefuck.main##wait_output(settings,popen)
+Ochiai_Score: 0.2
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\main.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+---
+Rank: 6
+Method: thefuck.main##setup_user_dir()
+Ochiai_Score: 0.2
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\main.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+---
+Rank: 7
+Method: thefuck.main##get_command(settings,args)
+Ochiai_Score: 0.2
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\main.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+---
+Rank: 8
+Method: thefuck.main##run_command(old_cmd,command,settings)
+Ochiai_Score: 0.2
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\main.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+---
+Rank: 9
+Method: thefuck.main##print_alias(entry_point)
+Ochiai_Score: 0.2
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\main.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+---
+Rank: 10
+Method: thefuck.corrector##load_rule(rule,settings)
+Ochiai_Score: 0.11547005383792514
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\corrector.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)

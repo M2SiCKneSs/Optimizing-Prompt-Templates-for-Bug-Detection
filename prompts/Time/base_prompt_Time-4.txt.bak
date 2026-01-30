@@ -1,0 +1,207 @@
+### BUG_REPORT
+Title: Constructing invalid Partials
+
+Description:
+Partials can be constructed by invoking a constructor Partial(DateTimeFieldType[], int[]) or by merging together a set of partials using with, each constructed by calling Partial(DateTimeFieldType, int), e.g.:
+Partial a = new Partial(new DateTimeFieldType[] { year(), hourOfDay() }, new int[] { 1, 1});
+Partial b = new Partial(year(), 1).with(hourOfDay(), 1);
+assert(a == b);
+However, the above doesn't work in all cases:
+new Partial(new DateTimeFieldType[] { clockhourOfDay(), hourOfDay() }, new int[] { 1, 1}); // throws Types array must not contain duplicate
+new Partial(clockhourOfDay(), 1).with(hourOfDay(), 1); // #<Partial [clockhourOfDay=1, hourOfDay=1]>
+I suppose the Partials should not allow to be constructed in either case. Is that right?
+There's also a related issue (probably stems from the fact that the Partial is invalid):
+new Partial(clockhourOfDay(), 1).with(hourOfDay(), 1).isEqual(new Partial(hourOfDay() ,1).with(clockhourOfDay(), 1)) // throws objects must have matching field types
+
+
+### FAILING_TEST
+org.joda.time.field.ZeroIsMaxDateTimeField.getMaximumValue(ReadablePartial,int[])
+org.joda.time.field.ZeroIsMaxDateTimeField.getMinimumValue()
+org.joda.time.field.ZeroIsMaxDateTimeField.getMaximumValue()
+org.joda.time.Partial.Partial(ReadablePartial)
+org.joda.time.Partial.with(DateTimeFieldType,int)
+org.joda.time.field.ZeroIsMaxDateTimeField.getMinimumValue()
+org.joda.time.field.ZeroIsMaxDateTimeField.getMinimumValue(ReadablePartial,int[])
+org.joda.time.field.ZeroIsMaxDateTimeField.getMaximumValue(ReadablePartial,int[])
+org.joda.time.field.ZeroIsMaxDateTimeField.getMaximumValue()
+org.joda.time.Partial.with(DateTimeFieldType,int)
+
+### CODE_SNIPPETS
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.field.ZeroIsMaxDateTimeField.getMaximumValue(ReadablePartial,int[])
+------------------------------------------------------------------------------------------
+public int getMaximumValue() {
+        return getWrappedField().getMaximumValue() + 1;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.field.ZeroIsMaxDateTimeField.getMinimumValue()
+------------------------------------------------------------------------------------------
+if (field.getMinimumValue() != 0) {
+            throw new IllegalArgumentException("Wrapped field's minumum value must be zero");
+        }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.field.ZeroIsMaxDateTimeField.getMaximumValue()
+------------------------------------------------------------------------------------------
+public int getMaximumValue() {
+        return getWrappedField().getMaximumValue() + 1;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.Partial.Partial(ReadablePartial)
+------------------------------------------------------------------------------------------
+public Partial() {
+        this((Chronology) null);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.Partial.with(DateTimeFieldType,int)
+------------------------------------------------------------------------------------------
+public Partial with(DateTimeFieldType fieldType, int value) {
+        if (fieldType == null) {
+            throw new IllegalArgumentException("The field type must not be null");
+        }
+        int index = indexOf(fieldType);
+        if (index == -1) {
+            DateTimeFieldType[] newTypes = new DateTimeFieldType[iTypes.length + 1];
+            int[] newValues = new int[newTypes.length];
+            
+            // find correct insertion point to keep largest-smallest order
+            int i = 0;
+            DurationField unitField = fieldType.getDurationType().getField(iChronology);
+            if (unitField.isSupported()) {
+                for (; i < iTypes.length; i++) {
+                    DateTimeFieldType loopType = iTypes[i];
+                    DurationField loopUnitField = loopType.getDurationType().getField(iChronology);
+                    if (loopUnitField.isSupported()) {
+                        int compare = unitField.compareTo(loopUnitField);
+                        if (compare > 0) {
+                            break;
+                        } else if (compare == 0) {
+                            if (fieldType.getRangeDurationType() == null) {
+                                break;
+                            }
+                            DurationField rangeField = fieldType.getRangeDurationType().getField(iChronology);
+                            DurationField loopRangeField = loopType.getRangeDurationType().getField(iChronology);
+                            if (rangeField.compareTo(loopRangeField) > 0) {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            System.arraycopy(iTypes, 0, newTypes, 0, i);
+            System.arraycopy(iValues, 0, newValues, 0, i);
+            newTypes[i] = fieldType;
+            newValues[i] = value;
+            System.arraycopy(iTypes, i, newTypes, i + 1, newTypes.length - i - 1);
+            System.arraycopy(iValues, i, newValues, i + 1, newValues.length - i - 1);
+            // use public constructor to ensure full validation
+            // this isn't overly efficient, but is safe
+            Partial newPartial = new Partial(newTypes, newValues, iChronology);
+            iChronology.validate(newPartial, newValues);
+            return newPartial;
+        }
+        if (value == getValue(index)) {
+            return this;
+        }
+        int[] newValues = getValues();
+        newValues = getField(index).set(this, index, newValues, value);
+        return new Partial(this, newValues);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.field.ZeroIsMaxDateTimeField.getMinimumValue()
+------------------------------------------------------------------------------------------
+if (field.getMinimumValue() != 0) {
+            throw new IllegalArgumentException("Wrapped field's minumum value must be zero");
+        }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.field.ZeroIsMaxDateTimeField.getMinimumValue(ReadablePartial,int[])
+------------------------------------------------------------------------------------------
+if (field.getMinimumValue() != 0) {
+            throw new IllegalArgumentException("Wrapped field's minumum value must be zero");
+        }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.field.ZeroIsMaxDateTimeField.getMaximumValue(ReadablePartial,int[])
+------------------------------------------------------------------------------------------
+public int getMaximumValue() {
+        return getWrappedField().getMaximumValue() + 1;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.field.ZeroIsMaxDateTimeField.getMaximumValue()
+------------------------------------------------------------------------------------------
+public int getMaximumValue() {
+        return getWrappedField().getMaximumValue() + 1;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.Partial.with(DateTimeFieldType,int)
+------------------------------------------------------------------------------------------
+public Partial with(DateTimeFieldType fieldType, int value) {
+        if (fieldType == null) {
+            throw new IllegalArgumentException("The field type must not be null");
+        }
+        int index = indexOf(fieldType);
+        if (index == -1) {
+            DateTimeFieldType[] newTypes = new DateTimeFieldType[iTypes.length + 1];
+            int[] newValues = new int[newTypes.length];
+            
+            // find correct insertion point to keep largest-smallest order
+            int i = 0;
+            DurationField unitField = fieldType.getDurationType().getField(iChronology);
+            if (unitField.isSupported()) {
+                for (; i < iTypes.length; i++) {
+                    DateTimeFieldType loopType = iTypes[i];
+                    DurationField loopUnitField = loopType.getDurationType().getField(iChronology);
+                    if (loopUnitField.isSupported()) {
+                        int compare = unitField.compareTo(loopUnitField);
+                        if (compare > 0) {
+                            break;
+                        } else if (compare == 0) {
+                            if (fieldType.getRangeDurationType() == null) {
+                                break;
+                            }
+                            DurationField rangeField = fieldType.getRangeDurationType().getField(iChronology);
+                            DurationField loopRangeField = loopType.getRangeDurationType().getField(iChronology);
+                            if (rangeField.compareTo(loopRangeField) > 0) {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            System.arraycopy(iTypes, 0, newTypes, 0, i);
+            System.arraycopy(iValues, 0, newValues, 0, i);
+            newTypes[i] = fieldType;
+            newValues[i] = value;
+            System.arraycopy(iTypes, i, newTypes, i + 1, newTypes.length - i - 1);
+            System.arraycopy(iValues, i, newValues, i + 1, newValues.length - i - 1);
+            // use public constructor to ensure full validation
+            // this isn't overly efficient, but is safe
+            Partial newPartial = new Partial(newTypes, newValues, iChronology);
+            iChronology.validate(newPartial, newValues);
+            return newPartial;
+        }
+        if (value == getValue(index)) {
+            return this;
+        }
+        int[] newValues = getValues();
+        newValues = getField(index).set(this, index, newValues, value);
+        return new Partial(this, newValues);
+    }
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.joda.time.TestPartial_Basics#testWith3
+Runtime: 1200872
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError at junit.framework.Assert.fail(Assert.java:55) at junit.framework.Assert.fail(Assert.java:64) at junit.framework.TestCase.fail(TestCase.java:235) at org.joda.time.TestPartial_Basics.testWith3(TestPartial_Basics.java:364) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

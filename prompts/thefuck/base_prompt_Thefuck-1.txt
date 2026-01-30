@@ -1,0 +1,79 @@
+### TOP_METHODS (Ochiai)
+1. thefuck.rules.go_unknown_command##get_golang_commands() | score=0.4082482904638631
+2. thefuck.rules.pip_unknown_command##get_new_command(command) | score=0.4082482904638631
+3. thefuck.rules.pip_unknown_command##match(command) | score=0.4082482904638631
+4. thefuck.rules.go_unknown_command##match(command) | score=0.4082482904638631
+5. thefuck.rules.go_unknown_command##get_new_command(command) | score=0.4082482904638631
+
+
+### CODE_SNIPPETS
+
+
+
+---
+Rank: 1
+Method: thefuck.rules.go_unknown_command##get_golang_commands()
+Ochiai_Score: 0.4082482904638631
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\rules\go_unknown_command.py
+Status: OK
+Snippet:
+def get_golang_commands():
+    proc = subprocess.Popen('go', stderr=subprocess.PIPE)
+    lines = [line.decode('utf-8').strip() for line in proc.stderr.readlines()]
+    lines = dropwhile(lambda line: line != 'The commands are:', lines)
+    lines = islice(lines, 2, None)
+    lines = takewhile(lambda line: line, lines)
+    return [line.split(' ')[0] for line in lines]
+
+
+---
+Rank: 2
+Method: thefuck.rules.pip_unknown_command##get_new_command(command)
+Ochiai_Score: 0.4082482904638631
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\rules\pip_unknown_command.py
+Status: OK
+Snippet:
+def get_new_command(command):
+    broken_cmd = re.findall(r'ERROR: unknown command \"([a-z]+)\"',
+                            command.output)[0]
+    new_cmd = re.findall(r'maybe you meant \"([a-z]+)\"', command.output)[0]
+
+    return replace_argument(command.script, broken_cmd, new_cmd)
+
+
+---
+Rank: 3
+Method: thefuck.rules.pip_unknown_command##match(command)
+Ochiai_Score: 0.4082482904638631
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\rules\pip_unknown_command.py
+Status: OK
+Snippet:
+def match(command):
+    return ('pip' in command.script and
+            'unknown command' in command.output and
+            'maybe you meant' in command.output)
+
+
+---
+Rank: 4
+Method: thefuck.rules.go_unknown_command##match(command)
+Ochiai_Score: 0.4082482904638631
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\rules\go_unknown_command.py
+Status: OK
+Snippet:
+def match(command):
+    return 'unknown command' in command.output
+
+
+---
+Rank: 5
+Method: thefuck.rules.go_unknown_command##get_new_command(command)
+Ochiai_Score: 0.4082482904638631
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\rules\go_unknown_command.py
+Status: OK
+Snippet:
+def get_new_command(command):
+    closest_subcommand = get_closest(command.script_parts[1], get_golang_commands())
+    return replace_argument(command.script, command.script_parts[1],
+                            closest_subcommand)
+

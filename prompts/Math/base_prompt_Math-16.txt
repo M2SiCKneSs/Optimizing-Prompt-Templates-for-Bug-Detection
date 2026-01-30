@@ -1,0 +1,108 @@
+### BUG_REPORT
+Title: FastMath.[cosh, sinh] do not support the same range of values as the Math counterparts
+
+Description:
+As reported by Jeff Hain:
+cosh(double) and sinh(double):
+Math.cosh(709.783) = 8.991046692770538E307
+FastMath.cosh(709.783) = Infinity
+Math.sinh(709.783) = 8.991046692770538E307
+FastMath.sinh(709.783) = Infinity
+===> This is due to using exp( x )/2 for values of |x|
+above 20: the result sometimes should not overflow,
+but exp( x ) does, so we end up with some infinity.
+===> for values of |x| >= StrictMath.log(Double.MAX_VALUE),
+exp will overflow, so you need to use that instead:
+for x positive:
+double t = exp(x*0.5);
+return (0.5*t)*t;
+for x negative:
+double t = exp(-x*0.5);
+return (-0.5*t)*t;
+
+
+### FAILING_TEST
+org.apache.commons.math3.complex.Complex.sinh()
+org.apache.commons.math3.complex.Complex.sin()
+org.apache.commons.math3.util.FastMath.exp(double,double,double[])
+org.apache.commons.math3.complex.Complex.cosh()
+org.apache.commons.math3.random.MersenneTwister.MersenneTwister(long)
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.complex.Complex.sinh()
+------------------------------------------------------------------------------------------
+public Complex sinh() {
+        if (isNaN) {
+            return NaN;
+        }
+
+        return createComplex(FastMath.sinh(real) * FastMath.cos(imaginary),
+            FastMath.cosh(real) * FastMath.sin(imaginary));
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.complex.Complex.sin()
+------------------------------------------------------------------------------------------
+public Complex sin() {
+        if (isNaN) {
+            return NaN;
+        }
+
+        return createComplex(FastMath.sin(real) * FastMath.cosh(imaginary),
+                             FastMath.cos(real) * FastMath.sinh(imaginary));
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.util.FastMath.exp(double,double,double[])
+------------------------------------------------------------------------------------------
+final double t = exp(0.5 * x);
+              return (0.5 * t) * t;
+          } else {
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.complex.Complex.cosh()
+------------------------------------------------------------------------------------------
+public Complex cosh() {
+        if (isNaN) {
+            return NaN;
+        }
+
+        return createComplex(FastMath.cosh(real) * FastMath.cos(imaginary),
+                             FastMath.sinh(real) * FastMath.sin(imaginary));
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.random.MersenneTwister.MersenneTwister(long)
+------------------------------------------------------------------------------------------
+public MersenneTwister() {
+        mt = new int[N];
+        setSeed(System.currentTimeMillis() + System.identityHashCode(this));
+    }
+
+------------------------------------------------------------------------------------------
+
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.apache.commons.math3.util.FastMathTest#testMath905LargeNegative
+Runtime: 64436918
+------------------------------------------------------------------------------------------
+java.lang.AssertionError: expected:<0.0> but was:<Infinity> at org.junit.Assert.fail(Assert.java:88) at org.junit.Assert.failNotEquals(Assert.java:834) at org.junit.Assert.assertEquals(Assert.java:553) at org.junit.Assert.assertEquals(Assert.java:683) at org.apache.commons.math3.util.FastMathTest.testMath905LargeNegative(FastMathTest.java:194) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #2
+Test: org.apache.commons.math3.util.FastMathTest#testMath905LargePositive
+Runtime: 60563951
+------------------------------------------------------------------------------------------
+java.lang.AssertionError: expected:<0.0> but was:<Infinity> at org.junit.Assert.fail(Assert.java:88) at org.junit.Assert.failNotEquals(Assert.java:834) at org.junit.Assert.assertEquals(Assert.java:553) at org.junit.Assert.assertEquals(Assert.java:683) at org.apache.commons.math3.util.FastMathTest.testMath905LargePositive(FastMathTest.java:172) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

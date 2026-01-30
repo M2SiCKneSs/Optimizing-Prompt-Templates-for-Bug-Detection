@@ -1,0 +1,1 @@
+Handle columns it the fix_file rule

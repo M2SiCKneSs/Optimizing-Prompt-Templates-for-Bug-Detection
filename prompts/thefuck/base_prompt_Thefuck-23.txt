@@ -1,0 +1,61 @@
+### TOP_METHODS (Ochiai)
+1. thefuck.utils##_get_mtime(name) | score=0.07198157507486945
+2. thefuck.utils##_cache(fn,*args,**kwargs) | score=0.07198157507486945
+3. thefuck.conf$_DefaultRulesNames#__add__(items) | score=0.06868028197434452
+4. thefuck.conf##get_settings(user_dir) | score=0.06868028197434452
+5. thefuck.conf$_DefaultRulesNames#__contains__(item) | score=0.06868028197434452
+
+
+### CODE_SNIPPETS
+
+
+
+---
+Rank: 1
+Method: thefuck.utils##_get_mtime(name)
+Ochiai_Score: 0.07198157507486945
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\utils.py
+Status: OK
+Snippet:
+    def _get_mtime(self, path):
+        try:
+            return str(os.path.getmtime(path))
+        except OSError:
+            return '0'
+
+
+---
+Rank: 2
+Method: thefuck.utils##_cache(fn,*args,**kwargs)
+Ochiai_Score: 0.07198157507486945
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\utils.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+
+---
+Rank: 3
+Method: thefuck.conf$_DefaultRulesNames#__add__(items)
+Ochiai_Score: 0.06868028197434452
+Status: PARSE_ERROR
+Error: Unexpected method format (missing ##): thefuck.conf$_DefaultRulesNames#__add__(items)
+
+
+---
+Rank: 4
+Method: thefuck.conf##get_settings(user_dir)
+Ochiai_Score: 0.06868028197434452
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\conf.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+
+---
+Rank: 5
+Method: thefuck.conf$_DefaultRulesNames#__contains__(item)
+Ochiai_Score: 0.06868028197434452
+Status: PARSE_ERROR
+Error: Unexpected method format (missing ##): thefuck.conf$_DefaultRulesNames#__contains__(item)
+

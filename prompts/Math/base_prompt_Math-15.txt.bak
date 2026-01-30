@@ -1,0 +1,367 @@
+### BUG_REPORT
+Title: FastMath.pow deviates from Math.pow for negative, finite base values with an exponent 2^52 &lt; y &lt; 2^53
+
+Description:
+As reported by Jeff Hain:
+pow(double,double):
+Math.pow(-1.0,5.000000000000001E15) = -1.0
+FastMath.pow(-1.0,5.000000000000001E15) = 1.0
+===> This is due to considering that power is an even
+integer if it is >= 2^52, while you need to test
+that it is >= 2^53 for it.
+===> replace
+"if (y >= TWO_POWER_52 || y <= -TWO_POWER_52)"
+with
+"if (y >= 2*TWO_POWER_52 || y <= -2*TWO_POWER_52)"
+and that solves it.
+
+
+### FAILING_TEST
+org.apache.commons.math3.util.FastMath.pow(double,double)
+org.apache.commons.math3.random.MersenneTwister.MersenneTwister(long)
+org.apache.commons.math3.util.ArithmeticUtils.gcdPositive(int,int)
+org.apache.commons.math3.util.FastMath.floor(double)
+org.apache.commons.math3.random.MersenneTwister.setSeed(int[])
+org.apache.commons.math3.random.MersenneTwister.MersenneTwister(long)
+org.apache.commons.math3.random.MersenneTwister.setSeed(int)
+org.apache.commons.math3.random.MersenneTwister.setSeed(int[])
+org.apache.commons.math3.random.MersenneTwister.setSeed(long)
+org.apache.commons.math3.dfp.DfpField.DfpField(int)
+
+### CODE_SNIPPETS
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.util.FastMath.pow(double,double)
+------------------------------------------------------------------------------------------
+public static double pow(double x, double y) {
+        final double lns[] = new double[2];
+
+        if (y == 0.0) {
+            return 1.0;
+        }
+
+        if (x != x) { // X is NaN
+            return x;
+        }
+
+
+        if (x == 0) {
+            long bits = Double.doubleToRawLongBits(x);
+            if ((bits & 0x8000000000000000L) != 0) {
+                // -zero
+                long yi = (long) y;
+
+                if (y < 0 && y == yi && (yi & 1) == 1) {
+                    return Double.NEGATIVE_INFINITY;
+                }
+
+                if (y > 0 && y == yi && (yi & 1) == 1) {
+                    return -0.0;
+                }
+            }
+
+            if (y < 0) {
+                return Double.POSITIVE_INFINITY;
+            }
+            if (y > 0) {
+                return 0.0;
+            }
+
+            return Double.NaN;
+        }
+
+        if (x == Double.POSITIVE_INFINITY) {
+            if (y != y) { // y is NaN
+                return y;
+            }
+            if (y < 0.0) {
+                return 0.0;
+            } else {
+                return Double.POSITIVE_INFINITY;
+            }
+        }
+
+        if (y == Double.POSITIVE_INFINITY) {
+            if (x * x == 1.0) {
+                return Double.NaN;
+            }
+
+            if (x * x > 1.0) {
+                return Double.POSITIVE_INFINITY;
+            } else {
+                return 0.0;
+            }
+        }
+
+        if (x == Double.NEGATIVE_INFINITY) {
+            if (y != y) { // y is NaN
+                return y;
+            }
+
+            if (y < 0) {
+                long yi = (long) y;
+                if (y == yi && (yi & 1) == 1) {
+                    return -0.0;
+                }
+
+                return 0.0;
+            }
+
+            if (y > 0)  {
+                long yi = (long) y;
+                if (y == yi && (yi & 1) == 1) {
+                    return Double.NEGATIVE_INFINITY;
+                }
+
+                return Double.POSITIVE_INFINITY;
+            }
+        }
+
+        if (y == Double.NEGATIVE_INFINITY) {
+
+            if (x * x == 1.0) {
+                return Double.NaN;
+            }
+
+            if (x * x < 1.0) {
+                return Double.POSITIVE_INFINITY;
+            } else {
+                return 0.0;
+            }
+        }
+
+        /* Handle special case x<0 */
+        if (x < 0) {
+            // y is an even integer in this case
+            if (y >= TWO_POWER_53 || y <= -TWO_POWER_53) {
+                return pow(-x, y);
+            }
+
+            if (y == (long) y) {
+                // If y is an integer
+                return ((long)y & 1) == 0 ? pow(-x, y) : -pow(-x, y);
+            } else {
+                return Double.NaN;
+            }
+        }
+
+        /* Split y into ya and yb such that y = ya+yb */
+        double ya;
+        double yb;
+        if (y < 8e298 && y > -8e298) {
+            double tmp1 = y * HEX_40000000;
+            ya = y + tmp1 - tmp1;
+            yb = y - ya;
+        } else {
+            double tmp1 = y * 9.31322574615478515625E-10;
+            double tmp2 = tmp1 * 9.31322574615478515625E-10;
+            ya = (tmp1 + tmp2 - tmp1) * HEX_40000000 * HEX_40000000;
+            yb = y - ya;
+        }
+
+        /* Compute ln(x) */
+        final double lores = log(x, lns);
+        if (Double.isInfinite(lores)){ // don't allow this to be converted to NaN
+            return lores;
+        }
+
+        double lna = lns[0];
+        double lnb = lns[1];
+
+        /* resplit lns */
+        double tmp1 = lna * HEX_40000000;
+        double tmp2 = lna + tmp1 - tmp1;
+        lnb += lna - tmp2;
+        lna = tmp2;
+
+        // y*ln(x) = (aa+ab)
+        final double aa = lna * ya;
+        final double ab = lna * yb + lnb * ya + lnb * yb;
+
+        lna = aa+ab;
+        lnb = -(lna - aa - ab);
+
+        double z = 1.0 / 120.0;
+        z = z * lnb + (1.0 / 24.0);
+        z = z * lnb + (1.0 / 6.0);
+        z = z * lnb + 0.5;
+        z = z * lnb + 1.0;
+        z = z * lnb;
+
+        final double result = exp(lna, z, null);
+        //result = result + result * z;
+        return result;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.random.MersenneTwister.MersenneTwister(long)
+------------------------------------------------------------------------------------------
+public MersenneTwister() {
+        mt = new int[N];
+        setSeed(System.currentTimeMillis() + System.identityHashCode(this));
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.util.ArithmeticUtils.gcdPositive(int,int)
+------------------------------------------------------------------------------------------
+private static int gcdPositive(int a,
+                                   int b) {
+        if (a == 0) {
+            return b;
+        }
+        else if (b == 0) {
+            return a;
+        }
+
+        // Make "a" and "b" odd, keeping track of common power of 2.
+        final int aTwos = Integer.numberOfTrailingZeros(a);
+        a >>= aTwos;
+        final int bTwos = Integer.numberOfTrailingZeros(b);
+        b >>= bTwos;
+        final int shift = Math.min(aTwos, bTwos);
+
+        // "a" and "b" are positive.
+        // If a > b then "gdc(a, b)" is equal to "gcd(a - b, b)".
+        // If a < b then "gcd(a, b)" is equal to "gcd(b - a, a)".
+        // Hence, in the successive iterations:
+        //  "a" becomes the absolute difference of the current values,
+        //  "b" becomes the minimum of the current values.
+        while (a != b) {
+            final int delta = a - b;
+            b = Math.min(a, b);
+            a = Math.abs(delta);
+
+            // Remove any power of 2 in "a" ("b" is guaranteed to be odd).
+            a >>= Integer.numberOfTrailingZeros(a);
+        }
+
+        // Recover the common power of 2.
+        return a << shift;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.util.FastMath.floor(double)
+------------------------------------------------------------------------------------------
+public static double floor(double x) {
+        long y;
+
+        if (x != x) { // NaN
+            return x;
+        }
+
+        if (x >= TWO_POWER_52 || x <= -TWO_POWER_52) {
+            return x;
+        }
+
+        y = (long) x;
+        if (x < 0 && y != x) {
+            y--;
+        }
+
+        if (y == 0) {
+            return x*y;
+        }
+
+        return y;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.random.MersenneTwister.setSeed(int[])
+------------------------------------------------------------------------------------------
+@Override
+    public void setSeed(int seed) {
+        // we use a long masked by 0xffffffffL as a poor man unsigned int
+        long longMT = seed;
+        // NB: unlike original C code, we are working with java longs, the cast below makes masking unnecessary
+        mt[0]= (int) longMT;
+        for (mti = 1; mti < N; ++mti) {
+            // See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier.
+            // initializer from the 2002-01-09 C version by Makoto Matsumoto
+            longMT = (1812433253l * (longMT ^ (longMT >> 30)) + mti) & 0xffffffffL;
+            mt[mti]= (int) longMT;
+        }
+
+        clear(); // Clear normal deviate cache
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.random.MersenneTwister.MersenneTwister(long)
+------------------------------------------------------------------------------------------
+public MersenneTwister() {
+        mt = new int[N];
+        setSeed(System.currentTimeMillis() + System.identityHashCode(this));
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.random.MersenneTwister.setSeed(int)
+------------------------------------------------------------------------------------------
+@Override
+    public void setSeed(int seed) {
+        // we use a long masked by 0xffffffffL as a poor man unsigned int
+        long longMT = seed;
+        // NB: unlike original C code, we are working with java longs, the cast below makes masking unnecessary
+        mt[0]= (int) longMT;
+        for (mti = 1; mti < N; ++mti) {
+            // See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier.
+            // initializer from the 2002-01-09 C version by Makoto Matsumoto
+            longMT = (1812433253l * (longMT ^ (longMT >> 30)) + mti) & 0xffffffffL;
+            mt[mti]= (int) longMT;
+        }
+
+        clear(); // Clear normal deviate cache
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.random.MersenneTwister.setSeed(int[])
+------------------------------------------------------------------------------------------
+@Override
+    public void setSeed(int seed) {
+        // we use a long masked by 0xffffffffL as a poor man unsigned int
+        long longMT = seed;
+        // NB: unlike original C code, we are working with java longs, the cast below makes masking unnecessary
+        mt[0]= (int) longMT;
+        for (mti = 1; mti < N; ++mti) {
+            // See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier.
+            // initializer from the 2002-01-09 C version by Makoto Matsumoto
+            longMT = (1812433253l * (longMT ^ (longMT >> 30)) + mti) & 0xffffffffL;
+            mt[mti]= (int) longMT;
+        }
+
+        clear(); // Clear normal deviate cache
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.random.MersenneTwister.setSeed(long)
+------------------------------------------------------------------------------------------
+@Override
+    public void setSeed(int seed) {
+        // we use a long masked by 0xffffffffL as a poor man unsigned int
+        long longMT = seed;
+        // NB: unlike original C code, we are working with java longs, the cast below makes masking unnecessary
+        mt[0]= (int) longMT;
+        for (mti = 1; mti < N; ++mti) {
+            // See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier.
+            // initializer from the 2002-01-09 C version by Makoto Matsumoto
+            longMT = (1812433253l * (longMT ^ (longMT >> 30)) + mti) & 0xffffffffL;
+            mt[mti]= (int) longMT;
+        }
+
+        clear(); // Clear normal deviate cache
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.dfp.DfpField.DfpField(int)
+------------------------------------------------------------------------------------------
+public DfpField(final int decimalDigits) {
+        this(decimalDigits, true);
+    }
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.apache.commons.math3.util.FastMathTest#testMath904
+Runtime: 62083897
+------------------------------------------------------------------------------------------
+java.lang.AssertionError: expected:<-1.0> but was:<1.0> at org.junit.Assert.fail(Assert.java:88) at org.junit.Assert.failNotEquals(Assert.java:834) at org.junit.Assert.assertEquals(Assert.java:553) at org.junit.Assert.assertEquals(Assert.java:683) at org.apache.commons.math3.util.FastMathTest.testMath904(FastMathTest.java:164) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

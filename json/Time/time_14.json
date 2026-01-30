@@ -1,0 +1,31 @@
+{
+  "project": "Time",
+  "bug_id": 14,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.joda.time.chrono.BasicMonthOfYearDateTimeField.add(org.joda.time.ReadablePartial",
+      "score": 0.997306
+    },
+    {
+      "rank": 2,
+      "method": "org.joda.time.IllegalFieldValueException.getMessage()",
+      "score": 0.872942
+    },
+    {
+      "rank": 3,
+      "method": "org.joda.time.MonthDay.fromDateFields(Date)",
+      "score": 0.756117
+    },
+    {
+      "rank": 4,
+      "method": "org.joda.time.LocalDateTime.fromCalendarFields(Calendar)",
+      "score": 0.631031
+    },
+    {
+      "rank": 5,
+      "method": "org.joda.time.YearMonthDay.fromDateFields(Date)",
+      "score": 0.518546
+    }
+  ]
+}

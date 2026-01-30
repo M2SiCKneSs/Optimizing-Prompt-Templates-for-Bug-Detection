@@ -1,0 +1,1129 @@
+================================================================================
+TDP (Test, Diagnose, Plan) - Execution Report
+================================================================================
+Start Time: 2025-12-13 12:11:31
+Total tests available: 36
+Total components: 52
+
+--- INITIAL TEST SELECTION ---
+Initial observed tests: [5, 11, 22, 33, 14, 25, 35, 17, 29, 34]
+Number of initial tests: 10
+Failed tests in initial set: 1
+Passed tests in initial set: 9
+  Test #5: PASSED - Components: ['c1', 'c2', 'c3', 'c4', 'c5', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+  Test #11: PASSED - Components: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+  Test #22: PASSED - Components: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+  Test #33: PASSED - Components: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+  Test #14: PASSED - Components: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+  Test #25: FAILED - Components: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+  Test #35: PASSED - Components: ['c1', 'c2', 'c3', 'c4', 'c5', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+  Test #17: PASSED - Components: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+  Test #29: PASSED - Components: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+  Test #34: PASSED - Components: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+
+Convergence threshold: 0.9
+
+*** MANUAL DIAGNOSES MODE ***
+  Manual Diagnosis 1: ['c8']
+  Manual Diagnosis 2: ['c4']
+  Manual Diagnosis 3: ['c5']
+  Manual Diagnosis 4: ['c6']
+  Manual Diagnosis 5: ['c7']
+  Manual Diagnosis 6: ['c27']
+  Manual Diagnosis 7: ['c28']
+  Manual Diagnosis 8: ['c2']
+  Manual Diagnosis 9: ['c29']
+  Manual Diagnosis 10: ['c45']
+
+================================================================================
+ITERATION 1
+================================================================================
+
+Tests used so far: 10 / 36
+Number of diagnoses: 10
+Best diagnosis: ['c6'] with P = 0.117
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 3.313
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c6'] | P=0.117 | Entropy Contribution=0.362667945
+  Rank 2: ['c7'] | P=0.117 | Entropy Contribution=0.362667945
+  Rank 3: ['c29'] | P=0.117 | Entropy Contribution=0.362667945
+  Rank 4: ['c8'] | P=0.093 | Entropy Contribution=0.317848477
+  Rank 5: ['c4'] | P=0.093 | Entropy Contribution=0.317848477
+  Rank 6: ['c5'] | P=0.093 | Entropy Contribution=0.317848477
+  Rank 7: ['c27'] | P=0.093 | Entropy Contribution=0.317848477
+  Rank 8: ['c28'] | P=0.093 | Entropy Contribution=0.317848477
+  Rank 9: ['c2'] | P=0.093 | Entropy Contribution=0.317848477
+  Rank 10: ['c45'] | P=0.093 | Entropy Contribution=0.317848477
+
+Components by Suspicion (Descending Order):
+  c6: Suspicion = 0.117
+  c7: Suspicion = 0.117
+  c29: Suspicion = 0.117
+  c2: Suspicion = 0.093
+  c4: Suspicion = 0.093
+  c5: Suspicion = 0.093
+  c8: Suspicion = 0.093
+  c27: Suspicion = 0.093
+  c28: Suspicion = 0.093
+  c45: Suspicion = 0.093
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #1
+  Info Gain: 0.048
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 2
+================================================================================
+
+Tests used so far: 11 / 36
+Number of diagnoses: 10
+Best diagnosis: ['c6'] with P = 0.125
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 3.303
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c6'] | P=0.125 | Entropy Contribution=0.375044228
+  Rank 2: ['c7'] | P=0.125 | Entropy Contribution=0.375044228
+  Rank 3: ['c29'] | P=0.125 | Entropy Contribution=0.375044228
+  Rank 4: ['c8'] | P=0.089 | Entropy Contribution=0.311173957
+  Rank 5: ['c4'] | P=0.089 | Entropy Contribution=0.311173957
+  Rank 6: ['c5'] | P=0.089 | Entropy Contribution=0.311173957
+  Rank 7: ['c27'] | P=0.089 | Entropy Contribution=0.311173957
+  Rank 8: ['c28'] | P=0.089 | Entropy Contribution=0.311173957
+  Rank 9: ['c2'] | P=0.089 | Entropy Contribution=0.311173957
+  Rank 10: ['c45'] | P=0.089 | Entropy Contribution=0.311173957
+
+Components by Suspicion (Descending Order):
+  c6: Suspicion = 0.125
+  c7: Suspicion = 0.125
+  c29: Suspicion = 0.125
+  c2: Suspicion = 0.089
+  c4: Suspicion = 0.089
+  c5: Suspicion = 0.089
+  c8: Suspicion = 0.089
+  c27: Suspicion = 0.089
+  c28: Suspicion = 0.089
+  c45: Suspicion = 0.089
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #2
+  Info Gain: 0.047
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 3
+================================================================================
+
+Tests used so far: 12 / 36
+Number of diagnoses: 10
+Best diagnosis: ['c6'] with P = 0.132
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 3.291
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c6'] | P=0.132 | Entropy Contribution=0.385945493
+  Rank 2: ['c7'] | P=0.132 | Entropy Contribution=0.385945493
+  Rank 3: ['c29'] | P=0.132 | Entropy Contribution=0.385945493
+  Rank 4: ['c8'] | P=0.086 | Entropy Contribution=0.304801623
+  Rank 5: ['c4'] | P=0.086 | Entropy Contribution=0.304801623
+  Rank 6: ['c5'] | P=0.086 | Entropy Contribution=0.304801623
+  Rank 7: ['c27'] | P=0.086 | Entropy Contribution=0.304801623
+  Rank 8: ['c28'] | P=0.086 | Entropy Contribution=0.304801623
+  Rank 9: ['c2'] | P=0.086 | Entropy Contribution=0.304801623
+  Rank 10: ['c45'] | P=0.086 | Entropy Contribution=0.304801623
+
+Components by Suspicion (Descending Order):
+  c6: Suspicion = 0.132
+  c7: Suspicion = 0.132
+  c29: Suspicion = 0.132
+  c2: Suspicion = 0.086
+  c4: Suspicion = 0.086
+  c5: Suspicion = 0.086
+  c8: Suspicion = 0.086
+  c27: Suspicion = 0.086
+  c28: Suspicion = 0.086
+  c45: Suspicion = 0.086
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #3
+  Info Gain: 0.046
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 4
+================================================================================
+
+Tests used so far: 13 / 36
+Number of diagnoses: 10
+Best diagnosis: ['c6'] with P = 0.139
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 3.278
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c6'] | P=0.139 | Entropy Contribution=0.395609194
+  Rank 2: ['c7'] | P=0.139 | Entropy Contribution=0.395609194
+  Rank 3: ['c29'] | P=0.139 | Entropy Contribution=0.395609194
+  Rank 4: ['c8'] | P=0.083 | Entropy Contribution=0.298711544
+  Rank 5: ['c4'] | P=0.083 | Entropy Contribution=0.298711544
+  Rank 6: ['c5'] | P=0.083 | Entropy Contribution=0.298711544
+  Rank 7: ['c27'] | P=0.083 | Entropy Contribution=0.298711544
+  Rank 8: ['c28'] | P=0.083 | Entropy Contribution=0.298711544
+  Rank 9: ['c2'] | P=0.083 | Entropy Contribution=0.298711544
+  Rank 10: ['c45'] | P=0.083 | Entropy Contribution=0.298711544
+
+Components by Suspicion (Descending Order):
+  c6: Suspicion = 0.139
+  c7: Suspicion = 0.139
+  c29: Suspicion = 0.139
+  c2: Suspicion = 0.083
+  c4: Suspicion = 0.083
+  c5: Suspicion = 0.083
+  c8: Suspicion = 0.083
+  c27: Suspicion = 0.083
+  c28: Suspicion = 0.083
+  c45: Suspicion = 0.083
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #4
+  Info Gain: 0.043
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+→ Test result: FAILED (1)
+
+================================================================================
+ITERATION 5
+================================================================================
+
+Tests used so far: 14 / 36
+Number of diagnoses: 10
+Best diagnosis: ['c6'] with P = 0.289
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 2.311
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c6'] | P=0.289 | Entropy Contribution=0.517631207
+  Rank 2: ['c7'] | P=0.289 | Entropy Contribution=0.517631207
+  Rank 3: ['c29'] | P=0.289 | Entropy Contribution=0.517631207
+  Rank 4: ['c8'] | P=0.019 | Entropy Contribution=0.108253856
+  Rank 5: ['c4'] | P=0.019 | Entropy Contribution=0.108253856
+  Rank 6: ['c5'] | P=0.019 | Entropy Contribution=0.108253856
+  Rank 7: ['c27'] | P=0.019 | Entropy Contribution=0.108253856
+  Rank 8: ['c28'] | P=0.019 | Entropy Contribution=0.108253856
+  Rank 9: ['c2'] | P=0.019 | Entropy Contribution=0.108253856
+  Rank 10: ['c45'] | P=0.019 | Entropy Contribution=0.108253856
+
+Components by Suspicion (Descending Order):
+  c6: Suspicion = 0.289
+  c7: Suspicion = 0.289
+  c29: Suspicion = 0.289
+  c2: Suspicion = 0.019
+  c4: Suspicion = 0.019
+  c5: Suspicion = 0.019
+  c8: Suspicion = 0.019
+  c27: Suspicion = 0.019
+  c28: Suspicion = 0.019
+  c45: Suspicion = 0.019
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #18
+  Info Gain: 0.010
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 6
+================================================================================
+
+Tests used so far: 15 / 36
+Number of diagnoses: 10
+Best diagnosis: ['c6'] with P = 0.295
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 2.245
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c6'] | P=0.295 | Entropy Contribution=0.519427224
+  Rank 2: ['c7'] | P=0.295 | Entropy Contribution=0.519427224
+  Rank 3: ['c29'] | P=0.295 | Entropy Contribution=0.519427224
+  Rank 4: ['c8'] | P=0.017 | Entropy Contribution=0.098167429
+  Rank 5: ['c4'] | P=0.017 | Entropy Contribution=0.098167429
+  Rank 6: ['c5'] | P=0.017 | Entropy Contribution=0.098167429
+  Rank 7: ['c27'] | P=0.017 | Entropy Contribution=0.098167429
+  Rank 8: ['c28'] | P=0.017 | Entropy Contribution=0.098167429
+  Rank 9: ['c2'] | P=0.017 | Entropy Contribution=0.098167429
+  Rank 10: ['c45'] | P=0.017 | Entropy Contribution=0.098167429
+
+Components by Suspicion (Descending Order):
+  c6: Suspicion = 0.295
+  c7: Suspicion = 0.295
+  c29: Suspicion = 0.295
+  c2: Suspicion = 0.017
+  c4: Suspicion = 0.017
+  c5: Suspicion = 0.017
+  c8: Suspicion = 0.017
+  c27: Suspicion = 0.017
+  c28: Suspicion = 0.017
+  c45: Suspicion = 0.017
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #24
+  Info Gain: 0.008
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 7
+================================================================================
+
+Tests used so far: 16 / 36
+Number of diagnoses: 10
+Best diagnosis: ['c6'] with P = 0.299
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 2.188
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c6'] | P=0.299 | Entropy Contribution=0.520816327
+  Rank 2: ['c7'] | P=0.299 | Entropy Contribution=0.520816327
+  Rank 3: ['c29'] | P=0.299 | Entropy Contribution=0.520816327
+  Rank 4: ['c8'] | P=0.015 | Entropy Contribution=0.089405166
+  Rank 5: ['c4'] | P=0.015 | Entropy Contribution=0.089405166
+  Rank 6: ['c5'] | P=0.015 | Entropy Contribution=0.089405166
+  Rank 7: ['c27'] | P=0.015 | Entropy Contribution=0.089405166
+  Rank 8: ['c28'] | P=0.015 | Entropy Contribution=0.089405166
+  Rank 9: ['c2'] | P=0.015 | Entropy Contribution=0.089405166
+  Rank 10: ['c45'] | P=0.015 | Entropy Contribution=0.089405166
+
+Components by Suspicion (Descending Order):
+  c6: Suspicion = 0.299
+  c7: Suspicion = 0.299
+  c29: Suspicion = 0.299
+  c2: Suspicion = 0.015
+  c4: Suspicion = 0.015
+  c5: Suspicion = 0.015
+  c8: Suspicion = 0.015
+  c27: Suspicion = 0.015
+  c28: Suspicion = 0.015
+  c45: Suspicion = 0.015
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #0
+  Info Gain: 0.007
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 8
+================================================================================
+
+Tests used so far: 17 / 36
+Number of diagnoses: 10
+Best diagnosis: ['c6'] with P = 0.299
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 2.187
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c6'] | P=0.299 | Entropy Contribution=0.520852310
+  Rank 2: ['c7'] | P=0.299 | Entropy Contribution=0.520852310
+  Rank 3: ['c29'] | P=0.299 | Entropy Contribution=0.520852310
+  Rank 4: ['c8'] | P=0.015 | Entropy Contribution=0.089164881
+  Rank 5: ['c4'] | P=0.015 | Entropy Contribution=0.089164881
+  Rank 6: ['c5'] | P=0.015 | Entropy Contribution=0.089164881
+  Rank 7: ['c27'] | P=0.015 | Entropy Contribution=0.089164881
+  Rank 8: ['c28'] | P=0.015 | Entropy Contribution=0.089164881
+  Rank 9: ['c2'] | P=0.015 | Entropy Contribution=0.089164881
+  Rank 10: ['c45'] | P=0.015 | Entropy Contribution=0.089164881
+
+Components by Suspicion (Descending Order):
+  c6: Suspicion = 0.299
+  c7: Suspicion = 0.299
+  c29: Suspicion = 0.299
+  c2: Suspicion = 0.015
+  c4: Suspicion = 0.015
+  c5: Suspicion = 0.015
+  c8: Suspicion = 0.015
+  c27: Suspicion = 0.015
+  c28: Suspicion = 0.015
+  c45: Suspicion = 0.015
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #6
+  Info Gain: 0.004
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 9
+================================================================================
+
+Tests used so far: 18 / 36
+Number of diagnoses: 10
+Best diagnosis: ['c6'] with P = 0.300
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 2.183
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c6'] | P=0.300 | Entropy Contribution=0.520943585
+  Rank 2: ['c7'] | P=0.300 | Entropy Contribution=0.520943585
+  Rank 3: ['c29'] | P=0.300 | Entropy Contribution=0.520943585
+  Rank 4: ['c8'] | P=0.014 | Entropy Contribution=0.088552073
+  Rank 5: ['c4'] | P=0.014 | Entropy Contribution=0.088552073
+  Rank 6: ['c5'] | P=0.014 | Entropy Contribution=0.088552073
+  Rank 7: ['c27'] | P=0.014 | Entropy Contribution=0.088552073
+  Rank 8: ['c28'] | P=0.014 | Entropy Contribution=0.088552073
+  Rank 9: ['c2'] | P=0.014 | Entropy Contribution=0.088552073
+  Rank 10: ['c45'] | P=0.014 | Entropy Contribution=0.088552073
+
+Components by Suspicion (Descending Order):
+  c6: Suspicion = 0.300
+  c7: Suspicion = 0.300
+  c29: Suspicion = 0.300
+  c2: Suspicion = 0.014
+  c4: Suspicion = 0.014
+  c5: Suspicion = 0.014
+  c8: Suspicion = 0.014
+  c27: Suspicion = 0.014
+  c28: Suspicion = 0.014
+  c45: Suspicion = 0.014
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #7
+  Info Gain: 0.002
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 10
+================================================================================
+
+Tests used so far: 19 / 36
+Number of diagnoses: 10
+Best diagnosis: ['c6'] with P = 0.300
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 2.177
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c6'] | P=0.300 | Entropy Contribution=0.521071113
+  Rank 2: ['c7'] | P=0.300 | Entropy Contribution=0.521071113
+  Rank 3: ['c29'] | P=0.300 | Entropy Contribution=0.521071113
+  Rank 4: ['c8'] | P=0.014 | Entropy Contribution=0.087687800
+  Rank 5: ['c4'] | P=0.014 | Entropy Contribution=0.087687800
+  Rank 6: ['c5'] | P=0.014 | Entropy Contribution=0.087687800
+  Rank 7: ['c27'] | P=0.014 | Entropy Contribution=0.087687800
+  Rank 8: ['c28'] | P=0.014 | Entropy Contribution=0.087687800
+  Rank 9: ['c2'] | P=0.014 | Entropy Contribution=0.087687800
+  Rank 10: ['c45'] | P=0.014 | Entropy Contribution=0.087687800
+
+Components by Suspicion (Descending Order):
+  c6: Suspicion = 0.300
+  c7: Suspicion = 0.300
+  c29: Suspicion = 0.300
+  c2: Suspicion = 0.014
+  c4: Suspicion = 0.014
+  c5: Suspicion = 0.014
+  c8: Suspicion = 0.014
+  c27: Suspicion = 0.014
+  c28: Suspicion = 0.014
+  c45: Suspicion = 0.014
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #8
+  Info Gain: 0.000
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 11
+================================================================================
+
+Tests used so far: 20 / 36
+Number of diagnoses: 10
+Best diagnosis: ['c6'] with P = 0.300
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 2.170
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c6'] | P=0.300 | Entropy Contribution=0.521221738
+  Rank 2: ['c7'] | P=0.300 | Entropy Contribution=0.521221738
+  Rank 3: ['c29'] | P=0.300 | Entropy Contribution=0.521221738
+  Rank 4: ['c8'] | P=0.014 | Entropy Contribution=0.086654596
+  Rank 5: ['c4'] | P=0.014 | Entropy Contribution=0.086654596
+  Rank 6: ['c5'] | P=0.014 | Entropy Contribution=0.086654596
+  Rank 7: ['c27'] | P=0.014 | Entropy Contribution=0.086654596
+  Rank 8: ['c28'] | P=0.014 | Entropy Contribution=0.086654596
+  Rank 9: ['c2'] | P=0.014 | Entropy Contribution=0.086654596
+  Rank 10: ['c45'] | P=0.014 | Entropy Contribution=0.086654596
+
+Components by Suspicion (Descending Order):
+  c6: Suspicion = 0.300
+  c7: Suspicion = 0.300
+  c29: Suspicion = 0.300
+  c2: Suspicion = 0.014
+  c4: Suspicion = 0.014
+  c5: Suspicion = 0.014
+  c8: Suspicion = 0.014
+  c27: Suspicion = 0.014
+  c28: Suspicion = 0.014
+  c45: Suspicion = 0.014
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #9
+  Info Gain: -0.001
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 12
+================================================================================
+
+Tests used so far: 21 / 36
+Number of diagnoses: 10
+Best diagnosis: ['c6'] with P = 0.301
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 2.163
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c6'] | P=0.301 | Entropy Contribution=0.521386320
+  Rank 2: ['c7'] | P=0.301 | Entropy Contribution=0.521386320
+  Rank 3: ['c29'] | P=0.301 | Entropy Contribution=0.521386320
+  Rank 4: ['c8'] | P=0.014 | Entropy Contribution=0.085509844
+  Rank 5: ['c4'] | P=0.014 | Entropy Contribution=0.085509844
+  Rank 6: ['c5'] | P=0.014 | Entropy Contribution=0.085509844
+  Rank 7: ['c27'] | P=0.014 | Entropy Contribution=0.085509844
+  Rank 8: ['c28'] | P=0.014 | Entropy Contribution=0.085509844
+  Rank 9: ['c2'] | P=0.014 | Entropy Contribution=0.085509844
+  Rank 10: ['c45'] | P=0.014 | Entropy Contribution=0.085509844
+
+Components by Suspicion (Descending Order):
+  c6: Suspicion = 0.301
+  c7: Suspicion = 0.301
+  c29: Suspicion = 0.301
+  c2: Suspicion = 0.014
+  c4: Suspicion = 0.014
+  c5: Suspicion = 0.014
+  c8: Suspicion = 0.014
+  c27: Suspicion = 0.014
+  c28: Suspicion = 0.014
+  c45: Suspicion = 0.014
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #10
+  Info Gain: -0.002
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 13
+================================================================================
+
+Tests used so far: 22 / 36
+Number of diagnoses: 10
+Best diagnosis: ['c6'] with P = 0.302
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 2.155
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c6'] | P=0.302 | Entropy Contribution=0.521558491
+  Rank 2: ['c7'] | P=0.302 | Entropy Contribution=0.521558491
+  Rank 3: ['c29'] | P=0.302 | Entropy Contribution=0.521558491
+  Rank 4: ['c8'] | P=0.014 | Entropy Contribution=0.084294048
+  Rank 5: ['c4'] | P=0.014 | Entropy Contribution=0.084294048
+  Rank 6: ['c5'] | P=0.014 | Entropy Contribution=0.084294048
+  Rank 7: ['c27'] | P=0.014 | Entropy Contribution=0.084294048
+  Rank 8: ['c28'] | P=0.014 | Entropy Contribution=0.084294048
+  Rank 9: ['c2'] | P=0.014 | Entropy Contribution=0.084294048
+  Rank 10: ['c45'] | P=0.014 | Entropy Contribution=0.084294048
+
+Components by Suspicion (Descending Order):
+  c6: Suspicion = 0.302
+  c7: Suspicion = 0.302
+  c29: Suspicion = 0.302
+  c2: Suspicion = 0.014
+  c4: Suspicion = 0.014
+  c5: Suspicion = 0.014
+  c8: Suspicion = 0.014
+  c27: Suspicion = 0.014
+  c28: Suspicion = 0.014
+  c45: Suspicion = 0.014
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #12
+  Info Gain: -0.002
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 14
+================================================================================
+
+Tests used so far: 23 / 36
+Number of diagnoses: 10
+Best diagnosis: ['c6'] with P = 0.302
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 2.146
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c6'] | P=0.302 | Entropy Contribution=0.521733812
+  Rank 2: ['c7'] | P=0.302 | Entropy Contribution=0.521733812
+  Rank 3: ['c29'] | P=0.302 | Entropy Contribution=0.521733812
+  Rank 4: ['c8'] | P=0.013 | Entropy Contribution=0.083036129
+  Rank 5: ['c4'] | P=0.013 | Entropy Contribution=0.083036129
+  Rank 6: ['c5'] | P=0.013 | Entropy Contribution=0.083036129
+  Rank 7: ['c27'] | P=0.013 | Entropy Contribution=0.083036129
+  Rank 8: ['c28'] | P=0.013 | Entropy Contribution=0.083036129
+  Rank 9: ['c2'] | P=0.013 | Entropy Contribution=0.083036129
+  Rank 10: ['c45'] | P=0.013 | Entropy Contribution=0.083036129
+
+Components by Suspicion (Descending Order):
+  c6: Suspicion = 0.302
+  c7: Suspicion = 0.302
+  c29: Suspicion = 0.302
+  c2: Suspicion = 0.013
+  c4: Suspicion = 0.013
+  c5: Suspicion = 0.013
+  c8: Suspicion = 0.013
+  c27: Suspicion = 0.013
+  c28: Suspicion = 0.013
+  c45: Suspicion = 0.013
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #13
+  Info Gain: -0.003
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 15
+================================================================================
+
+Tests used so far: 24 / 36
+Number of diagnoses: 10
+Best diagnosis: ['c6'] with P = 0.303
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 2.138
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c6'] | P=0.303 | Entropy Contribution=0.521909204
+  Rank 2: ['c7'] | P=0.303 | Entropy Contribution=0.521909204
+  Rank 3: ['c29'] | P=0.303 | Entropy Contribution=0.521909204
+  Rank 4: ['c8'] | P=0.013 | Entropy Contribution=0.081756897
+  Rank 5: ['c4'] | P=0.013 | Entropy Contribution=0.081756897
+  Rank 6: ['c5'] | P=0.013 | Entropy Contribution=0.081756897
+  Rank 7: ['c27'] | P=0.013 | Entropy Contribution=0.081756897
+  Rank 8: ['c28'] | P=0.013 | Entropy Contribution=0.081756897
+  Rank 9: ['c2'] | P=0.013 | Entropy Contribution=0.081756897
+  Rank 10: ['c45'] | P=0.013 | Entropy Contribution=0.081756897
+
+Components by Suspicion (Descending Order):
+  c6: Suspicion = 0.303
+  c7: Suspicion = 0.303
+  c29: Suspicion = 0.303
+  c2: Suspicion = 0.013
+  c4: Suspicion = 0.013
+  c5: Suspicion = 0.013
+  c8: Suspicion = 0.013
+  c27: Suspicion = 0.013
+  c28: Suspicion = 0.013
+  c45: Suspicion = 0.013
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #15
+  Info Gain: -0.003
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 16
+================================================================================
+
+Tests used so far: 25 / 36
+Number of diagnoses: 10
+Best diagnosis: ['c6'] with P = 0.303
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 2.130
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c6'] | P=0.303 | Entropy Contribution=0.522082543
+  Rank 2: ['c7'] | P=0.303 | Entropy Contribution=0.522082543
+  Rank 3: ['c29'] | P=0.303 | Entropy Contribution=0.522082543
+  Rank 4: ['c8'] | P=0.013 | Entropy Contribution=0.080471405
+  Rank 5: ['c4'] | P=0.013 | Entropy Contribution=0.080471405
+  Rank 6: ['c5'] | P=0.013 | Entropy Contribution=0.080471405
+  Rank 7: ['c27'] | P=0.013 | Entropy Contribution=0.080471405
+  Rank 8: ['c28'] | P=0.013 | Entropy Contribution=0.080471405
+  Rank 9: ['c2'] | P=0.013 | Entropy Contribution=0.080471405
+  Rank 10: ['c45'] | P=0.013 | Entropy Contribution=0.080471405
+
+Components by Suspicion (Descending Order):
+  c6: Suspicion = 0.303
+  c7: Suspicion = 0.303
+  c29: Suspicion = 0.303
+  c2: Suspicion = 0.013
+  c4: Suspicion = 0.013
+  c5: Suspicion = 0.013
+  c8: Suspicion = 0.013
+  c27: Suspicion = 0.013
+  c28: Suspicion = 0.013
+  c45: Suspicion = 0.013
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #16
+  Info Gain: -0.003
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 17
+================================================================================
+
+Tests used so far: 26 / 36
+Number of diagnoses: 10
+Best diagnosis: ['c6'] with P = 0.304
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 2.121
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c6'] | P=0.304 | Entropy Contribution=0.522252390
+  Rank 2: ['c7'] | P=0.304 | Entropy Contribution=0.522252390
+  Rank 3: ['c29'] | P=0.304 | Entropy Contribution=0.522252390
+  Rank 4: ['c8'] | P=0.013 | Entropy Contribution=0.079190546
+  Rank 5: ['c4'] | P=0.013 | Entropy Contribution=0.079190546
+  Rank 6: ['c5'] | P=0.013 | Entropy Contribution=0.079190546
+  Rank 7: ['c27'] | P=0.013 | Entropy Contribution=0.079190546
+  Rank 8: ['c28'] | P=0.013 | Entropy Contribution=0.079190546
+  Rank 9: ['c2'] | P=0.013 | Entropy Contribution=0.079190546
+  Rank 10: ['c45'] | P=0.013 | Entropy Contribution=0.079190546
+
+Components by Suspicion (Descending Order):
+  c6: Suspicion = 0.304
+  c7: Suspicion = 0.304
+  c29: Suspicion = 0.304
+  c2: Suspicion = 0.013
+  c4: Suspicion = 0.013
+  c5: Suspicion = 0.013
+  c8: Suspicion = 0.013
+  c27: Suspicion = 0.013
+  c28: Suspicion = 0.013
+  c45: Suspicion = 0.013
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #19
+  Info Gain: -0.004
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 18
+================================================================================
+
+Tests used so far: 27 / 36
+Number of diagnoses: 10
+Best diagnosis: ['c6'] with P = 0.305
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 2.113
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c6'] | P=0.305 | Entropy Contribution=0.522417792
+  Rank 2: ['c7'] | P=0.305 | Entropy Contribution=0.522417792
+  Rank 3: ['c29'] | P=0.305 | Entropy Contribution=0.522417792
+  Rank 4: ['c8'] | P=0.012 | Entropy Contribution=0.077922191
+  Rank 5: ['c4'] | P=0.012 | Entropy Contribution=0.077922191
+  Rank 6: ['c5'] | P=0.012 | Entropy Contribution=0.077922191
+  Rank 7: ['c27'] | P=0.012 | Entropy Contribution=0.077922191
+  Rank 8: ['c28'] | P=0.012 | Entropy Contribution=0.077922191
+  Rank 9: ['c2'] | P=0.012 | Entropy Contribution=0.077922191
+  Rank 10: ['c45'] | P=0.012 | Entropy Contribution=0.077922191
+
+Components by Suspicion (Descending Order):
+  c6: Suspicion = 0.305
+  c7: Suspicion = 0.305
+  c29: Suspicion = 0.305
+  c2: Suspicion = 0.012
+  c4: Suspicion = 0.012
+  c5: Suspicion = 0.012
+  c8: Suspicion = 0.012
+  c27: Suspicion = 0.012
+  c28: Suspicion = 0.012
+  c45: Suspicion = 0.012
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #20
+  Info Gain: -0.004
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 19
+================================================================================
+
+Tests used so far: 28 / 36
+Number of diagnoses: 10
+Best diagnosis: ['c6'] with P = 0.305
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 2.104
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c6'] | P=0.305 | Entropy Contribution=0.522578147
+  Rank 2: ['c7'] | P=0.305 | Entropy Contribution=0.522578147
+  Rank 3: ['c29'] | P=0.305 | Entropy Contribution=0.522578147
+  Rank 4: ['c8'] | P=0.012 | Entropy Contribution=0.076671981
+  Rank 5: ['c4'] | P=0.012 | Entropy Contribution=0.076671981
+  Rank 6: ['c5'] | P=0.012 | Entropy Contribution=0.076671981
+  Rank 7: ['c27'] | P=0.012 | Entropy Contribution=0.076671981
+  Rank 8: ['c28'] | P=0.012 | Entropy Contribution=0.076671981
+  Rank 9: ['c2'] | P=0.012 | Entropy Contribution=0.076671981
+  Rank 10: ['c45'] | P=0.012 | Entropy Contribution=0.076671981
+
+Components by Suspicion (Descending Order):
+  c6: Suspicion = 0.305
+  c7: Suspicion = 0.305
+  c29: Suspicion = 0.305
+  c2: Suspicion = 0.012
+  c4: Suspicion = 0.012
+  c5: Suspicion = 0.012
+  c8: Suspicion = 0.012
+  c27: Suspicion = 0.012
+  c28: Suspicion = 0.012
+  c45: Suspicion = 0.012
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #21
+  Info Gain: -0.004
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 20
+================================================================================
+
+Tests used so far: 29 / 36
+Number of diagnoses: 10
+Best diagnosis: ['c6'] with P = 0.306
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 2.096
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c6'] | P=0.306 | Entropy Contribution=0.522733101
+  Rank 2: ['c7'] | P=0.306 | Entropy Contribution=0.522733101
+  Rank 3: ['c29'] | P=0.306 | Entropy Contribution=0.522733101
+  Rank 4: ['c8'] | P=0.012 | Entropy Contribution=0.075443907
+  Rank 5: ['c4'] | P=0.012 | Entropy Contribution=0.075443907
+  Rank 6: ['c5'] | P=0.012 | Entropy Contribution=0.075443907
+  Rank 7: ['c27'] | P=0.012 | Entropy Contribution=0.075443907
+  Rank 8: ['c28'] | P=0.012 | Entropy Contribution=0.075443907
+  Rank 9: ['c2'] | P=0.012 | Entropy Contribution=0.075443907
+  Rank 10: ['c45'] | P=0.012 | Entropy Contribution=0.075443907
+
+Components by Suspicion (Descending Order):
+  c6: Suspicion = 0.306
+  c7: Suspicion = 0.306
+  c29: Suspicion = 0.306
+  c2: Suspicion = 0.012
+  c4: Suspicion = 0.012
+  c5: Suspicion = 0.012
+  c8: Suspicion = 0.012
+  c27: Suspicion = 0.012
+  c28: Suspicion = 0.012
+  c45: Suspicion = 0.012
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #23
+  Info Gain: -0.004
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 21
+================================================================================
+
+Tests used so far: 30 / 36
+Number of diagnoses: 10
+Best diagnosis: ['c6'] with P = 0.306
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 2.088
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c6'] | P=0.306 | Entropy Contribution=0.522882482
+  Rank 2: ['c7'] | P=0.306 | Entropy Contribution=0.522882482
+  Rank 3: ['c29'] | P=0.306 | Entropy Contribution=0.522882482
+  Rank 4: ['c8'] | P=0.012 | Entropy Contribution=0.074240728
+  Rank 5: ['c4'] | P=0.012 | Entropy Contribution=0.074240728
+  Rank 6: ['c5'] | P=0.012 | Entropy Contribution=0.074240728
+  Rank 7: ['c27'] | P=0.012 | Entropy Contribution=0.074240728
+  Rank 8: ['c28'] | P=0.012 | Entropy Contribution=0.074240728
+  Rank 9: ['c2'] | P=0.012 | Entropy Contribution=0.074240728
+  Rank 10: ['c45'] | P=0.012 | Entropy Contribution=0.074240728
+
+Components by Suspicion (Descending Order):
+  c6: Suspicion = 0.306
+  c7: Suspicion = 0.306
+  c29: Suspicion = 0.306
+  c2: Suspicion = 0.012
+  c4: Suspicion = 0.012
+  c5: Suspicion = 0.012
+  c8: Suspicion = 0.012
+  c27: Suspicion = 0.012
+  c28: Suspicion = 0.012
+  c45: Suspicion = 0.012
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #26
+  Info Gain: -0.004
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 22
+================================================================================
+
+Tests used so far: 31 / 36
+Number of diagnoses: 10
+Best diagnosis: ['c6'] with P = 0.307
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 2.081
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c6'] | P=0.307 | Entropy Contribution=0.523026241
+  Rank 2: ['c7'] | P=0.307 | Entropy Contribution=0.523026241
+  Rank 3: ['c29'] | P=0.307 | Entropy Contribution=0.523026241
+  Rank 4: ['c8'] | P=0.011 | Entropy Contribution=0.073064280
+  Rank 5: ['c4'] | P=0.011 | Entropy Contribution=0.073064280
+  Rank 6: ['c5'] | P=0.011 | Entropy Contribution=0.073064280
+  Rank 7: ['c27'] | P=0.011 | Entropy Contribution=0.073064280
+  Rank 8: ['c28'] | P=0.011 | Entropy Contribution=0.073064280
+  Rank 9: ['c2'] | P=0.011 | Entropy Contribution=0.073064280
+  Rank 10: ['c45'] | P=0.011 | Entropy Contribution=0.073064280
+
+Components by Suspicion (Descending Order):
+  c6: Suspicion = 0.307
+  c7: Suspicion = 0.307
+  c29: Suspicion = 0.307
+  c2: Suspicion = 0.011
+  c4: Suspicion = 0.011
+  c5: Suspicion = 0.011
+  c8: Suspicion = 0.011
+  c27: Suspicion = 0.011
+  c28: Suspicion = 0.011
+  c45: Suspicion = 0.011
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #27
+  Info Gain: -0.004
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 23
+================================================================================
+
+Tests used so far: 32 / 36
+Number of diagnoses: 10
+Best diagnosis: ['c6'] with P = 0.308
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 2.073
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c6'] | P=0.308 | Entropy Contribution=0.523164422
+  Rank 2: ['c7'] | P=0.308 | Entropy Contribution=0.523164422
+  Rank 3: ['c29'] | P=0.308 | Entropy Contribution=0.523164422
+  Rank 4: ['c8'] | P=0.011 | Entropy Contribution=0.071915708
+  Rank 5: ['c4'] | P=0.011 | Entropy Contribution=0.071915708
+  Rank 6: ['c5'] | P=0.011 | Entropy Contribution=0.071915708
+  Rank 7: ['c27'] | P=0.011 | Entropy Contribution=0.071915708
+  Rank 8: ['c28'] | P=0.011 | Entropy Contribution=0.071915708
+  Rank 9: ['c2'] | P=0.011 | Entropy Contribution=0.071915708
+  Rank 10: ['c45'] | P=0.011 | Entropy Contribution=0.071915708
+
+Components by Suspicion (Descending Order):
+  c6: Suspicion = 0.308
+  c7: Suspicion = 0.308
+  c29: Suspicion = 0.308
+  c2: Suspicion = 0.011
+  c4: Suspicion = 0.011
+  c5: Suspicion = 0.011
+  c8: Suspicion = 0.011
+  c27: Suspicion = 0.011
+  c28: Suspicion = 0.011
+  c45: Suspicion = 0.011
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #28
+  Info Gain: -0.004
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 24
+================================================================================
+
+Tests used so far: 33 / 36
+Number of diagnoses: 10
+Best diagnosis: ['c6'] with P = 0.308
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 2.065
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c6'] | P=0.308 | Entropy Contribution=0.523297130
+  Rank 2: ['c7'] | P=0.308 | Entropy Contribution=0.523297130
+  Rank 3: ['c29'] | P=0.308 | Entropy Contribution=0.523297130
+  Rank 4: ['c8'] | P=0.011 | Entropy Contribution=0.070795633
+  Rank 5: ['c4'] | P=0.011 | Entropy Contribution=0.070795633
+  Rank 6: ['c5'] | P=0.011 | Entropy Contribution=0.070795633
+  Rank 7: ['c27'] | P=0.011 | Entropy Contribution=0.070795633
+  Rank 8: ['c28'] | P=0.011 | Entropy Contribution=0.070795633
+  Rank 9: ['c2'] | P=0.011 | Entropy Contribution=0.070795633
+  Rank 10: ['c45'] | P=0.011 | Entropy Contribution=0.070795633
+
+Components by Suspicion (Descending Order):
+  c6: Suspicion = 0.308
+  c7: Suspicion = 0.308
+  c29: Suspicion = 0.308
+  c2: Suspicion = 0.011
+  c4: Suspicion = 0.011
+  c5: Suspicion = 0.011
+  c8: Suspicion = 0.011
+  c27: Suspicion = 0.011
+  c28: Suspicion = 0.011
+  c45: Suspicion = 0.011
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #30
+  Info Gain: -0.004
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 25
+================================================================================
+
+Tests used so far: 34 / 36
+Number of diagnoses: 10
+Best diagnosis: ['c6'] with P = 0.309
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 2.058
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c6'] | P=0.309 | Entropy Contribution=0.523424514
+  Rank 2: ['c7'] | P=0.309 | Entropy Contribution=0.523424514
+  Rank 3: ['c29'] | P=0.309 | Entropy Contribution=0.523424514
+  Rank 4: ['c8'] | P=0.011 | Entropy Contribution=0.069704285
+  Rank 5: ['c4'] | P=0.011 | Entropy Contribution=0.069704285
+  Rank 6: ['c5'] | P=0.011 | Entropy Contribution=0.069704285
+  Rank 7: ['c27'] | P=0.011 | Entropy Contribution=0.069704285
+  Rank 8: ['c28'] | P=0.011 | Entropy Contribution=0.069704285
+  Rank 9: ['c2'] | P=0.011 | Entropy Contribution=0.069704285
+  Rank 10: ['c45'] | P=0.011 | Entropy Contribution=0.069704285
+
+Components by Suspicion (Descending Order):
+  c6: Suspicion = 0.309
+  c7: Suspicion = 0.309
+  c29: Suspicion = 0.309
+  c2: Suspicion = 0.011
+  c4: Suspicion = 0.011
+  c5: Suspicion = 0.011
+  c8: Suspicion = 0.011
+  c27: Suspicion = 0.011
+  c28: Suspicion = 0.011
+  c45: Suspicion = 0.011
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #31
+  Info Gain: -0.004
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 26
+================================================================================
+
+Tests used so far: 35 / 36
+Number of diagnoses: 10
+Best diagnosis: ['c6'] with P = 0.309
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 2.051
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c6'] | P=0.309 | Entropy Contribution=0.523546749
+  Rank 2: ['c7'] | P=0.309 | Entropy Contribution=0.523546749
+  Rank 3: ['c29'] | P=0.309 | Entropy Contribution=0.523546749
+  Rank 4: ['c8'] | P=0.010 | Entropy Contribution=0.068641603
+  Rank 5: ['c4'] | P=0.010 | Entropy Contribution=0.068641603
+  Rank 6: ['c5'] | P=0.010 | Entropy Contribution=0.068641603
+  Rank 7: ['c27'] | P=0.010 | Entropy Contribution=0.068641603
+  Rank 8: ['c28'] | P=0.010 | Entropy Contribution=0.068641603
+  Rank 9: ['c2'] | P=0.010 | Entropy Contribution=0.068641603
+  Rank 10: ['c45'] | P=0.010 | Entropy Contribution=0.068641603
+
+Components by Suspicion (Descending Order):
+  c6: Suspicion = 0.309
+  c7: Suspicion = 0.309
+  c29: Suspicion = 0.309
+  c2: Suspicion = 0.010
+  c4: Suspicion = 0.010
+  c5: Suspicion = 0.010
+  c8: Suspicion = 0.010
+  c27: Suspicion = 0.010
+  c28: Suspicion = 0.010
+  c45: Suspicion = 0.010
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #32
+  Info Gain: -0.004
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c41', 'c44', 'c45', 'c46', 'c47', 'c48', 'c49', 'c50', 'c51', 'c52']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 27
+================================================================================
+
+Tests used so far: 36 / 36
+Number of diagnoses: 10
+Best diagnosis: ['c6'] with P = 0.309
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 2.044
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c6'] | P=0.309 | Entropy Contribution=0.523664027
+  Rank 2: ['c7'] | P=0.309 | Entropy Contribution=0.523664027
+  Rank 3: ['c29'] | P=0.309 | Entropy Contribution=0.523664027
+  Rank 4: ['c8'] | P=0.010 | Entropy Contribution=0.067607305
+  Rank 5: ['c4'] | P=0.010 | Entropy Contribution=0.067607305
+  Rank 6: ['c5'] | P=0.010 | Entropy Contribution=0.067607305
+  Rank 7: ['c27'] | P=0.010 | Entropy Contribution=0.067607305
+  Rank 8: ['c28'] | P=0.010 | Entropy Contribution=0.067607305
+  Rank 9: ['c2'] | P=0.010 | Entropy Contribution=0.067607305
+  Rank 10: ['c45'] | P=0.010 | Entropy Contribution=0.067607305
+
+Components by Suspicion (Descending Order):
+  c6: Suspicion = 0.309
+  c7: Suspicion = 0.309
+  c29: Suspicion = 0.309
+  c2: Suspicion = 0.010
+  c4: Suspicion = 0.010
+  c5: Suspicion = 0.010
+  c8: Suspicion = 0.010
+  c27: Suspicion = 0.010
+  c28: Suspicion = 0.010
+  c45: Suspicion = 0.010
+
+================================================================================
+
+✗ ALL TESTS EXHAUSTED
+================================================================================
+Best diagnosis found: ['c6']
+Probability: 0.309
+Total tests used: 36 / 36
+Total iterations: 27
+
+================================================================================
+TDP COMPLETED
+================================================================================
+End Time: 2025-12-13 12:13:04
+Duration: 93.35 seconds
+Final diagnosis: ['c6']
+Probability: 0.309
+Total tests used: 36 / 36
+Total iterations: 27

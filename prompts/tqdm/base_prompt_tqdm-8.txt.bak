@@ -1,0 +1,116 @@
+### TOP_METHODS (Ochiai)
+Source CSV: C:\Users\user\Desktop\uni\mark\FAILING_TEST\Tqdm\tqdm_8_ochiai_top_10.csv
+Source Code File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\tqdm\_tqdm.py
+
+1. ..tqdm._tqdm$tqdm#print_status(s) | score=0.1889822365046136
+2. ..tqdm._tqdm$tqdm#fp_write(s) | score=0.1889822365046136
+3. ..tqdm._tqdm$tqdm#fp_write(s) | score=0.1889822365046136
+4. ..tqdm._main##cast(val,typ) | score=0.16666666666666666
+5. ..tqdm._tqdm$tqdm#format_interval(t) | score=0.16666666666666666
+6. ..tqdm._tqdm$tqdm#format_sizeof(num,suffix) | score=0.16666666666666666
+7. ..tqdm._tqdm$tqdm#status_printer(file) | score=0.16666666666666666
+8. ..tqdm._tqdm$tqdm#format_meter(n,total,elapsed,ncols,prefix,ascii,unit,unit_scale,rate,bar_format) | score=0.16666666666666666
+9. ..tqdm._tqdm$tqdm#__new__(*args,**kwargs) | score=0.16666666666666666
+10. ..tqdm._tqdm$tqdm#_get_free_pos(instance) | score=0.16666666666666666
+
+### CODE_SNIPPETS
+
+---
+Rank: 1
+Method: ..tqdm._tqdm$tqdm#print_status(s)
+Ochiai_Score: 0.1889822365046136
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\tqdm\_tqdm.py
+Resolved_Symbol: class tqdm.print_status
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in _tqdm.py)
+
+---
+Rank: 2
+Method: ..tqdm._tqdm$tqdm#fp_write(s)
+Ochiai_Score: 0.1889822365046136
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\tqdm\_tqdm.py
+Resolved_Symbol: class tqdm.fp_write
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in _tqdm.py)
+
+---
+Rank: 3
+Method: ..tqdm._tqdm$tqdm#fp_write(s)
+Ochiai_Score: 0.1889822365046136
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\tqdm\_tqdm.py
+Resolved_Symbol: class tqdm.fp_write
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in _tqdm.py)
+
+---
+Rank: 4
+Method: ..tqdm._main##cast(val,typ)
+Ochiai_Score: 0.16666666666666666
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\tqdm\_tqdm.py
+Resolved_Symbol: class ..tqdm._main.cast
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in _tqdm.py)
+
+---
+Rank: 5
+Method: ..tqdm._tqdm$tqdm#format_interval(t)
+Ochiai_Score: 0.16666666666666666
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\tqdm\_tqdm.py
+Resolved_Symbol: class tqdm.format_interval
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in _tqdm.py)
+
+---
+Rank: 6
+Method: ..tqdm._tqdm$tqdm#format_sizeof(num,suffix)
+Ochiai_Score: 0.16666666666666666
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\tqdm\_tqdm.py
+Resolved_Symbol: class tqdm.format_sizeof
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in _tqdm.py)
+
+---
+Rank: 7
+Method: ..tqdm._tqdm$tqdm#status_printer(file)
+Ochiai_Score: 0.16666666666666666
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\tqdm\_tqdm.py
+Resolved_Symbol: class tqdm.status_printer
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in _tqdm.py)
+
+---
+Rank: 8
+Method: ..tqdm._tqdm$tqdm#format_meter(n,total,elapsed,ncols,prefix,ascii,unit,unit_scale,rate,bar_format)
+Ochiai_Score: 0.16666666666666666
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\tqdm\_tqdm.py
+Resolved_Symbol: class tqdm.format_meter
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in _tqdm.py)
+
+---
+Rank: 9
+Method: ..tqdm._tqdm$tqdm#__new__(*args,**kwargs)
+Ochiai_Score: 0.16666666666666666
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\tqdm\_tqdm.py
+Resolved_Symbol: class tqdm.__new__
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in _tqdm.py)
+
+---
+Rank: 10
+Method: ..tqdm._tqdm$tqdm#_get_free_pos(instance)
+Ochiai_Score: 0.16666666666666666
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\tqdm\_tqdm.py
+Resolved_Symbol: class tqdm._get_free_pos
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in _tqdm.py)

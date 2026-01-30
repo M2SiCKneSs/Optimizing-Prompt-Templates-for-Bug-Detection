@@ -1,0 +1,31 @@
+{
+  "project": "Chart",
+  "bug_id": 15,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.jfree.chart.plot.PiePlot.initialise(java.awt.Graphics2D",
+      "score": 0.997795
+    },
+    {
+      "rank": 2,
+      "method": "org.jfree.chart.plot.PiePlot.getLegendItems()",
+      "score": 0.874026
+    },
+    {
+      "rank": 3,
+      "method": "org.jfree.chart.plot.PiePlot3D.draw(Graphics2D",
+      "score": 0.751696
+    },
+    {
+      "rank": 4,
+      "method": "org.jfree.chart.plot.PiePlot.getMaximumLabelWidth()",
+      "score": 0.63414
+    },
+    {
+      "rank": 5,
+      "method": "org.jfree.chart.plot.PiePlot.initialise(Graphics2D",
+      "score": 0.514732
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+### TOP_METHODS (Ochiai)
+1. black##append_to_line(leaf) | score=0.20851441405707477
+2. black##rhs(line,py36) | score=0.2
+3. black##get_imports_from_children(children) | score=0.14002800840280097
+4. black$WriteBack#from_configuration() | score=0.105999788000636
+5. black##reformat_one(src,line_length,fast,write_back,mode,report) | score=0.105999788000636
+
+
+### CODE_SNIPPETS
+
+
+
+---
+Rank: 1
+Method: black##append_to_line(leaf)
+Ochiai_Score: 0.20851441405707477
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: #append_to_line
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in black.py)
+
+
+---
+Rank: 2
+Method: black##rhs(line,py36)
+Ochiai_Score: 0.2
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: #rhs
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in black.py)
+
+
+---
+Rank: 3
+Method: black##get_imports_from_children(children)
+Ochiai_Score: 0.14002800840280097
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: #get_imports_from_children
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in black.py)
+
+
+---
+Rank: 4
+Method: black$WriteBack#from_configuration()
+Ochiai_Score: 0.105999788000636
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: class WriteBack.from_configuration
+Status: OK
+Snippet:
+    def from_configuration(
+        cls, *, check: bool, diff: bool, color: bool = False
+    ) -> "WriteBack":
+        if check and not diff:
+            return cls.CHECK
+
+        if diff and color:
+            return cls.COLOR_DIFF
+
+        return cls.DIFF if diff else cls.YES
+
+
+---
+Rank: 5
+Method: black##reformat_one(src,line_length,fast,write_back,mode,report)
+Ochiai_Score: 0.105999788000636
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: #reformat_one
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in black.py)
+

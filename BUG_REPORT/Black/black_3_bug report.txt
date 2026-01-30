@@ -1,0 +1,6 @@
+Change exit code to 2 when config file doesn't exist (#1361)
+Fixes #1360, where an invalid config file causes a return/exit code of 1. This
+change means this case is caught earlier, treated like any other bad
+parameters, and results in an exit code of 2.
+
+Co-authored-by: Toby Fleming <tobywf@users.noreply.github.com>

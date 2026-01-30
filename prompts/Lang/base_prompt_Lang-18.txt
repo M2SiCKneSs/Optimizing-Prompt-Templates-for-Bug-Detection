@@ -1,0 +1,96 @@
+### BUG_REPORT
+Title: FastDateFormat formats year differently than SimpleDateFormat in Java 7
+
+Description:
+Starting with Java 7 does SimpleDateFormat format a year pattern of 'Y' or 'YYY' as '2003' instead of '03' as in former Java releases. According Javadoc this pattern should have been always been formatted as number, therefore the new behavior seems to be a bug fix in the JDK. FastDateFormat is adjusted to behave the same.
+
+
+### FAILING_TEST
+org.apache.commons.lang3.time.FastDateFormat.format(long)
+org.apache.commons.lang3.time.FastDateFormat.parsePattern()
+org.apache.commons.lang3.time.FastDateFormat.toString()
+org.apache.commons.lang3.time.DateUtils.parseDateWithLeniency(String,String[],boolean)
+org.apache.commons.lang3.time.DateFormatUtils.format(Date,String,TimeZone,Locale)
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.time.FastDateFormat.format(long)
+------------------------------------------------------------------------------------------
+@Override
+    public StringBuffer format(final Object obj, final StringBuffer toAppendTo, final FieldPosition pos) {
+        return printer.format(obj, toAppendTo, pos);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.time.FastDateFormat.parsePattern()
+------------------------------------------------------------------------------------------
+[NOT FOUND] Method/ctor 'parsePattern' not found in C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Lang\src\main\java\org\apache\commons\lang3\time\FastDateFormat.java
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.time.FastDateFormat.toString()
+------------------------------------------------------------------------------------------
+@Override
+    public String toString() {
+        return "FastDateFormat[" + printer.getPattern() + "," + printer.getLocale() + "," + printer.getTimeZone().getID() + "]";
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.time.DateUtils.parseDateWithLeniency(String,String[],boolean)
+------------------------------------------------------------------------------------------
+private static Date parseDateWithLeniency(
+            final String str, final Locale locale, final String[] parsePatterns, final boolean lenient) throws ParseException {
+        if (str == null || parsePatterns == null) {
+            throw new IllegalArgumentException("Date and Patterns must not be null");
+        }
+        
+        SimpleDateFormat parser;
+        if (locale == null) {
+            parser = new SimpleDateFormat();
+        } else {
+            parser = new SimpleDateFormat("", locale);
+        }
+        
+        parser.setLenient(lenient);
+        final ParsePosition pos = new ParsePosition(0);
+        for (final String parsePattern : parsePatterns) {
+
+            String pattern = parsePattern;
+
+            // LANG-530 - need to make sure 'ZZ' output doesn't get passed to SimpleDateFormat
+            if (parsePattern.endsWith("ZZ")) {
+                pattern = pattern.substring(0, pattern.length() - 1);
+            }
+            
+            parser.applyPattern(pattern);
+            pos.setIndex(0);
+
+            String str2 = str;
+            // LANG-530 - need to make sure 'ZZ' output doesn't hit SimpleDateFormat as it will ParseException
+            if (parsePattern.endsWith("ZZ")) {
+                str2 = str.replaceAll("([-+][0-9][0-9]):([0-9][0-9])$", "$1$2"); 
+            }
+
+            final Date date = parser.parse(str2, pos);
+            if (date != null && pos.getIndex() == str2.length()) {
+                return date;
+            }
+        }
+        throw new ParseException("Unable to parse the date: " + str, -1);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.time.DateFormatUtils.format(Date,String,TimeZone,Locale)
+------------------------------------------------------------------------------------------
+public static String format(final long millis, final String pattern) {
+        return format(new Date(millis), pattern, null, null);
+    }
+
+------------------------------------------------------------------------------------------
+

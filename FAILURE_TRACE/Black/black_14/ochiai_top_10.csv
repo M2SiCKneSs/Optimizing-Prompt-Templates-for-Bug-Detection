@@ -1,0 +1,11 @@
+Method,Ochiai_Score
+black$WriteBack#from_configuration(),0.11952286093343936
+black$FileMode#from_configuration(),0.11952286093343936
+"black##read_pyproject_toml(ctx,param,value)",0.11952286093343936
+"black##main(ctx,line_length,check,diff,fast,pyi,py36,skip_string_normalization,quiet,verbose,include,exclude,src,config)",0.11952286093343936
+"black##reformat_one(src,line_length,fast,write_back,mode,report)",0.11952286093343936
+"black##schedule_formatting(sources,line_length,fast,write_back,mode,report,loop,executor)",0.11952286093343936
+"black##format_file_in_place(src,line_length,fast,write_back,mode,lock)",0.11952286093343936
+"black##format_stdin_to_stdout(line_length,fast,write_back,mode)",0.11952286093343936
+black##format_file_contents(src_contents),0.11952286093343936
+"black##format_str(src_contents,line_length)",0.11952286093343936

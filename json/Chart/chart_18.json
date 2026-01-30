@@ -1,0 +1,31 @@
+{
+  "project": "Chart",
+  "bug_id": 18,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.jfree.data.DefaultKeyedValues.removeValue(Comparable)",
+      "score": 0.992782
+    },
+    {
+      "rank": 2,
+      "method": "org.jfree.data.DefaultKeyedValues2D.removeColumn(Comparable)",
+      "score": 0.87024
+    },
+    {
+      "rank": 3,
+      "method": "org.jfree.data.DefaultKeyedValues.getIndex(Comparable)",
+      "score": 0.750862
+    },
+    {
+      "rank": 4,
+      "method": "org.jfree.data.DefaultKeyedValues2D.DefaultKeyedValues2D()",
+      "score": 0.636016
+    },
+    {
+      "rank": 5,
+      "method": "org.jfree.data.DefaultKeyedValues2D.getRowIndex(Comparable)",
+      "score": 0.518403
+    }
+  ]
+}

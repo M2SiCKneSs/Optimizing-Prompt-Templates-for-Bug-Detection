@@ -1,0 +1,31 @@
+{
+  "project": "Chart",
+  "bug_id": 14,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.jfree.chart.plot.CategoryPlot.removeRangeMarker(Marker",
+      "score": 0.995056
+    },
+    {
+      "rank": 2,
+      "method": "org.jfree.chart.plot.CategoryPlot.removeDomainMarker(Marker",
+      "score": 0.877274
+    },
+    {
+      "rank": 3,
+      "method": "org.jfree.chart.plot.XYPlot.removeRangeMarker(int",
+      "score": 0.750948
+    },
+    {
+      "rank": 4,
+      "method": "org.jfree.chart.plot.XYPlot.removeRangeMarker(Marker",
+      "score": 0.636623
+    },
+    {
+      "rank": 5,
+      "method": "org.jfree.chart.plot.CategoryPlot.removeRangeMarker(Marker)",
+      "score": 0.517584
+    }
+  ]
+}

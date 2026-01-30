@@ -1,0 +1,141 @@
+### BUG_REPORT
+Title: #113 Duration.toPeriod with fixed time zones.
+
+Description:
+I have a question concerning the conversion of a Duration to Period. I'm not sure if this is a bug, or if there is a different way to do this.
+The basis of the problem, is that using Duration.toPeriod() uses the chronology of the default time zone to do the conversion. This can cause different results from a timezone with DST and one without. This can be reproduced easily with this test.
+//set default time zone with this argument -Duser.timezone="GMT"
+public void testForJodaForum()
+{
+    System.out.println("Timezone: " + DateTimeZone.getDefault());
+
+    //Duration of more than 24 hours
+    Duration aDuration = new Duration(DateTimeConstants.MILLIS_PER_HOUR * 30 + DateTimeConstants.MILLIS_PER_MINUTE * 50
+        + DateTimeConstants.MILLIS_PER_SECOND * 14);
+
+    System.out.println("Duration before: " + aDuration);
+    Period period = aDuration.toPeriod();
+    System.out.println("Period after: " + period);        
+}
+
+A fixed time zone produces this output
+Timezone: Etc/GMT
+Duration before: PT111014S
+Period after: P1DT6H50M14S
+A DST time zone produces this output
+Timezone: America/Chicago
+Duration before: PT111014S
+Period after: PT30H50M14S
+In the joda code, Duration.toPeriod() uses a period constructor that takes the chronology, but null is passed in, so the chronology of the default time zone is used, which leads to this behavior.
+The javadoc of toPeriod() states that only precise fields of hours, minutes, seconds, and millis will be converted. But for a fixed timezone, days and weeks are also precise, which is stated in the javadoc for toPeriod(Chronology chrono). In our app, we need consistent behavior regardless of the default time zone, which is to have all the extra hours put into the hours bucket. Since Duration is supposed to be a 'time zone independent' length of time, I don't think we should have to do any chronology manipulation to get this to work.
+Any help is appreciated.
+Thanks,
+Cameron
+
+
+### FAILING_TEST
+org.joda.time.tz.FixedDateTimeZone.isFixed()
+org.joda.time.DateTimeZone.getDefault()
+org.joda.time.tz.DateTimeZoneBuilder.readFrom(DataInput,String)
+org.joda.time.Period.Period(long)
+org.joda.time.DateTimeZone.forOffsetHours(int)
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.tz.FixedDateTimeZone.isFixed()
+------------------------------------------------------------------------------------------
+public boolean isFixed() {
+        return true;
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.DateTimeZone.getDefault()
+------------------------------------------------------------------------------------------
+public static DateTimeZone getDefault() {
+        DateTimeZone zone = cDefault;
+        if (zone == null) {
+            synchronized(DateTimeZone.class) {
+                zone = cDefault;
+                if (zone == null) {
+                    DateTimeZone temp = null;
+                    try {
+                        try {
+                            String id = System.getProperty("user.timezone");
+                            if (id != null) {  // null check avoids stack overflow
+                                temp = forID(id);
+                            }
+                        } catch (RuntimeException ex) {
+                            // ignored
+                        }
+                        if (temp == null) {
+                            temp = forTimeZone(TimeZone.getDefault());
+                        }
+                    } catch (IllegalArgumentException ex) {
+                        // ignored
+                    }
+                    if (temp == null) {
+                        temp = UTC;
+                    }
+                    cDefault = zone = temp;
+                }
+            }
+        }
+        return zone;
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.tz.DateTimeZoneBuilder.readFrom(DataInput,String)
+------------------------------------------------------------------------------------------
+public static DateTimeZone readFrom(InputStream in, String id) throws IOException {
+        if (in instanceof DataInput) {
+            return readFrom((DataInput)in, id);
+        } else {
+            return readFrom((DataInput)new DataInputStream(in), id);
+        }
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.Period.Period(long)
+------------------------------------------------------------------------------------------
+public static final Period ZERO = new Period();
+
+    /** Serialization version */
+    private static final long serialVersionUID = 741052353876488155L;
+
+    //-----------------------------------------------------------------------
+    /**
+     * Parses a {@code Period} from the specified string.
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.DateTimeZone.forOffsetHours(int)
+------------------------------------------------------------------------------------------
+public static DateTimeZone forOffsetHours(int hoursOffset) throws IllegalArgumentException {
+        return forOffsetHoursMinutes(hoursOffset, 0);
+    }
+
+------------------------------------------------------------------------------------------
+
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.joda.time.TestDuration_Basics#testToPeriod_fixedZone
+Runtime: 5836244
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<0> but was:<64> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:234) at junit.framework.Assert.assertEquals(Assert.java:241) at junit.framework.TestCase.assertEquals(TestCase.java:409) at org.joda.time.TestDuration_Basics.testToPeriod_fixedZone(TestDuration_Basics.java:483) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #2
+Test: org.joda.time.TestPeriod_Constructors#testConstructor_long_fixedZone
+Runtime: 4951825
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<0> but was:<64> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:234) at junit.framework.Assert.assertEquals(Assert.java:241) at junit.framework.TestCase.assertEquals(TestCase.java:409) at org.joda.time.TestPeriod_Constructors.testConstructor_long_fixedZone(TestPeriod_Constructors.java:188) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

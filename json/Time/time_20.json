@@ -1,0 +1,31 @@
+{
+  "project": "Time",
+  "bug_id": 20,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.joda.time.format.DateTimeFormatterBuilder.printTo(StringBuffer",
+      "score": 0.992536
+    },
+    {
+      "rank": 2,
+      "method": "org.joda.time.format.DateTimeFormat.appendPatternTo(DateTimeFormatterBuilder",
+      "score": 0.870505
+    },
+    {
+      "rank": 3,
+      "method": "org.joda.time.format.DateTimeFormatter.parseDateTime(String)",
+      "score": 0.759573
+    },
+    {
+      "rank": 4,
+      "method": "org.joda.time.tz.ZoneInfoCompiler.test(String",
+      "score": 0.631911
+    },
+    {
+      "rank": 5,
+      "method": "org.joda.time.format.DateTimeFormatterBuilder.TimeZoneId.parseInto(org.joda.time.format.DateTimeParserBucket",
+      "score": 0.51221
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "project": "Time",
+  "bug_id": 13,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.joda.time.base.AbstractDuration.toString()",
+      "score": 0.992335
+    },
+    {
+      "rank": 2,
+      "method": "org.joda.time.base.AbstractPeriod.toPeriod()",
+      "score": 0.877763
+    },
+    {
+      "rank": 3,
+      "method": "org.joda.time.tz.ZoneInfoCompiler.test(String",
+      "score": 0.759261
+    },
+    {
+      "rank": 4,
+      "method": "org.joda.time.format.FormatUtils.appendUnpaddedInteger(StringBuffer",
+      "score": 0.638878
+    },
+    {
+      "rank": 5,
+      "method": "org.joda.time.Period.getMillis()",
+      "score": 0.514704
+    }
+  ]
+}

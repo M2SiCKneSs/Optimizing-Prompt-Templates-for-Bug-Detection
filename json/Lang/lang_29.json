@@ -1,0 +1,31 @@
+{
+  "project": "Lang",
+  "bug_id": 29,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.lang3.SystemUtils.getJavaVersionMatches(String)",
+      "score": 0.991008
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.lang3.SystemUtils.toJavaVersionInt(String)",
+      "score": 0.874299
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.lang3.StringUtils.capitalize(CharSequence)",
+      "score": 0.75444
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.lang3.StringUtils.swapCase(String)",
+      "score": 0.632476
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseStackTrace(Throwable)",
+      "score": 0.517814
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "project": "Math",
+  "bug_id": 6,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizer.push(double[]",
+      "score": 0.991162
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.math3.optimization.general.AbstractLeastSquaresOptimizer.optimize(int",
+      "score": 0.872107
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizer.doOptimize()",
+      "score": 0.758186
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizer.initializeCMA(double[])",
+      "score": 0.637533
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.math3.optimization.general.AbstractLeastSquaresOptimizer.optimizeInternal(int",
+      "score": 0.518833
+    }
+  ]
+}

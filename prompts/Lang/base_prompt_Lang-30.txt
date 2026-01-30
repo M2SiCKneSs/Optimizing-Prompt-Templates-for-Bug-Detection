@@ -1,0 +1,231 @@
+### BUG_REPORT
+Title: StringUtils methods do not handle Unicode 2.0+ supplementary characters correctly.
+
+Description:
+StringUtils.containsAny methods incorrectly matches Unicode 2.0+ supplementary characters.
+For example, define a test fixture to be the Unicode character U+20000 where U+20000 is written in Java source as "\uD840\uDC00"
+	private static final String CharU20000 = "\uD840\uDC00";
+	private static final String CharU20001 = "\uD840\uDC01";
+You can see Unicode supplementary characters correctly implemented in the JRE call:
+	assertEquals(-1, CharU20000.indexOf(CharU20001));
+But this is broken:
+	assertEquals(false, StringUtils.containsAny(CharU20000, CharU20001));
+	assertEquals(false, StringUtils.containsAny(CharU20001, CharU20000));
+This is fine:
+	assertEquals(true, StringUtils.contains(CharU20000 + CharU20001, CharU20000));
+	assertEquals(true, StringUtils.contains(CharU20000 + CharU20001, CharU20001));
+	assertEquals(true, StringUtils.contains(CharU20000, CharU20000));
+	assertEquals(false, StringUtils.contains(CharU20000, CharU20001));
+because the method calls the JRE to perform the match.
+More than you want to know:
+
+http://java.sun.com/developer/technicalArticles/Intl/Supplementary/
+
+
+### FAILING_TEST
+org.apache.commons.lang3.text.translate.UnicodeEscaper.between(int,int)
+org.apache.commons.lang3.StringUtils.containsNone(CharSequence,char[])
+org.apache.commons.lang3.StringUtils.containsNone(CharSequence,String)
+org.apache.commons.lang3.StringUtils.splitWorker(String,String,int,boolean)
+org.apache.commons.lang3.text.translate.UnicodeEscaper.outsideOf(int,int)
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.text.translate.UnicodeEscaper.between(int,int)
+------------------------------------------------------------------------------------------
+public static UnicodeEscaper between(final int codepointLow, final int codepointHigh) {
+        return new UnicodeEscaper(codepointLow, codepointHigh, true);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.StringUtils.containsNone(CharSequence,char[])
+------------------------------------------------------------------------------------------
+public static boolean containsNone(final CharSequence cs, final char... searchChars) {
+        if (cs == null || searchChars == null) {
+            return true;
+        }
+        final int csLen = cs.length();
+        final int csLast = csLen - 1;
+        final int searchLen = searchChars.length;
+        final int searchLast = searchLen - 1;
+        for (int i = 0; i < csLen; i++) {
+            final char ch = cs.charAt(i);
+            for (int j = 0; j < searchLen; j++) {
+                if (searchChars[j] == ch) {
+                    if (Character.isHighSurrogate(ch)) {
+                        if (j == searchLast) {
+                            // missing low surrogate, fine, like String.indexOf(String)
+                            return false;
+                        }
+                        if (i < csLast && searchChars[j + 1] == cs.charAt(i + 1)) {
+                            return false;
+                        }
+                    } else {
+                        // ch is in the Basic Multilingual Plane
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.StringUtils.containsNone(CharSequence,String)
+------------------------------------------------------------------------------------------
+public static boolean containsNone(final CharSequence cs, final char... searchChars) {
+        if (cs == null || searchChars == null) {
+            return true;
+        }
+        final int csLen = cs.length();
+        final int csLast = csLen - 1;
+        final int searchLen = searchChars.length;
+        final int searchLast = searchLen - 1;
+        for (int i = 0; i < csLen; i++) {
+            final char ch = cs.charAt(i);
+            for (int j = 0; j < searchLen; j++) {
+                if (searchChars[j] == ch) {
+                    if (Character.isHighSurrogate(ch)) {
+                        if (j == searchLast) {
+                            // missing low surrogate, fine, like String.indexOf(String)
+                            return false;
+                        }
+                        if (i < csLast && searchChars[j + 1] == cs.charAt(i + 1)) {
+                            return false;
+                        }
+                    } else {
+                        // ch is in the Basic Multilingual Plane
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.StringUtils.splitWorker(String,String,int,boolean)
+------------------------------------------------------------------------------------------
+private static String[] splitWorker(final String str, final char separatorChar, final boolean preserveAllTokens) {
+        // Performance tuned for 2.0 (JDK1.4)
+
+        if (str == null) {
+            return null;
+        }
+        final int len = str.length();
+        if (len == 0) {
+            return ArrayUtils.EMPTY_STRING_ARRAY;
+        }
+        final List<String> list = new ArrayList<String>();
+        int i = 0, start = 0;
+        boolean match = false;
+        boolean lastMatch = false;
+        while (i < len) {
+            if (str.charAt(i) == separatorChar) {
+                if (match || preserveAllTokens) {
+                    list.add(str.substring(start, i));
+                    match = false;
+                    lastMatch = true;
+                }
+                start = ++i;
+                continue;
+            }
+            lastMatch = false;
+            match = true;
+            i++;
+        }
+        if (match || preserveAllTokens && lastMatch) {
+            list.add(str.substring(start, i));
+        }
+        return list.toArray(new String[list.size()]);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.text.translate.UnicodeEscaper.outsideOf(int,int)
+------------------------------------------------------------------------------------------
+public static UnicodeEscaper outsideOf(final int codepointLow, final int codepointHigh) {
+        return new UnicodeEscaper(codepointLow, codepointHigh, false);
+    }
+
+------------------------------------------------------------------------------------------
+
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.apache.commons.lang3.StringUtilsEqualsIndexOfTest#testContainsAny_StringCharArrayWithBadSupplementaryChars
+Runtime: 2674873
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<false> but was:<true> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:174) at junit.framework.Assert.assertEquals(Assert.java:181) at junit.framework.TestCase.assertEquals(TestCase.java:341) at org.apache.commons.lang3.StringUtilsEqualsIndexOfTest.testContainsAny_StringCharArrayWithBadSupplementaryChars(StringUtilsEqualsIndexOfTest.java:138) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #2
+Test: org.apache.commons.lang3.StringUtilsEqualsIndexOfTest#testContainsAny_StringWithBadSupplementaryChars
+Runtime: 1604733
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<false> but was:<true> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:174) at junit.framework.Assert.assertEquals(Assert.java:181) at junit.framework.TestCase.assertEquals(TestCase.java:341) at org.apache.commons.lang3.StringUtilsEqualsIndexOfTest.testContainsAny_StringWithBadSupplementaryChars(StringUtilsEqualsIndexOfTest.java:186) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #3
+Test: org.apache.commons.lang3.StringUtilsEqualsIndexOfTest#testContainsNone_CharArrayWithBadSupplementaryChars
+Runtime: 1471934
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<true> but was:<false> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:174) at junit.framework.Assert.assertEquals(Assert.java:181) at junit.framework.TestCase.assertEquals(TestCase.java:341) at org.apache.commons.lang3.StringUtilsEqualsIndexOfTest.testContainsNone_CharArrayWithBadSupplementaryChars(StringUtilsEqualsIndexOfTest.java:308) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #4
+Test: org.apache.commons.lang3.StringUtilsEqualsIndexOfTest#testContainsNone_CharArrayWithSupplementaryChars
+Runtime: 982795
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<true> but was:<false> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:174) at junit.framework.Assert.assertEquals(Assert.java:181) at junit.framework.TestCase.assertEquals(TestCase.java:341) at org.apache.commons.lang3.StringUtilsEqualsIndexOfTest.testContainsNone_CharArrayWithSupplementaryChars(StringUtilsEqualsIndexOfTest.java:327) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #5
+Test: org.apache.commons.lang3.StringUtilsEqualsIndexOfTest#testContainsNone_StringWithBadSupplementaryChars
+Runtime: 1464871
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<true> but was:<false> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:174) at junit.framework.Assert.assertEquals(Assert.java:181) at junit.framework.TestCase.assertEquals(TestCase.java:341) at org.apache.commons.lang3.StringUtilsEqualsIndexOfTest.testContainsNone_StringWithBadSupplementaryChars(StringUtilsEqualsIndexOfTest.java:362) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #6
+Test: org.apache.commons.lang3.StringUtilsEqualsIndexOfTest#testContainsNone_StringWithSupplementaryChars
+Runtime: 1026588
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<true> but was:<false> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:174) at junit.framework.Assert.assertEquals(Assert.java:181) at junit.framework.TestCase.assertEquals(TestCase.java:341) at org.apache.commons.lang3.StringUtilsEqualsIndexOfTest.testContainsNone_StringWithSupplementaryChars(StringUtilsEqualsIndexOfTest.java:381) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #7
+Test: org.apache.commons.lang3.StringUtilsEqualsIndexOfTest#testIndexOfAnyBut_StringCharArrayWithSupplementaryChars
+Runtime: 1620423
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<2> but was:<3> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:234) at junit.framework.Assert.assertEquals(Assert.java:241) at junit.framework.TestCase.assertEquals(TestCase.java:409) at org.apache.commons.lang3.StringUtilsEqualsIndexOfTest.testIndexOfAnyBut_StringCharArrayWithSupplementaryChars(StringUtilsEqualsIndexOfTest.java:593) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #8
+Test: org.apache.commons.lang3.StringUtilsEqualsIndexOfTest#testIndexOfAnyBut_StringStringWithSupplementaryChars
+Runtime: 891694
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<2> but was:<3> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:234) at junit.framework.Assert.assertEquals(Assert.java:241) at junit.framework.TestCase.assertEquals(TestCase.java:409) at org.apache.commons.lang3.StringUtilsEqualsIndexOfTest.testIndexOfAnyBut_StringStringWithSupplementaryChars(StringUtilsEqualsIndexOfTest.java:616) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #9
+Test: org.apache.commons.lang3.StringUtilsEqualsIndexOfTest#testIndexOfAny_StringCharArrayWithSupplementaryChars
+Runtime: 1517930
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<2> but was:<0> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:234) at junit.framework.Assert.assertEquals(Assert.java:241) at junit.framework.TestCase.assertEquals(TestCase.java:409) at org.apache.commons.lang3.StringUtilsEqualsIndexOfTest.testIndexOfAny_StringCharArrayWithSupplementaryChars(StringUtilsEqualsIndexOfTest.java:528) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #10
+Test: org.apache.commons.lang3.StringUtilsEqualsIndexOfTest#testIndexOfAny_StringStringWithSupplementaryChars
+Runtime: 1538620
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<2> but was:<0> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:234) at junit.framework.Assert.assertEquals(Assert.java:241) at junit.framework.TestCase.assertEquals(TestCase.java:409) at org.apache.commons.lang3.StringUtilsEqualsIndexOfTest.testIndexOfAny_StringStringWithSupplementaryChars(StringUtilsEqualsIndexOfTest.java:571) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

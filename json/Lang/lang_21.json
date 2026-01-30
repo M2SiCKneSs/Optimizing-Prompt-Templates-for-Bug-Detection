@@ -1,0 +1,31 @@
+{
+  "project": "Lang",
+  "bug_id": 21,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.lang3.time.DateUtils.isSameLocalTime(java.util.Calendar",
+      "score": 0.999727
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.lang3.time.DateUtils.round(Calendar",
+      "score": 0.877062
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.lang3.time.DateUtils.DateUtils()",
+      "score": 0.759799
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.lang3.time.DateUtils.round(Date",
+      "score": 0.637719
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.lang3.time.DateUtils.isSameLocalTime(Calendar",
+      "score": 0.512076
+    }
+  ]
+}

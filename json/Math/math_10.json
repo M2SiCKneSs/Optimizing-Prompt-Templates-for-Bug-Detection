@@ -1,0 +1,31 @@
+{
+  "project": "Math",
+  "bug_id": 10,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.math3.geometry.euclidean.threed.Rotation.getAngles(RotationOrder)",
+      "score": 0.994027
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.math3.analysis.differentiation.DSCompiler.divide(double[]",
+      "score": 0.870922
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.math3.complex.Complex.getArgument()",
+      "score": 0.75747
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.math3.util.FastMath.atan2(double",
+      "score": 0.635989
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.math3.analysis.differentiation.DSCompiler.atan2(double[]",
+      "score": 0.515523
+    }
+  ]
+}

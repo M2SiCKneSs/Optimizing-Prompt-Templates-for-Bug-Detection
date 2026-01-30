@@ -1,0 +1,11 @@
+Method,Ochiai_Score
+thefuck.rules.go_unknown_command##get_golang_commands(),0.4082482904638631
+thefuck.rules.pip_unknown_command##get_new_command(command),0.4082482904638631
+thefuck.rules.pip_unknown_command##match(command),0.4082482904638631
+thefuck.rules.go_unknown_command##match(command),0.4082482904638631
+thefuck.rules.go_unknown_command##get_new_command(command),0.4082482904638631
+"thefuck.specific.sudo##sudo_support(fn,command)",0.05423261445466404
+"thefuck.utils##_for_app(fn,command)",0.04993761694389223
+thefuck.types$Command#from_raw_script(raw_script),0.03623806888127808
+thefuck.types$Command#__repr__(),0.03623806888127808
+"thefuck.types$Command#__init__(script,output)",0.03623806888127808

@@ -1,0 +1,358 @@
+### BUG_REPORT
+Title: Fraction specified with maxDenominator and a value very close to a simple fraction should not throw an overflow exception
+
+Description:
+An overflow exception is thrown when a Fraction is initialized with a maxDenominator from a double that is very close to a simple
+fraction.  For example:
+double d = 0.5000000001;
+Fraction f = new Fraction(d, 10);
+Patch with unit test on way.
+
+
+### FAILING_TEST
+org.apache.commons.math3.fraction.BigFraction.BigFraction(double,double,int,int)
+org.apache.commons.math3.fraction.Fraction.negate()
+org.apache.commons.math3.fraction.BigFraction.BigFraction(long,long)
+org.apache.commons.math3.fraction.Fraction.getReducedFraction(int,int)
+org.apache.commons.math3.exception.MathIllegalStateException.getLocalizedMessage()
+org.apache.commons.math3.exception.MathIllegalStateException.getLocalizedMessage()
+org.apache.commons.math3.fraction.FractionConversionException.FractionConversionException(double,long,long)
+org.apache.commons.math3.fraction.Fraction.Fraction(double,int)
+org.apache.commons.math3.fraction.BigFraction.BigFraction(double,int)
+org.apache.commons.math3.exception.ConvergenceException.ConvergenceException(Localizable,Object)
+
+### CODE_SNIPPETS
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.fraction.BigFraction.BigFraction(double,double,int,int)
+------------------------------------------------------------------------------------------
+public static final BigFraction TWO = new BigFraction(2);
+
+    /** A fraction representing "1". */
+    public static final BigFraction ONE = new BigFraction(1);
+
+    /** A fraction representing "0". */
+    public static final BigFraction ZERO = new BigFraction(0);
+
+    /** A fraction representing "-1 / 1". */
+    public static final BigFraction MINUS_ONE = new BigFraction(-1);
+
+    /** A fraction representing "4/5". */
+    public static final BigFraction FOUR_FIFTHS = new BigFraction(4, 5);
+
+    /** A fraction representing "1/5". */
+    public static final BigFraction ONE_FIFTH = new BigFraction(1, 5);
+
+    /** A fraction representing "1/2". */
+    public static final BigFraction ONE_HALF = new BigFraction(1, 2);
+
+    /** A fraction representing "1/4". */
+    public static final BigFraction ONE_QUARTER = new BigFraction(1, 4);
+
+    /** A fraction representing "1/3". */
+    public static final BigFraction ONE_THIRD = new BigFraction(1, 3);
+
+    /** A fraction representing "3/5". */
+    public static final BigFraction THREE_FIFTHS = new BigFraction(3, 5);
+
+    /** A fraction representing "3/4". */
+    public static final BigFraction THREE_QUARTERS = new BigFraction(3, 4);
+
+    /** A fraction representing "2/5". */
+    public static final BigFraction TWO_FIFTHS = new BigFraction(2, 5);
+
+    /** A fraction representing "2/4". */
+    public static final BigFraction TWO_QUARTERS = new BigFraction(2, 4);
+
+    /** A fraction representing "2/3". */
+    public static final BigFraction TWO_THIRDS = new BigFraction(2, 3);
+
+    /** Serializable version identifier. */
+    private static final long serialVersionUID = -5630213147331578515L;
+
+    /** <code>BigInteger</code> representation of 100. */
+    private static final BigInteger ONE_HUNDRED = BigInteger.valueOf(100);
+
+    /** The numerator. */
+    private final BigInteger numerator;
+
+    /** The denominator. */
+    private final BigInteger denominator;
+
+    /**
+     * <p>
+     * Create a {@link BigFraction} equivalent to the passed <tt>BigInteger</tt>, ie
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.fraction.Fraction.negate()
+------------------------------------------------------------------------------------------
+public Fraction negate() {
+        if (numerator==Integer.MIN_VALUE) {
+            throw new MathArithmeticException(LocalizedFormats.OVERFLOW_IN_FRACTION, numerator, denominator);
+        }
+        return new Fraction(-numerator, denominator);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.fraction.BigFraction.BigFraction(long,long)
+------------------------------------------------------------------------------------------
+public static final BigFraction TWO = new BigFraction(2);
+
+    /** A fraction representing "1". */
+    public static final BigFraction ONE = new BigFraction(1);
+
+    /** A fraction representing "0". */
+    public static final BigFraction ZERO = new BigFraction(0);
+
+    /** A fraction representing "-1 / 1". */
+    public static final BigFraction MINUS_ONE = new BigFraction(-1);
+
+    /** A fraction representing "4/5". */
+    public static final BigFraction FOUR_FIFTHS = new BigFraction(4, 5);
+
+    /** A fraction representing "1/5". */
+    public static final BigFraction ONE_FIFTH = new BigFraction(1, 5);
+
+    /** A fraction representing "1/2". */
+    public static final BigFraction ONE_HALF = new BigFraction(1, 2);
+
+    /** A fraction representing "1/4". */
+    public static final BigFraction ONE_QUARTER = new BigFraction(1, 4);
+
+    /** A fraction representing "1/3". */
+    public static final BigFraction ONE_THIRD = new BigFraction(1, 3);
+
+    /** A fraction representing "3/5". */
+    public static final BigFraction THREE_FIFTHS = new BigFraction(3, 5);
+
+    /** A fraction representing "3/4". */
+    public static final BigFraction THREE_QUARTERS = new BigFraction(3, 4);
+
+    /** A fraction representing "2/5". */
+    public static final BigFraction TWO_FIFTHS = new BigFraction(2, 5);
+
+    /** A fraction representing "2/4". */
+    public static final BigFraction TWO_QUARTERS = new BigFraction(2, 4);
+
+    /** A fraction representing "2/3". */
+    public static final BigFraction TWO_THIRDS = new BigFraction(2, 3);
+
+    /** Serializable version identifier. */
+    private static final long serialVersionUID = -5630213147331578515L;
+
+    /** <code>BigInteger</code> representation of 100. */
+    private static final BigInteger ONE_HUNDRED = BigInteger.valueOf(100);
+
+    /** The numerator. */
+    private final BigInteger numerator;
+
+    /** The denominator. */
+    private final BigInteger denominator;
+
+    /**
+     * <p>
+     * Create a {@link BigFraction} equivalent to the passed <tt>BigInteger</tt>, ie
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.fraction.Fraction.getReducedFraction(int,int)
+------------------------------------------------------------------------------------------
+public static Fraction getReducedFraction(int numerator, int denominator) {
+        if (denominator == 0) {
+            throw new MathArithmeticException(LocalizedFormats.ZERO_DENOMINATOR_IN_FRACTION,
+                                              numerator, denominator);
+        }
+        if (numerator==0) {
+            return ZERO; // normalize zero.
+        }
+        // allow 2^k/-2^31 as a valid fraction (where k>0)
+        if (denominator==Integer.MIN_VALUE && (numerator&1)==0) {
+            numerator/=2; denominator/=2;
+        }
+        if (denominator < 0) {
+            if (numerator==Integer.MIN_VALUE ||
+                    denominator==Integer.MIN_VALUE) {
+                throw new MathArithmeticException(LocalizedFormats.OVERFLOW_IN_FRACTION,
+                                                  numerator, denominator);
+            }
+            numerator = -numerator;
+            denominator = -denominator;
+        }
+        // simplify fraction.
+        int gcd = ArithmeticUtils.gcd(numerator, denominator);
+        numerator /= gcd;
+        denominator /= gcd;
+        return new Fraction(numerator, denominator);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.exception.MathIllegalStateException.getLocalizedMessage()
+------------------------------------------------------------------------------------------
+@Override
+    public String getLocalizedMessage() {
+        return context.getLocalizedMessage();
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.exception.MathIllegalStateException.getLocalizedMessage()
+------------------------------------------------------------------------------------------
+@Override
+    public String getLocalizedMessage() {
+        return context.getLocalizedMessage();
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.fraction.FractionConversionException.FractionConversionException(double,long,long)
+------------------------------------------------------------------------------------------
+public FractionConversionException(double value, int maxIterations) {
+        super(LocalizedFormats.FAILED_FRACTION_CONVERSION, value, maxIterations);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.fraction.Fraction.Fraction(double,int)
+------------------------------------------------------------------------------------------
+public static final Fraction TWO = new Fraction(2, 1);
+
+    /** A fraction representing "1". */
+    public static final Fraction ONE = new Fraction(1, 1);
+
+    /** A fraction representing "0". */
+    public static final Fraction ZERO = new Fraction(0, 1);
+
+    /** A fraction representing "4/5". */
+    public static final Fraction FOUR_FIFTHS = new Fraction(4, 5);
+
+    /** A fraction representing "1/5". */
+    public static final Fraction ONE_FIFTH = new Fraction(1, 5);
+
+    /** A fraction representing "1/2". */
+    public static final Fraction ONE_HALF = new Fraction(1, 2);
+
+    /** A fraction representing "1/4". */
+    public static final Fraction ONE_QUARTER = new Fraction(1, 4);
+
+    /** A fraction representing "1/3". */
+    public static final Fraction ONE_THIRD = new Fraction(1, 3);
+
+    /** A fraction representing "3/5". */
+    public static final Fraction THREE_FIFTHS = new Fraction(3, 5);
+
+    /** A fraction representing "3/4". */
+    public static final Fraction THREE_QUARTERS = new Fraction(3, 4);
+
+    /** A fraction representing "2/5". */
+    public static final Fraction TWO_FIFTHS = new Fraction(2, 5);
+
+    /** A fraction representing "2/4". */
+    public static final Fraction TWO_QUARTERS = new Fraction(2, 4);
+
+    /** A fraction representing "2/3". */
+    public static final Fraction TWO_THIRDS = new Fraction(2, 3);
+
+    /** A fraction representing "-1 / 1". */
+    public static final Fraction MINUS_ONE = new Fraction(-1, 1);
+
+    /** Serializable version identifier */
+    private static final long serialVersionUID = 3698073679419233275L;
+
+    /** The default epsilon used for convergence. */
+    private static final double DEFAULT_EPSILON = 1e-5;
+
+    /** The denominator. */
+    private final int denominator;
+
+    /** The numerator. */
+    private final int numerator;
+
+    /**
+     * Create a fraction given the double value.
+     * @param value the double value to convert to a fraction.
+     * @throws FractionConversionException if the continued fraction failed to
+     *         converge.
+     */
+    public Fraction(double value) throws FractionConversionException {
+        this(value, DEFAULT_EPSILON, 100);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.fraction.BigFraction.BigFraction(double,int)
+------------------------------------------------------------------------------------------
+public static final BigFraction TWO = new BigFraction(2);
+
+    /** A fraction representing "1". */
+    public static final BigFraction ONE = new BigFraction(1);
+
+    /** A fraction representing "0". */
+    public static final BigFraction ZERO = new BigFraction(0);
+
+    /** A fraction representing "-1 / 1". */
+    public static final BigFraction MINUS_ONE = new BigFraction(-1);
+
+    /** A fraction representing "4/5". */
+    public static final BigFraction FOUR_FIFTHS = new BigFraction(4, 5);
+
+    /** A fraction representing "1/5". */
+    public static final BigFraction ONE_FIFTH = new BigFraction(1, 5);
+
+    /** A fraction representing "1/2". */
+    public static final BigFraction ONE_HALF = new BigFraction(1, 2);
+
+    /** A fraction representing "1/4". */
+    public static final BigFraction ONE_QUARTER = new BigFraction(1, 4);
+
+    /** A fraction representing "1/3". */
+    public static final BigFraction ONE_THIRD = new BigFraction(1, 3);
+
+    /** A fraction representing "3/5". */
+    public static final BigFraction THREE_FIFTHS = new BigFraction(3, 5);
+
+    /** A fraction representing "3/4". */
+    public static final BigFraction THREE_QUARTERS = new BigFraction(3, 4);
+
+    /** A fraction representing "2/5". */
+    public static final BigFraction TWO_FIFTHS = new BigFraction(2, 5);
+
+    /** A fraction representing "2/4". */
+    public static final BigFraction TWO_QUARTERS = new BigFraction(2, 4);
+
+    /** A fraction representing "2/3". */
+    public static final BigFraction TWO_THIRDS = new BigFraction(2, 3);
+
+    /** Serializable version identifier. */
+    private static final long serialVersionUID = -5630213147331578515L;
+
+    /** <code>BigInteger</code> representation of 100. */
+    private static final BigInteger ONE_HUNDRED = BigInteger.valueOf(100);
+
+    /** The numerator. */
+    private final BigInteger numerator;
+
+    /** The denominator. */
+    private final BigInteger denominator;
+
+    /**
+     * <p>
+     * Create a {@link BigFraction} equivalent to the passed <tt>BigInteger</tt>, ie
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.exception.ConvergenceException.ConvergenceException(Localizable,Object)
+------------------------------------------------------------------------------------------
+public ConvergenceException() {
+        this(LocalizedFormats.CONVERGENCE_FAILED);
+    }
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.apache.commons.math3.fraction.BigFractionTest#testDigitLimitConstructor
+Runtime: 5749988
+------------------------------------------------------------------------------------------
+org.apache.commons.math3.fraction.FractionConversionException: illegal state: Overflow trying to convert 0.5 to fraction (2
+
+------------------------------------------------------------------------------------------
+Fail #2
+Test: org.apache.commons.math3.fraction.FractionTest#testDigitLimitConstructor
+Runtime: 3705396
+------------------------------------------------------------------------------------------
+org.apache.commons.math3.fraction.FractionConversionException: illegal state: Overflow trying to convert 0.5 to fraction (2

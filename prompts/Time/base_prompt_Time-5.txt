@@ -1,0 +1,107 @@
+### BUG_REPORT
+Title: none standard PeriodType without year throws exception
+
+Description:
+Hi.
+I tried to get a Period only for months and weeks with following code:
+Period p = new Period(new DateTime(startDate.getTime()), new DateTime(endDate.getTime()), PeriodType.forFields(new DurationFieldType[]{DurationFieldType.months(), DurationFieldType.weeks()})).normalizedStandard(PeriodType.forFields(new DurationFieldType[]{DurationFieldType.months(), DurationFieldType.weeks()}));
+return p.getMonths();
+This throws following exception:
+ 10-17 14:35:50.999: E/AndroidRuntime(1350): java.lang.UnsupportedOperationException: Field is not supported
+ 10-17 14:35:50.999: E/AndroidRuntime(1350): at org.joda.time.PeriodType.setIndexedField(PeriodType.java:690)
+ 10-17 14:35:50.999: E/AndroidRuntime(1350): at org.joda.time.Period.withYears(Period.java:896) 10-17
+ 14:35:50.999: E/AndroidRuntime(1350): at org.joda.time.Period.normalizedStandard(Period.java:1630)
+
+Even removing the year component with .withYearsRemoved() throws the same exception:
+this works:
+Period p = new Period(new DateTime(startDate.getTime()), new DateTime(endDate.getTime()), PeriodType.standard()).normalizedStandard(PeriodType.standard());
+return p.getMonths();
+this fails:
+Period p = new Period(new DateTime(startDate.getTime()), new DateTime(endDate.getTime()), PeriodType.standard().withYearsRemoved()).normalizedStandard(PeriodType.standard().withYearsRemoved());
+return p.getMonths();
+
+
+### FAILING_TEST
+org.joda.time.chrono.BaseChronology.get(ReadablePeriod,long)
+org.joda.time.DateTimeUtils.getPeriodType(PeriodType)
+org.joda.time.chrono.ISOChronology.getInstanceUTC()
+org.joda.time.chrono.ISOChronology.getInstance()
+org.joda.time.chrono.ISOChronology.getInstance(DateTimeZone)
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.chrono.BaseChronology.get(ReadablePeriod,long)
+------------------------------------------------------------------------------------------
+public int[] get(ReadablePartial partial, long instant) {
+        int size = partial.size();
+        int[] values = new int[size];
+        for (int i = 0; i < size; i++) {
+            values[i] = partial.getFieldType(i).getField(this).get(instant);
+        }
+        return values;
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.DateTimeUtils.getPeriodType(PeriodType)
+------------------------------------------------------------------------------------------
+public static final PeriodType getPeriodType(PeriodType type) {
+        if (type == null) {
+            return PeriodType.standard();
+        }
+        return type;
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.chrono.ISOChronology.getInstanceUTC()
+------------------------------------------------------------------------------------------
+public static ISOChronology getInstanceUTC() {
+        return INSTANCE_UTC;
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.chrono.ISOChronology.getInstance()
+------------------------------------------------------------------------------------------
+public static ISOChronology getInstance() {
+        return getInstance(DateTimeZone.getDefault());
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.chrono.ISOChronology.getInstance(DateTimeZone)
+------------------------------------------------------------------------------------------
+public static ISOChronology getInstance() {
+        return getInstance(DateTimeZone.getDefault());
+    }
+
+------------------------------------------------------------------------------------------
+
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.joda.time.TestPeriod_Basics#testNormalizedStandard_periodType_months1
+Runtime: 5804751
+------------------------------------------------------------------------------------------
+java.lang.UnsupportedOperationException: Field is not supported at org.joda.time.PeriodType.setIndexedField(PeriodType.java:690) at org.joda.time.Period.withYears(Period.java:896) at org.joda.time.Period.normalizedStandard(Period.java:1631) at org.joda.time.TestPeriod_Basics.testNormalizedStandard_periodType_months1(TestPeriod_Basics.java:1522) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #2
+Test: org.joda.time.TestPeriod_Basics#testNormalizedStandard_periodType_months2
+Runtime: 5527289
+------------------------------------------------------------------------------------------
+java.lang.UnsupportedOperationException: Field is not supported at org.joda.time.PeriodType.setIndexedField(PeriodType.java:690) at org.joda.time.Period.withYears(Period.java:896) at org.joda.time.Period.normalizedStandard(Period.java:1631) at org.joda.time.TestPeriod_Basics.testNormalizedStandard_periodType_months2(TestPeriod_Basics.java:1529) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #3
+Test: org.joda.time.TestPeriod_Basics#testNormalizedStandard_periodType_monthsWeeks
+Runtime: 5112608
+------------------------------------------------------------------------------------------
+java.lang.UnsupportedOperationException: Field is not supported at org.joda.time.PeriodType.setIndexedField(PeriodType.java:690) at org.joda.time.Period.withYears(Period.java:896) at org.joda.time.Period.normalizedStandard(Period.java:1631) at org.joda.time.TestPeriod_Basics.testNormalizedStandard_periodType_monthsWeeks(TestPeriod_Basics.java:1557) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

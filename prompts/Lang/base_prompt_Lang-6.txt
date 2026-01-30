@@ -1,0 +1,137 @@
+### BUG_REPORT
+Title: StringIndexOutOfBoundsException in CharSequenceTranslator
+
+Description:
+I found that there is bad surrogate pair handling in the CharSequenceTranslator
+This is a simple test case for this problem.
+\uD83D\uDE30 is a surrogate pair.
+
+@Test
+public void testEscapeSurrogatePairs() throws Exception {
+    assertEquals("\uD83D\uDE30", StringEscapeUtils.escapeCsv("\uD83D\uDE30"));
+}
+
+
+You'll get the exception as shown below.
+
+java.lang.StringIndexOutOfBoundsException: String index out of range: 2
+	at java.lang.String.charAt(String.java:658)
+	at java.lang.Character.codePointAt(Character.java:4668)
+	at org.apache.commons.lang3.text.translate.CharSequenceTranslator.translate(CharSequenceTranslator.java:95)
+	at org.apache.commons.lang3.text.translate.CharSequenceTranslator.translate(CharSequenceTranslator.java:59)
+	at org.apache.commons.lang3.StringEscapeUtils.escapeCsv(StringEscapeUtils.java:556)
+
+
+Patch attached, the method affected:
+
+public final void translate(CharSequence input, Writer out) throws IOException
+
+
+### FAILING_TEST
+org.apache.commons.lang3.text.translate.CharSequenceTranslator.with(CharSequenceTranslator)
+org.apache.commons.lang3.StringEscapeUtils.escapeCsv(String)
+org.apache.commons.lang3.text.translate.CharSequenceTranslator.translate(CharSequence)
+org.apache.commons.lang3.StringEscapeUtils.escapeJava(String)
+org.apache.commons.lang3.StringUtils.containsNone(CharSequence,char)
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.text.translate.CharSequenceTranslator.with(CharSequenceTranslator)
+------------------------------------------------------------------------------------------
+public final CharSequenceTranslator with(final CharSequenceTranslator... translators) {
+        final CharSequenceTranslator[] newArray = new CharSequenceTranslator[translators.length + 1];
+        newArray[0] = this;
+        System.arraycopy(translators, 0, newArray, 1, translators.length);
+        return new AggregateTranslator(newArray);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.StringEscapeUtils.escapeCsv(String)
+------------------------------------------------------------------------------------------
+public static final String escapeCsv(final String input) {
+        return ESCAPE_CSV.translate(input);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.text.translate.CharSequenceTranslator.translate(CharSequence)
+------------------------------------------------------------------------------------------
+public abstract int translate(CharSequence input, int index, Writer out) throws IOException;
+
+    /**
+     * Helper for non-Writer usage. 
+     * @param input CharSequence to be translated
+     * @return String output of translation
+     */
+    public final String translate(final CharSequence input) {
+        if (input == null) {
+            return null;
+        }
+        try {
+            final StringWriter writer = new StringWriter(input.length() * 2);
+            translate(input, writer);
+            return writer.toString();
+        } catch (final IOException ioe) {
+            // this should never ever happen while writing to a StringWriter
+            throw new RuntimeException(ioe);
+        }
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.StringEscapeUtils.escapeJava(String)
+------------------------------------------------------------------------------------------
+public static final String escapeJava(final String input) {
+        return ESCAPE_JAVA.translate(input);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.StringUtils.containsNone(CharSequence,char)
+------------------------------------------------------------------------------------------
+public static boolean containsNone(final CharSequence cs, final char... searchChars) {
+        if (cs == null || searchChars == null) {
+            return true;
+        }
+        final int csLen = cs.length();
+        final int csLast = csLen - 1;
+        final int searchLen = searchChars.length;
+        final int searchLast = searchLen - 1;
+        for (int i = 0; i < csLen; i++) {
+            final char ch = cs.charAt(i);
+            for (int j = 0; j < searchLen; j++) {
+                if (searchChars[j] == ch) {
+                    if (Character.isHighSurrogate(ch)) {
+                        if (j == searchLast) {
+                            // missing low surrogate, fine, like String.indexOf(String)
+                            return false;
+                        }
+                        if (i < csLast && searchChars[j + 1] == cs.charAt(i + 1)) {
+                            return false;
+                        }
+                    } else {
+                        // ch is in the Basic Multilingual Plane
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+------------------------------------------------------------------------------------------
+
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.apache.commons.lang3.StringUtilsTest#testEscapeSurrogatePairs
+Runtime: 4170355
+------------------------------------------------------------------------------------------
+java.lang.StringIndexOutOfBoundsException: index 2

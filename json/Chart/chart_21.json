@@ -1,0 +1,31 @@
+{
+  "project": "Chart",
+  "bug_id": 21,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset.add(org.jfree.data.statistics.BoxAndWhiskerItem",
+      "score": 0.996203
+    },
+    {
+      "rank": 2,
+      "method": "org.jfree.data.statistics.BoxAndWhiskerItem.BoxAndWhiskerItem(Number",
+      "score": 0.871529
+    },
+    {
+      "rank": 3,
+      "method": "org.jfree.data.KeyedObjects2D.KeyedObjects2D()",
+      "score": 0.752819
+    },
+    {
+      "rank": 4,
+      "method": "org.jfree.data.statistics.BoxAndWhiskerItem.getMaxOutlier()",
+      "score": 0.634928
+    },
+    {
+      "rank": 5,
+      "method": "org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset.add(List",
+      "score": 0.510135
+    }
+  ]
+}

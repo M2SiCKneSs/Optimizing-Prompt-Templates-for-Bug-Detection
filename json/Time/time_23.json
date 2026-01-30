@@ -1,0 +1,31 @@
+{
+  "project": "Time",
+  "bug_id": 23,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.joda.time.format.DateTimeFormatterBuilder.appendFixedSignedDecimal(DateTimeFieldType",
+      "score": 0.992427
+    },
+    {
+      "rank": 2,
+      "method": "org.joda.time.DateTimeZone.DateTimeZone(String)",
+      "score": 0.877547
+    },
+    {
+      "rank": 3,
+      "method": "org.joda.time.DateTimeZone.getConvertedId(String)",
+      "score": 0.751141
+    },
+    {
+      "rank": 4,
+      "method": "org.joda.time.tz.ZoneInfoProvider.loadZoneData(String)",
+      "score": 0.637247
+    },
+    {
+      "rank": 5,
+      "method": "org.joda.time.DateTimeZone.forTimeZone(TimeZone)",
+      "score": 0.517635
+    }
+  ]
+}

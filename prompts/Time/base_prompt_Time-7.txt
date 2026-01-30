@@ -1,0 +1,148 @@
+### BUG_REPORT
+Title: DateTimeFormat.parseInto sometimes miscalculates year (2.2)
+
+Description:
+There appears to be a bug in the fix to http://sourceforge.net/p/joda-time/bugs/148 (which I also reported).
+The following code (which can be added to org.joda.time.format.TestDateTimeFormatter) breaks, because the input mutable date time's millis appear to be mishandled and the year for the parse is changed to 1999:
+    public void testParseInto_monthDay_feb29_startOfYear() {
+        DateTimeFormatter f = DateTimeFormat.forPattern("M d").withLocale(Locale.UK);
+        MutableDateTime result = new MutableDateTime(2000, 1, 1, 0, 0, 0, 0, NEWYORK);
+        assertEquals(4, f.parseInto(result, "2 29", 0));
+        assertEquals(new MutableDateTime(2000, 2, 29, 0, 0, 0, 0, NEWYORK), result);
+    }
+
+
+### FAILING_TEST
+org.joda.time.format.DateTimeParserBucket.computeMillis(boolean,String)
+org.joda.time.DateTimeZone.getDefaultNameProvider()
+org.joda.time.DateTimeZone.fixedOffsetZone(String,int)
+org.joda.time.DateTimeZone.getDefaultProvider()
+org.joda.time.IllegalFieldValueException.prependMessage(String)
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.format.DateTimeParserBucket.computeMillis(boolean,String)
+------------------------------------------------------------------------------------------
+public long computeMillis() {
+        return computeMillis(false, null);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.DateTimeZone.getDefaultNameProvider()
+------------------------------------------------------------------------------------------
+private static NameProvider getDefaultNameProvider() {
+        NameProvider nameProvider = null;
+        try {
+            String providerClass = System.getProperty("org.joda.time.DateTimeZone.NameProvider");
+            if (providerClass != null) {
+                try {
+                    nameProvider = (NameProvider) Class.forName(providerClass).newInstance();
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        } catch (SecurityException ex) {
+            // ignore
+        }
+
+        if (nameProvider == null) {
+            nameProvider = new DefaultNameProvider();
+        }
+
+        return nameProvider;
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.DateTimeZone.fixedOffsetZone(String,int)
+------------------------------------------------------------------------------------------
+private static synchronized DateTimeZone fixedOffsetZone(String id, int offset) {
+        if (offset == 0) {
+            return DateTimeZone.UTC;
+        }
+        if (iFixedOffsetCache == null) {
+            iFixedOffsetCache = new HashMap<String, SoftReference<DateTimeZone>>();
+        }
+        DateTimeZone zone;
+        Reference<DateTimeZone> ref = iFixedOffsetCache.get(id);
+        if (ref != null) {
+            zone = ref.get();
+            if (zone != null) {
+                return zone;
+            }
+        }
+        zone = new FixedDateTimeZone(id, null, offset, offset);
+        iFixedOffsetCache.put(id, new SoftReference<DateTimeZone>(zone));
+        return zone;
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.DateTimeZone.getDefaultProvider()
+------------------------------------------------------------------------------------------
+private static Provider getDefaultProvider() {
+        Provider provider = null;
+
+        try {
+            String providerClass = System.getProperty("org.joda.time.DateTimeZone.Provider");
+            if (providerClass != null) {
+                try {
+                    provider = (Provider) Class.forName(providerClass).newInstance();
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        } catch (SecurityException ex) {
+            // ignored
+        }
+
+        if (provider == null) {
+            try {
+                provider = new ZoneInfoProvider("org/joda/time/tz/data");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        if (provider == null) {
+            provider = new UTCProvider();
+        }
+
+        return provider;
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.IllegalFieldValueException.prependMessage(String)
+------------------------------------------------------------------------------------------
+public void prependMessage(String message) {
+        if (iMessage == null) {
+            iMessage = message;
+        } else if (message != null) {
+            iMessage = message + ": " + iMessage;
+        }
+    }
+
+------------------------------------------------------------------------------------------
+
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.joda.time.format.TestDateTimeFormatter#testParseInto_monthDay_feb29_newYork_startOfYear
+Runtime: 3484746
+------------------------------------------------------------------------------------------
+org.joda.time.IllegalFieldValueException: Cannot parse "2 29": Value 29 for dayOfMonth must be in the range [1
+
+------------------------------------------------------------------------------------------
+Fail #2
+Test: org.joda.time.format.TestDateTimeFormatter#testParseInto_monthDay_feb29_tokyo_endOfYear
+Runtime: 2740796
+------------------------------------------------------------------------------------------
+org.joda.time.IllegalFieldValueException: Cannot parse "2 29": Value 29 for dayOfMonth must be in the range [1

@@ -1,0 +1,31 @@
+{
+  "project": "Time",
+  "bug_id": 7,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.joda.time.format.DateTimeFormatter.parseInto(org.joda.time.ReadWritableInstant",
+      "score": 0.994916
+    },
+    {
+      "rank": 2,
+      "method": "org.joda.time.format.DateTimeParserBucket.computeMillis(boolean",
+      "score": 0.878218
+    },
+    {
+      "rank": 3,
+      "method": "org.joda.time.IllegalFieldValueException.getMessage()",
+      "score": 0.755341
+    },
+    {
+      "rank": 4,
+      "method": "org.joda.time.format.DateTimeFormatter.withPivotYear(Integer)",
+      "score": 0.633846
+    },
+    {
+      "rank": 5,
+      "method": "org.joda.time.MutableDateTime.parse(String)",
+      "score": 0.51435
+    }
+  ]
+}

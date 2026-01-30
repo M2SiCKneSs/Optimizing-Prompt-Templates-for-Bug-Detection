@@ -1,0 +1,31 @@
+{
+  "project": "Math",
+  "bug_id": 32,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.math3.geometry.euclidean.twod.PolygonsSet.computeGeometricalProperties()",
+      "score": 0.996834
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.math3.random.EmpiricalDistribution.density(double)",
+      "score": 0.873307
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.math3.distribution.GammaDistribution.density(double)",
+      "score": 0.75031
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.math3.optim.BaseOptimizer.incrementIterationCount()",
+      "score": 0.636739
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.math3.distribution.HypergeometricDistribution.getSupportLowerBound()",
+      "score": 0.515049
+    }
+  ]
+}

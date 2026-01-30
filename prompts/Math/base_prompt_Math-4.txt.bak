@@ -1,0 +1,239 @@
+### BUG_REPORT
+Title: NPE when calling SubLine.intersection() with non-intersecting lines
+
+Description:
+When calling SubLine.intersection() with two lines that not intersect, then a NullPointerException is thrown in Line.toSubSpace(). This bug is in the twod and threed implementations.
+The attached patch fixes both implementations and adds the required test cases.
+
+
+### FAILING_TEST
+org.apache.commons.math3.geometry.euclidean.twod.SubLine.intersection(SubLine,boolean)
+org.apache.commons.math3.geometry.euclidean.threed.SubLine.intersection(SubLine,boolean)
+org.apache.commons.math3.geometry.euclidean.twod.SubLine.side(Hyperplane<Euclidean2D>)
+org.apache.commons.math3.geometry.euclidean.threed.SubLine.SubLine(Vector3D,Vector3D)
+org.apache.commons.math3.geometry.euclidean.twod.SubLine.split(Hyperplane<Euclidean2D>)
+org.apache.commons.math3.geometry.euclidean.twod.SubLine.intersection(SubLine,boolean)
+org.apache.commons.math3.geometry.euclidean.threed.SubLine.SubLine(Vector3D,Vector3D)
+org.apache.commons.math3.geometry.euclidean.threed.SubLine.intersection(SubLine,boolean)
+org.apache.commons.math3.geometry.euclidean.twod.SubLine.SubLine(Vector2D,Vector2D)
+org.apache.commons.math3.geometry.euclidean.threed.Line.getAbscissa(Vector3D)
+
+### CODE_SNIPPETS
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.geometry.euclidean.twod.SubLine.intersection(SubLine,boolean)
+------------------------------------------------------------------------------------------
+public Vector2D intersection(final SubLine subLine, final boolean includeEndPoints) {
+
+        // retrieve the underlying lines
+        Line line1 = (Line) getHyperplane();
+        Line line2 = (Line) subLine.getHyperplane();
+
+        // compute the intersection on infinite line
+        Vector2D v2D = line1.intersection(line2);
+        if (v2D == null) {
+            return null;
+        }
+
+        // check location of point with respect to first sub-line
+        Location loc1 = getRemainingRegion().checkPoint(line1.toSubSpace(v2D));
+
+        // check location of point with respect to second sub-line
+        Location loc2 = subLine.getRemainingRegion().checkPoint(line2.toSubSpace(v2D));
+
+        if (includeEndPoints) {
+            return ((loc1 != Location.OUTSIDE) && (loc2 != Location.OUTSIDE)) ? v2D : null;
+        } else {
+            return ((loc1 == Location.INSIDE) && (loc2 == Location.INSIDE)) ? v2D : null;
+        }
+
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.geometry.euclidean.threed.SubLine.intersection(SubLine,boolean)
+------------------------------------------------------------------------------------------
+public Vector3D intersection(final SubLine subLine, final boolean includeEndPoints) {
+
+        // compute the intersection on infinite line
+        Vector3D v1D = line.intersection(subLine.line);
+        if (v1D == null) {
+            return null;
+        }
+
+        // check location of point with respect to first sub-line
+        Location loc1 = remainingRegion.checkPoint(line.toSubSpace(v1D));
+
+        // check location of point with respect to second sub-line
+        Location loc2 = subLine.remainingRegion.checkPoint(subLine.line.toSubSpace(v1D));
+
+        if (includeEndPoints) {
+            return ((loc1 != Location.OUTSIDE) && (loc2 != Location.OUTSIDE)) ? v1D : null;
+        } else {
+            return ((loc1 == Location.INSIDE) && (loc2 == Location.INSIDE)) ? v1D : null;
+        }
+
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.geometry.euclidean.twod.SubLine.side(Hyperplane<Euclidean2D>)
+------------------------------------------------------------------------------------------
+@Override
+    public Side side(final Hyperplane<Euclidean2D> hyperplane) {
+
+        final Line    thisLine  = (Line) getHyperplane();
+        final Line    otherLine = (Line) hyperplane;
+        final Vector2D crossing  = thisLine.intersection(otherLine);
+
+        if (crossing == null) {
+            // the lines are parallel,
+            final double global = otherLine.getOffset(thisLine);
+            return (global < -1.0e-10) ? Side.MINUS : ((global > 1.0e-10) ? Side.PLUS : Side.HYPER);
+        }
+
+        // the lines do intersect
+        final boolean direct = FastMath.sin(thisLine.getAngle() - otherLine.getAngle()) < 0;
+        final Vector1D x = thisLine.toSubSpace(crossing);
+        return getRemainingRegion().side(new OrientedPoint(x, direct));
+
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.geometry.euclidean.threed.SubLine.SubLine(Vector3D,Vector3D)
+------------------------------------------------------------------------------------------
+public SubLine(final Line line, final IntervalsSet remainingRegion) {
+        this.line            = line;
+        this.remainingRegion = remainingRegion;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.geometry.euclidean.twod.SubLine.split(Hyperplane<Euclidean2D>)
+------------------------------------------------------------------------------------------
+@Override
+    public SplitSubHyperplane<Euclidean2D> split(final Hyperplane<Euclidean2D> hyperplane) {
+
+        final Line    thisLine  = (Line) getHyperplane();
+        final Line    otherLine = (Line) hyperplane;
+        final Vector2D crossing  = thisLine.intersection(otherLine);
+
+        if (crossing == null) {
+            // the lines are parallel
+            final double global = otherLine.getOffset(thisLine);
+            return (global < -1.0e-10) ?
+                   new SplitSubHyperplane<Euclidean2D>(null, this) :
+                   new SplitSubHyperplane<Euclidean2D>(this, null);
+        }
+
+        // the lines do intersect
+        final boolean direct = FastMath.sin(thisLine.getAngle() - otherLine.getAngle()) < 0;
+        final Vector1D x      = thisLine.toSubSpace(crossing);
+        final SubHyperplane<Euclidean1D> subPlus  = new OrientedPoint(x, !direct).wholeHyperplane();
+        final SubHyperplane<Euclidean1D> subMinus = new OrientedPoint(x,  direct).wholeHyperplane();
+
+        final BSPTree<Euclidean1D> splitTree = getRemainingRegion().getTree(false).split(subMinus);
+        final BSPTree<Euclidean1D> plusTree  = getRemainingRegion().isEmpty(splitTree.getPlus()) ?
+                                               new BSPTree<Euclidean1D>(Boolean.FALSE) :
+                                               new BSPTree<Euclidean1D>(subPlus, new BSPTree<Euclidean1D>(Boolean.FALSE),
+                                                                        splitTree.getPlus(), null);
+        final BSPTree<Euclidean1D> minusTree = getRemainingRegion().isEmpty(splitTree.getMinus()) ?
+                                               new BSPTree<Euclidean1D>(Boolean.FALSE) :
+                                               new BSPTree<Euclidean1D>(subMinus, new BSPTree<Euclidean1D>(Boolean.FALSE),
+                                                                        splitTree.getMinus(), null);
+
+        return new SplitSubHyperplane<Euclidean2D>(new SubLine(thisLine.copySelf(), new IntervalsSet(plusTree)),
+                                                   new SubLine(thisLine.copySelf(), new IntervalsSet(minusTree)));
+
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.geometry.euclidean.twod.SubLine.intersection(SubLine,boolean)
+------------------------------------------------------------------------------------------
+public Vector2D intersection(final SubLine subLine, final boolean includeEndPoints) {
+
+        // retrieve the underlying lines
+        Line line1 = (Line) getHyperplane();
+        Line line2 = (Line) subLine.getHyperplane();
+
+        // compute the intersection on infinite line
+        Vector2D v2D = line1.intersection(line2);
+        if (v2D == null) {
+            return null;
+        }
+
+        // check location of point with respect to first sub-line
+        Location loc1 = getRemainingRegion().checkPoint(line1.toSubSpace(v2D));
+
+        // check location of point with respect to second sub-line
+        Location loc2 = subLine.getRemainingRegion().checkPoint(line2.toSubSpace(v2D));
+
+        if (includeEndPoints) {
+            return ((loc1 != Location.OUTSIDE) && (loc2 != Location.OUTSIDE)) ? v2D : null;
+        } else {
+            return ((loc1 == Location.INSIDE) && (loc2 == Location.INSIDE)) ? v2D : null;
+        }
+
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.geometry.euclidean.threed.SubLine.SubLine(Vector3D,Vector3D)
+------------------------------------------------------------------------------------------
+public SubLine(final Line line, final IntervalsSet remainingRegion) {
+        this.line            = line;
+        this.remainingRegion = remainingRegion;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.geometry.euclidean.threed.SubLine.intersection(SubLine,boolean)
+------------------------------------------------------------------------------------------
+public Vector3D intersection(final SubLine subLine, final boolean includeEndPoints) {
+
+        // compute the intersection on infinite line
+        Vector3D v1D = line.intersection(subLine.line);
+        if (v1D == null) {
+            return null;
+        }
+
+        // check location of point with respect to first sub-line
+        Location loc1 = remainingRegion.checkPoint(line.toSubSpace(v1D));
+
+        // check location of point with respect to second sub-line
+        Location loc2 = subLine.remainingRegion.checkPoint(subLine.line.toSubSpace(v1D));
+
+        if (includeEndPoints) {
+            return ((loc1 != Location.OUTSIDE) && (loc2 != Location.OUTSIDE)) ? v1D : null;
+        } else {
+            return ((loc1 == Location.INSIDE) && (loc2 == Location.INSIDE)) ? v1D : null;
+        }
+
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.geometry.euclidean.twod.SubLine.SubLine(Vector2D,Vector2D)
+------------------------------------------------------------------------------------------
+public SubLine(final Hyperplane<Euclidean2D> hyperplane,
+                   final Region<Euclidean1D> remainingRegion) {
+        super(hyperplane, remainingRegion);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.geometry.euclidean.threed.Line.getAbscissa(Vector3D)
+------------------------------------------------------------------------------------------
+public double getAbscissa(final Vector3D point) {
+        return point.subtract(zero).dotProduct(direction);
+    }
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.apache.commons.math3.geometry.euclidean.threed.SubLineTest#testIntersectionNotIntersecting
+Runtime: 4692108
+------------------------------------------------------------------------------------------
+java.lang.NullPointerException at org.apache.commons.math3.geometry.euclidean.threed.Line.getAbscissa(Line.java:114) at org.apache.commons.math3.geometry.euclidean.threed.Line.toSubSpace(Line.java:129) at org.apache.commons.math3.geometry.euclidean.threed.SubLine.intersection(SubLine.java:116) at org.apache.commons.math3.geometry.euclidean.threed.SubLineTest.testIntersectionNotIntersecting(SubLineTest.java:160) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #2
+Test: org.apache.commons.math3.geometry.euclidean.twod.SubLineTest#testIntersectionParallel
+Runtime: 2687840
+------------------------------------------------------------------------------------------
+java.lang.NullPointerException at org.apache.commons.math3.geometry.euclidean.twod.Line.toSubSpace(Line.java:182) at org.apache.commons.math3.geometry.euclidean.twod.SubLine.intersection(SubLine.java:120) at org.apache.commons.math3.geometry.euclidean.twod.SubLineTest.testIntersectionParallel(SubLineTest.java:151) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

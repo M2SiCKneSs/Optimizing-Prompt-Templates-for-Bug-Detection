@@ -1,0 +1,1 @@
+Fix for "# fmt: on" with decorators (#1325)

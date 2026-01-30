@@ -1,0 +1,31 @@
+{
+  "project": "Time",
+  "bug_id": 16,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.joda.time.MutableDateTime.setChronology(Chronology)",
+      "score": 0.993983
+    },
+    {
+      "rank": 2,
+      "method": "org.joda.time.chrono.BasicGJChronology.setYear(long",
+      "score": 0.87017
+    },
+    {
+      "rank": 3,
+      "method": "org.joda.time.format.DateTimeFormatter.parseInto(org.joda.time.ReadWritableInstant",
+      "score": 0.757206
+    },
+    {
+      "rank": 4,
+      "method": "org.joda.time.format.ISODateTimeFormat.dateTimeNoMillis()",
+      "score": 0.636383
+    },
+    {
+      "rank": 5,
+      "method": "org.joda.time.format.DateTimeFormatterBuilder.StringLiteral.parseInto(DateTimeParserBucket",
+      "score": 0.51109
+    }
+  ]
+}

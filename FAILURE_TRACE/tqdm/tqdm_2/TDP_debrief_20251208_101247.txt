@@ -1,0 +1,447 @@
+================================================================================
+TDP (Test, Diagnose, Plan) - Execution Report
+================================================================================
+Start Time: 2025-12-08 10:12:47
+Total tests available: 59
+Total components: 123
+
+--- INITIAL TEST SELECTION ---
+Initial observed tests: [2, 3, 4, 5, 32, 34, 35, 50, 57, 30]
+Number of initial tests: 10
+Failed tests in initial set: 6
+Passed tests in initial set: 4
+  Test #2: FAILED - Components: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c48', 'c49', 'c50', 'c51', 'c52', 'c53', 'c54', 'c55', 'c56', 'c57', 'c58', 'c59', 'c60', 'c62', 'c63', 'c64', 'c65', 'c66', 'c67', 'c68', 'c69', 'c70', 'c71', 'c72', 'c73', 'c74', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93', 'c94', 'c95', 'c96', 'c97', 'c98', 'c99', 'c100', 'c101', 'c104', 'c105', 'c106', 'c107', 'c108', 'c109', 'c110', 'c111', 'c112', 'c113', 'c114', 'c115', 'c116', 'c117', 'c118', 'c119', 'c120', 'c121', 'c122', 'c123']
+  Test #3: FAILED - Components: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c48', 'c49', 'c50', 'c51', 'c52', 'c53', 'c54', 'c55', 'c56', 'c57', 'c58', 'c59', 'c60', 'c62', 'c63', 'c64', 'c65', 'c66', 'c67', 'c68', 'c69', 'c70', 'c71', 'c72', 'c73', 'c74', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93', 'c94', 'c95', 'c96', 'c97', 'c98', 'c99', 'c100', 'c101', 'c104', 'c105', 'c106', 'c107', 'c108', 'c109', 'c110', 'c111', 'c112', 'c113', 'c114', 'c115', 'c116', 'c117', 'c118', 'c119', 'c120', 'c121', 'c122', 'c123']
+  Test #4: FAILED - Components: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c48', 'c49', 'c50', 'c51', 'c52', 'c53', 'c54', 'c55', 'c56', 'c57', 'c58', 'c59', 'c60', 'c62', 'c63', 'c64', 'c65', 'c66', 'c67', 'c68', 'c69', 'c70', 'c71', 'c72', 'c73', 'c74', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93', 'c94', 'c95', 'c96', 'c97', 'c98', 'c99', 'c100', 'c101', 'c104', 'c105', 'c106', 'c107', 'c108', 'c109', 'c110', 'c111', 'c112', 'c113', 'c114', 'c115', 'c116', 'c117', 'c118', 'c119', 'c120', 'c121', 'c122', 'c123']
+  Test #5: PASSED - Components: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c48', 'c49', 'c50', 'c51', 'c52', 'c53', 'c54', 'c55', 'c56', 'c57', 'c58', 'c59', 'c60', 'c62', 'c63', 'c64', 'c65', 'c66', 'c67', 'c68', 'c69', 'c70', 'c71', 'c72', 'c73', 'c74', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93', 'c94', 'c95', 'c96', 'c97', 'c98', 'c99', 'c100', 'c101', 'c104', 'c105', 'c106', 'c107', 'c108', 'c109', 'c110', 'c111', 'c112', 'c113', 'c114', 'c115', 'c116', 'c117', 'c118', 'c119', 'c120', 'c121', 'c122', 'c123']
+  Test #32: FAILED - Components: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c48', 'c49', 'c50', 'c51', 'c52', 'c53', 'c54', 'c55', 'c56', 'c57', 'c58', 'c59', 'c60', 'c62', 'c63', 'c64', 'c65', 'c66', 'c67', 'c68', 'c69', 'c70', 'c71', 'c72', 'c73', 'c74', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93', 'c94', 'c95', 'c96', 'c97', 'c98', 'c99', 'c100', 'c101', 'c104', 'c105', 'c106', 'c107', 'c108', 'c109', 'c110', 'c111', 'c112', 'c113', 'c114', 'c115', 'c116', 'c117', 'c118', 'c119', 'c120', 'c121', 'c122', 'c123']
+  Test #34: FAILED - Components: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c48', 'c49', 'c50', 'c51', 'c52', 'c53', 'c54', 'c55', 'c56', 'c57', 'c58', 'c59', 'c60', 'c62', 'c63', 'c64', 'c65', 'c66', 'c67', 'c68', 'c69', 'c70', 'c71', 'c72', 'c73', 'c74', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93', 'c94', 'c95', 'c96', 'c97', 'c98', 'c99', 'c100', 'c101', 'c104', 'c105', 'c106', 'c107', 'c108', 'c109', 'c110', 'c111', 'c112', 'c113', 'c114', 'c115', 'c116', 'c117', 'c118', 'c119', 'c120', 'c121', 'c122', 'c123']
+  Test #35: FAILED - Components: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c48', 'c49', 'c50', 'c51', 'c52', 'c53', 'c54', 'c55', 'c56', 'c57', 'c58', 'c59', 'c60', 'c62', 'c63', 'c64', 'c65', 'c66', 'c67', 'c68', 'c69', 'c70', 'c71', 'c72', 'c73', 'c74', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93', 'c94', 'c95', 'c96', 'c97', 'c98', 'c99', 'c100', 'c101', 'c104', 'c105', 'c106', 'c107', 'c108', 'c109', 'c110', 'c111', 'c112', 'c113', 'c114', 'c115', 'c116', 'c117', 'c118', 'c119', 'c120', 'c121', 'c122', 'c123']
+  Test #50: PASSED - Components: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c48', 'c49', 'c50', 'c51', 'c52', 'c53', 'c54', 'c55', 'c56', 'c57', 'c58', 'c59', 'c60', 'c61', 'c62', 'c63', 'c64', 'c65', 'c66', 'c67', 'c68', 'c69', 'c70', 'c71', 'c72', 'c73', 'c74', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93', 'c94', 'c95', 'c96', 'c97', 'c98', 'c99', 'c100', 'c101', 'c104', 'c105', 'c106', 'c107', 'c108', 'c109', 'c110', 'c111', 'c112', 'c113', 'c114', 'c115', 'c116', 'c117', 'c118', 'c119', 'c120', 'c121', 'c122', 'c123']
+  Test #57: PASSED - Components: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c48', 'c49', 'c50', 'c51', 'c52', 'c53', 'c54', 'c55', 'c56', 'c57', 'c58', 'c59', 'c60', 'c61', 'c62', 'c63', 'c64', 'c65', 'c66', 'c67', 'c68', 'c69', 'c70', 'c71', 'c72', 'c73', 'c74', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93', 'c94', 'c95', 'c96', 'c97', 'c98', 'c99', 'c100', 'c101', 'c102', 'c104', 'c105', 'c106', 'c107', 'c108', 'c109', 'c110', 'c111', 'c112', 'c113', 'c114', 'c115', 'c116', 'c117', 'c118', 'c119', 'c120', 'c121', 'c122', 'c123']
+  Test #30: PASSED - Components: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c48', 'c49', 'c50', 'c51', 'c52', 'c53', 'c54', 'c55', 'c56', 'c57', 'c58', 'c59', 'c60', 'c62', 'c63', 'c64', 'c65', 'c66', 'c67', 'c68', 'c69', 'c70', 'c71', 'c72', 'c73', 'c74', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93', 'c94', 'c95', 'c96', 'c97', 'c98', 'c99', 'c100', 'c101', 'c104', 'c105', 'c106', 'c107', 'c108', 'c109', 'c110', 'c111', 'c112', 'c113', 'c114', 'c115', 'c116', 'c117', 'c118', 'c119', 'c120', 'c121', 'c122', 'c123']
+
+Convergence threshold: 0.9
+
+*** MANUAL DIAGNOSES MODE ***
+  Manual Diagnosis 1: ['c34']
+  Manual Diagnosis 2: ['c35']
+  Manual Diagnosis 3: ['c36']
+  Manual Diagnosis 4: ['c1']
+  Manual Diagnosis 5: ['c103']
+  Manual Diagnosis 6: ['c121']
+  Manual Diagnosis 7: ['c122']
+  Manual Diagnosis 8: ['c67']
+  Manual Diagnosis 9: ['c68']
+  Manual Diagnosis 10: ['c20']
+
+================================================================================
+ITERATION 1
+================================================================================
+
+Tests used so far: 10 / 59
+Number of diagnoses: 10
+Best diagnosis: ['c103'] with P = 0.928
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 0.494
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c103'] | P=0.928 | Entropy Contribution=0.100
+  Rank 2: ['c34'] | P=0.032 | Entropy Contribution=0.159
+  Rank 3: ['c35'] | P=0.032 | Entropy Contribution=0.159
+  Rank 4: ['c36'] | P=0.001 | Entropy Contribution=0.011
+  Rank 5: ['c1'] | P=0.001 | Entropy Contribution=0.011
+  Rank 6: ['c121'] | P=0.001 | Entropy Contribution=0.011
+  Rank 7: ['c122'] | P=0.001 | Entropy Contribution=0.011
+  Rank 8: ['c67'] | P=0.001 | Entropy Contribution=0.011
+  Rank 9: ['c68'] | P=0.001 | Entropy Contribution=0.011
+  Rank 10: ['c20'] | P=0.001 | Entropy Contribution=0.011
+
+Components by Suspicion (Descending Order):
+  c103: Suspicion = 0.928
+  c34: Suspicion = 0.032
+  c35: Suspicion = 0.032
+  c1: Suspicion = 0.001
+  c20: Suspicion = 0.001
+  c36: Suspicion = 0.001
+  c67: Suspicion = 0.001
+  c68: Suspicion = 0.001
+  c121: Suspicion = 0.001
+  c122: Suspicion = 0.001
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #6
+  Info Gain: 0.006
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c48', 'c49', 'c50', 'c51', 'c52', 'c53', 'c54', 'c55', 'c56', 'c57', 'c58', 'c59', 'c60', 'c62', 'c63', 'c64', 'c65', 'c66', 'c67', 'c68', 'c69', 'c70', 'c71', 'c72', 'c73', 'c74', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93', 'c94', 'c95', 'c96', 'c97', 'c98', 'c99', 'c100', 'c101', 'c104', 'c105', 'c106', 'c107', 'c108', 'c109', 'c110', 'c111', 'c112', 'c113', 'c114', 'c115', 'c116', 'c117', 'c118', 'c119', 'c120', 'c121', 'c122', 'c123']
+→ Test result: FAILED (1)
+
+================================================================================
+ITERATION 2
+================================================================================
+
+Tests used so far: 11 / 59
+Number of diagnoses: 10
+Best diagnosis: ['c103'] with P = 0.953
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 0.351
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c103'] | P=0.953 | Entropy Contribution=0.066
+  Rank 2: ['c34'] | P=0.021 | Entropy Contribution=0.117
+  Rank 3: ['c35'] | P=0.021 | Entropy Contribution=0.117
+  Rank 4: ['c36'] | P=0.001 | Entropy Contribution=0.007
+  Rank 5: ['c1'] | P=0.001 | Entropy Contribution=0.007
+  Rank 6: ['c121'] | P=0.001 | Entropy Contribution=0.007
+  Rank 7: ['c122'] | P=0.001 | Entropy Contribution=0.007
+  Rank 8: ['c67'] | P=0.001 | Entropy Contribution=0.007
+  Rank 9: ['c68'] | P=0.001 | Entropy Contribution=0.007
+  Rank 10: ['c20'] | P=0.001 | Entropy Contribution=0.007
+
+Components by Suspicion (Descending Order):
+  c103: Suspicion = 0.953
+  c34: Suspicion = 0.021
+  c35: Suspicion = 0.021
+  c1: Suspicion = 0.001
+  c20: Suspicion = 0.001
+  c36: Suspicion = 0.001
+  c67: Suspicion = 0.001
+  c68: Suspicion = 0.001
+  c121: Suspicion = 0.001
+  c122: Suspicion = 0.001
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #7
+  Info Gain: 0.003
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c48', 'c49', 'c50', 'c51', 'c52', 'c53', 'c54', 'c55', 'c56', 'c57', 'c58', 'c59', 'c60', 'c62', 'c63', 'c64', 'c65', 'c66', 'c67', 'c68', 'c69', 'c70', 'c71', 'c72', 'c73', 'c74', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93', 'c94', 'c95', 'c96', 'c97', 'c98', 'c99', 'c100', 'c101', 'c104', 'c105', 'c106', 'c107', 'c108', 'c109', 'c110', 'c111', 'c112', 'c113', 'c114', 'c115', 'c116', 'c117', 'c118', 'c119', 'c120', 'c121', 'c122', 'c123']
+→ Test result: FAILED (1)
+
+================================================================================
+ITERATION 3
+================================================================================
+
+Tests used so far: 12 / 59
+Number of diagnoses: 10
+Best diagnosis: ['c103'] with P = 0.967
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 0.261
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c103'] | P=0.967 | Entropy Contribution=0.046
+  Rank 2: ['c34'] | P=0.015 | Entropy Contribution=0.089
+  Rank 3: ['c35'] | P=0.015 | Entropy Contribution=0.089
+  Rank 4: ['c36'] | P=0.000 | Entropy Contribution=0.005
+  Rank 5: ['c1'] | P=0.000 | Entropy Contribution=0.005
+  Rank 6: ['c121'] | P=0.000 | Entropy Contribution=0.005
+  Rank 7: ['c122'] | P=0.000 | Entropy Contribution=0.005
+  Rank 8: ['c67'] | P=0.000 | Entropy Contribution=0.005
+  Rank 9: ['c68'] | P=0.000 | Entropy Contribution=0.005
+  Rank 10: ['c20'] | P=0.000 | Entropy Contribution=0.005
+
+Components by Suspicion (Descending Order):
+  c103: Suspicion = 0.967
+  c34: Suspicion = 0.015
+  c35: Suspicion = 0.015
+  c1: Suspicion = 0.000
+  c20: Suspicion = 0.000
+  c36: Suspicion = 0.000
+  c67: Suspicion = 0.000
+  c68: Suspicion = 0.000
+  c121: Suspicion = 0.000
+  c122: Suspicion = 0.000
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #8
+  Info Gain: 0.001
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c48', 'c49', 'c50', 'c51', 'c52', 'c53', 'c54', 'c55', 'c56', 'c57', 'c58', 'c59', 'c60', 'c62', 'c63', 'c64', 'c65', 'c66', 'c67', 'c68', 'c69', 'c70', 'c71', 'c72', 'c73', 'c74', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93', 'c94', 'c95', 'c96', 'c97', 'c98', 'c99', 'c100', 'c101', 'c104', 'c105', 'c106', 'c107', 'c108', 'c109', 'c110', 'c111', 'c112', 'c113', 'c114', 'c115', 'c116', 'c117', 'c118', 'c119', 'c120', 'c121', 'c122', 'c123']
+→ Test result: FAILED (1)
+
+================================================================================
+ITERATION 4
+================================================================================
+
+Tests used so far: 13 / 59
+Number of diagnoses: 10
+Best diagnosis: ['c103'] with P = 0.976
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 0.202
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c103'] | P=0.976 | Entropy Contribution=0.034
+  Rank 2: ['c34'] | P=0.011 | Entropy Contribution=0.071
+  Rank 3: ['c35'] | P=0.011 | Entropy Contribution=0.071
+  Rank 4: ['c36'] | P=0.000 | Entropy Contribution=0.004
+  Rank 5: ['c1'] | P=0.000 | Entropy Contribution=0.004
+  Rank 6: ['c121'] | P=0.000 | Entropy Contribution=0.004
+  Rank 7: ['c122'] | P=0.000 | Entropy Contribution=0.004
+  Rank 8: ['c67'] | P=0.000 | Entropy Contribution=0.004
+  Rank 9: ['c68'] | P=0.000 | Entropy Contribution=0.004
+  Rank 10: ['c20'] | P=0.000 | Entropy Contribution=0.004
+
+Components by Suspicion (Descending Order):
+  c103: Suspicion = 0.976
+  c34: Suspicion = 0.011
+  c35: Suspicion = 0.011
+  c1: Suspicion = 0.000
+  c20: Suspicion = 0.000
+  c36: Suspicion = 0.000
+  c67: Suspicion = 0.000
+  c68: Suspicion = 0.000
+  c121: Suspicion = 0.000
+  c122: Suspicion = 0.000
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #9
+  Info Gain: 0.001
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c48', 'c49', 'c50', 'c51', 'c52', 'c53', 'c54', 'c55', 'c56', 'c57', 'c58', 'c59', 'c60', 'c62', 'c63', 'c64', 'c65', 'c66', 'c67', 'c68', 'c69', 'c70', 'c71', 'c72', 'c73', 'c74', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93', 'c94', 'c95', 'c96', 'c97', 'c98', 'c99', 'c100', 'c101', 'c104', 'c105', 'c106', 'c107', 'c108', 'c109', 'c110', 'c111', 'c112', 'c113', 'c114', 'c115', 'c116', 'c117', 'c118', 'c119', 'c120', 'c121', 'c122', 'c123']
+→ Test result: FAILED (1)
+
+================================================================================
+ITERATION 5
+================================================================================
+
+Tests used so far: 14 / 59
+Number of diagnoses: 10
+Best diagnosis: ['c103'] with P = 0.982
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 0.161
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c103'] | P=0.982 | Entropy Contribution=0.026
+  Rank 2: ['c34'] | P=0.008 | Entropy Contribution=0.058
+  Rank 3: ['c35'] | P=0.008 | Entropy Contribution=0.058
+  Rank 4: ['c36'] | P=0.000 | Entropy Contribution=0.003
+  Rank 5: ['c1'] | P=0.000 | Entropy Contribution=0.003
+  Rank 6: ['c121'] | P=0.000 | Entropy Contribution=0.003
+  Rank 7: ['c122'] | P=0.000 | Entropy Contribution=0.003
+  Rank 8: ['c67'] | P=0.000 | Entropy Contribution=0.003
+  Rank 9: ['c68'] | P=0.000 | Entropy Contribution=0.003
+  Rank 10: ['c20'] | P=0.000 | Entropy Contribution=0.003
+
+Components by Suspicion (Descending Order):
+  c103: Suspicion = 0.982
+  c34: Suspicion = 0.008
+  c35: Suspicion = 0.008
+  c1: Suspicion = 0.000
+  c20: Suspicion = 0.000
+  c36: Suspicion = 0.000
+  c67: Suspicion = 0.000
+  c68: Suspicion = 0.000
+  c121: Suspicion = 0.000
+  c122: Suspicion = 0.000
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #10
+  Info Gain: 0.000
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c48', 'c49', 'c50', 'c51', 'c52', 'c53', 'c54', 'c55', 'c56', 'c57', 'c58', 'c59', 'c60', 'c61', 'c62', 'c63', 'c64', 'c65', 'c66', 'c67', 'c68', 'c69', 'c70', 'c71', 'c72', 'c73', 'c74', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93', 'c94', 'c95', 'c96', 'c97', 'c98', 'c99', 'c100', 'c101', 'c104', 'c105', 'c106', 'c107', 'c108', 'c109', 'c110', 'c111', 'c112', 'c113', 'c114', 'c115', 'c116', 'c117', 'c118', 'c119', 'c120', 'c121', 'c122', 'c123']
+→ Test result: PASSED (0)
+
+================================================================================
+ITERATION 6
+================================================================================
+
+Tests used so far: 15 / 59
+Number of diagnoses: 10
+Best diagnosis: ['c103'] with P = 0.995
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 0.053
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c103'] | P=0.995 | Entropy Contribution=0.007
+  Rank 2: ['c34'] | P=0.002 | Entropy Contribution=0.020
+  Rank 3: ['c35'] | P=0.002 | Entropy Contribution=0.020
+  Rank 4: ['c36'] | P=0.000 | Entropy Contribution=0.001
+  Rank 5: ['c1'] | P=0.000 | Entropy Contribution=0.001
+  Rank 6: ['c121'] | P=0.000 | Entropy Contribution=0.001
+  Rank 7: ['c122'] | P=0.000 | Entropy Contribution=0.001
+  Rank 8: ['c67'] | P=0.000 | Entropy Contribution=0.001
+  Rank 9: ['c68'] | P=0.000 | Entropy Contribution=0.001
+  Rank 10: ['c20'] | P=0.000 | Entropy Contribution=0.001
+
+Components by Suspicion (Descending Order):
+  c103: Suspicion = 0.995
+  c34: Suspicion = 0.002
+  c35: Suspicion = 0.002
+  c1: Suspicion = 0.000
+  c20: Suspicion = 0.000
+  c36: Suspicion = 0.000
+  c67: Suspicion = 0.000
+  c68: Suspicion = 0.000
+  c121: Suspicion = 0.000
+  c122: Suspicion = 0.000
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #11
+  Info Gain: 0.000
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c48', 'c49', 'c50', 'c51', 'c52', 'c53', 'c54', 'c55', 'c56', 'c57', 'c58', 'c59', 'c60', 'c62', 'c63', 'c64', 'c65', 'c66', 'c67', 'c68', 'c69', 'c70', 'c71', 'c72', 'c73', 'c74', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93', 'c94', 'c95', 'c96', 'c97', 'c98', 'c99', 'c100', 'c101', 'c104', 'c105', 'c106', 'c107', 'c108', 'c109', 'c110', 'c111', 'c112', 'c113', 'c114', 'c115', 'c116', 'c117', 'c118', 'c119', 'c120', 'c121', 'c122', 'c123']
+→ Test result: FAILED (1)
+
+================================================================================
+ITERATION 7
+================================================================================
+
+Tests used so far: 16 / 59
+Number of diagnoses: 10
+Best diagnosis: ['c103'] with P = 0.996
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 0.039
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c103'] | P=0.996 | Entropy Contribution=0.005
+  Rank 2: ['c34'] | P=0.002 | Entropy Contribution=0.015
+  Rank 3: ['c35'] | P=0.002 | Entropy Contribution=0.015
+  Rank 4: ['c36'] | P=0.000 | Entropy Contribution=0.001
+  Rank 5: ['c1'] | P=0.000 | Entropy Contribution=0.001
+  Rank 6: ['c121'] | P=0.000 | Entropy Contribution=0.001
+  Rank 7: ['c122'] | P=0.000 | Entropy Contribution=0.001
+  Rank 8: ['c67'] | P=0.000 | Entropy Contribution=0.001
+  Rank 9: ['c68'] | P=0.000 | Entropy Contribution=0.001
+  Rank 10: ['c20'] | P=0.000 | Entropy Contribution=0.001
+
+Components by Suspicion (Descending Order):
+  c103: Suspicion = 0.996
+  c34: Suspicion = 0.002
+  c35: Suspicion = 0.002
+  c1: Suspicion = 0.000
+  c20: Suspicion = 0.000
+  c36: Suspicion = 0.000
+  c67: Suspicion = 0.000
+  c68: Suspicion = 0.000
+  c121: Suspicion = 0.000
+  c122: Suspicion = 0.000
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #12
+  Info Gain: 0.000
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c48', 'c49', 'c50', 'c51', 'c52', 'c53', 'c54', 'c55', 'c56', 'c57', 'c58', 'c59', 'c60', 'c62', 'c63', 'c64', 'c65', 'c66', 'c67', 'c68', 'c69', 'c70', 'c71', 'c72', 'c73', 'c74', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93', 'c94', 'c95', 'c96', 'c97', 'c98', 'c99', 'c100', 'c101', 'c104', 'c105', 'c106', 'c107', 'c108', 'c109', 'c110', 'c111', 'c112', 'c113', 'c114', 'c115', 'c116', 'c117', 'c118', 'c119', 'c120', 'c121', 'c122', 'c123']
+→ Test result: FAILED (1)
+
+================================================================================
+ITERATION 8
+================================================================================
+
+Tests used so far: 17 / 59
+Number of diagnoses: 10
+Best diagnosis: ['c103'] with P = 0.997
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 0.030
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c103'] | P=0.997 | Entropy Contribution=0.004
+  Rank 2: ['c34'] | P=0.001 | Entropy Contribution=0.011
+  Rank 3: ['c35'] | P=0.001 | Entropy Contribution=0.011
+  Rank 4: ['c36'] | P=0.000 | Entropy Contribution=0.000
+  Rank 5: ['c1'] | P=0.000 | Entropy Contribution=0.000
+  Rank 6: ['c121'] | P=0.000 | Entropy Contribution=0.000
+  Rank 7: ['c122'] | P=0.000 | Entropy Contribution=0.000
+  Rank 8: ['c67'] | P=0.000 | Entropy Contribution=0.000
+  Rank 9: ['c68'] | P=0.000 | Entropy Contribution=0.000
+  Rank 10: ['c20'] | P=0.000 | Entropy Contribution=0.000
+
+Components by Suspicion (Descending Order):
+  c103: Suspicion = 0.997
+  c34: Suspicion = 0.001
+  c35: Suspicion = 0.001
+  c1: Suspicion = 0.000
+  c20: Suspicion = 0.000
+  c36: Suspicion = 0.000
+  c67: Suspicion = 0.000
+  c68: Suspicion = 0.000
+  c121: Suspicion = 0.000
+  c122: Suspicion = 0.000
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #13
+  Info Gain: 0.000
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c48', 'c49', 'c50', 'c51', 'c52', 'c53', 'c54', 'c55', 'c56', 'c57', 'c58', 'c59', 'c60', 'c62', 'c63', 'c64', 'c65', 'c66', 'c67', 'c68', 'c69', 'c70', 'c71', 'c72', 'c73', 'c74', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93', 'c94', 'c95', 'c96', 'c97', 'c98', 'c99', 'c100', 'c101', 'c104', 'c105', 'c106', 'c107', 'c108', 'c109', 'c110', 'c111', 'c112', 'c113', 'c114', 'c115', 'c116', 'c117', 'c118', 'c119', 'c120', 'c121', 'c122', 'c123']
+→ Test result: FAILED (1)
+
+================================================================================
+ITERATION 9
+================================================================================
+
+Tests used so far: 18 / 59
+Number of diagnoses: 10
+Best diagnosis: ['c103'] with P = 0.998
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 0.023
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c103'] | P=0.998 | Entropy Contribution=0.003
+  Rank 2: ['c34'] | P=0.001 | Entropy Contribution=0.009
+  Rank 3: ['c35'] | P=0.001 | Entropy Contribution=0.009
+  Rank 4: ['c36'] | P=0.000 | Entropy Contribution=0.000
+  Rank 5: ['c1'] | P=0.000 | Entropy Contribution=0.000
+  Rank 6: ['c121'] | P=0.000 | Entropy Contribution=0.000
+  Rank 7: ['c122'] | P=0.000 | Entropy Contribution=0.000
+  Rank 8: ['c67'] | P=0.000 | Entropy Contribution=0.000
+  Rank 9: ['c68'] | P=0.000 | Entropy Contribution=0.000
+  Rank 10: ['c20'] | P=0.000 | Entropy Contribution=0.000
+
+Components by Suspicion (Descending Order):
+  c103: Suspicion = 0.998
+  c34: Suspicion = 0.001
+  c35: Suspicion = 0.001
+  c1: Suspicion = 0.000
+  c20: Suspicion = 0.000
+  c36: Suspicion = 0.000
+  c67: Suspicion = 0.000
+  c68: Suspicion = 0.000
+  c121: Suspicion = 0.000
+  c122: Suspicion = 0.000
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #14
+  Info Gain: 0.000
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c48', 'c49', 'c50', 'c51', 'c52', 'c53', 'c54', 'c55', 'c56', 'c57', 'c58', 'c59', 'c60', 'c62', 'c63', 'c64', 'c65', 'c66', 'c67', 'c68', 'c69', 'c70', 'c71', 'c72', 'c73', 'c74', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93', 'c94', 'c95', 'c96', 'c97', 'c98', 'c99', 'c100', 'c101', 'c104', 'c105', 'c106', 'c107', 'c108', 'c109', 'c110', 'c111', 'c112', 'c113', 'c114', 'c115', 'c116', 'c117', 'c118', 'c119', 'c120', 'c121', 'c122', 'c123']
+→ Test result: FAILED (1)
+
+================================================================================
+ITERATION 10
+================================================================================
+
+Tests used so far: 19 / 59
+Number of diagnoses: 10
+Best diagnosis: ['c103'] with P = 0.998
+Sum of all diagnosis probabilities: 1.000
+Overall Entropy: 0.019
+
+--- DIAGNOSES BREAKDOWN (Descending Order by Probability) ---
+  Rank 1: ['c103'] | P=0.998 | Entropy Contribution=0.002
+  Rank 2: ['c34'] | P=0.001 | Entropy Contribution=0.007
+  Rank 3: ['c35'] | P=0.001 | Entropy Contribution=0.007
+  Rank 4: ['c36'] | P=0.000 | Entropy Contribution=0.000
+  Rank 5: ['c1'] | P=0.000 | Entropy Contribution=0.000
+  Rank 6: ['c121'] | P=0.000 | Entropy Contribution=0.000
+  Rank 7: ['c122'] | P=0.000 | Entropy Contribution=0.000
+  Rank 8: ['c67'] | P=0.000 | Entropy Contribution=0.000
+  Rank 9: ['c68'] | P=0.000 | Entropy Contribution=0.000
+  Rank 10: ['c20'] | P=0.000 | Entropy Contribution=0.000
+
+Components by Suspicion (Descending Order):
+  c103: Suspicion = 0.998
+  c34: Suspicion = 0.001
+  c35: Suspicion = 0.001
+  c1: Suspicion = 0.000
+  c20: Suspicion = 0.000
+  c36: Suspicion = 0.000
+  c67: Suspicion = 0.000
+  c68: Suspicion = 0.000
+  c121: Suspicion = 0.000
+  c122: Suspicion = 0.000
+
+--- TEST PLANNING ---
+→ SELECTED TEST: #15
+  Info Gain: 0.000
+  Components in trace: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30', 'c31', 'c32', 'c33', 'c34', 'c35', 'c36', 'c37', 'c38', 'c39', 'c40', 'c41', 'c42', 'c43', 'c44', 'c48', 'c49', 'c50', 'c51', 'c52', 'c53', 'c54', 'c55', 'c56', 'c57', 'c58', 'c59', 'c60', 'c62', 'c63', 'c64', 'c65', 'c66', 'c67', 'c68', 'c69', 'c70', 'c71', 'c72', 'c73', 'c74', 'c86', 'c87', 'c88', 'c89', 'c90', 'c91', 'c92', 'c93', 'c94', 'c95', 'c96', 'c97', 'c98', 'c99', 'c100', 'c101', 'c104', 'c105', 'c106', 'c107', 'c108', 'c109', 'c110', 'c111', 'c112', 'c113', 'c114', 'c115', 'c116', 'c117', 'c118', 'c119', 'c120', 'c121', 'c122', 'c123']
+→ Test result: FAILED (1)
+
+
+================================================================================
+TDP COMPLETED
+================================================================================
+End Time: 2025-12-08 10:14:27
+Duration: 99.80 seconds
+Final diagnosis: ['c103']
+Probability: 0.999
+Total tests used: 20 / 59
+Total iterations: 10

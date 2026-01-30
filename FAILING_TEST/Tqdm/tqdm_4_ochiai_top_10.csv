@@ -1,0 +1,11 @@
+Method,Ochiai_Score
+..tqdm._tqdm$tqdm#fp_write(s),0.16222142113076254
+..tqdm._tqdm$tqdm#print_status(s),0.16222142113076254
+"..tqdm._main##cast(val,typ)",0.1386750490563073
+"..tqdm._main##main(fp,argv)",0.1386750490563073
+"..tqdm._main##posix_pipe(fin,fout,delim,buf_size,callback)",0.1386750490563073
+"..tqdm._monitor$TMonitor#__init__(tqdm_cls,sleep_interval)",0.1386750490563073
+..tqdm._monitor$TMonitor#exit(),0.1386750490563073
+..tqdm._monitor$TMonitor#report(),0.1386750490563073
+"..tqdm._tqdm$TqdmWarning#__init__(msg,fp_write,*a,**k)",0.1386750490563073
+..tqdm._monitor$TMonitor#get_instances(),0.1386750490563073

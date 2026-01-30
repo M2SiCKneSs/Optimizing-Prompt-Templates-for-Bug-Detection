@@ -1,0 +1,89 @@
+### BUG_REPORT
+Title: "HarmonicFitter.ParameterGuesser" sometimes fails to return sensible values
+
+Description:
+The inner class "ParameterGuesser" in "HarmonicFitter" (package "o.a.c.m.optimization.fitting") fails to compute a usable guess for the "amplitude" parameter.
+
+
+### FAILING_TEST
+org.apache.commons.math3.optimization.fitting.HarmonicFitter.fit()
+org.apache.commons.math3.optimization.fitting.HarmonicFitter.fit(double[])
+org.apache.commons.math3.optimization.fitting.GaussianFitter.fit()
+org.apache.commons.math3.optimization.fitting.HarmonicFitter.HarmonicFitter(DifferentiableMultivariateVectorOptimizer)
+org.apache.commons.math3.analysis.function.HarmonicOscillator.HarmonicOscillator(double,double,double)
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.optimization.fitting.HarmonicFitter.fit()
+------------------------------------------------------------------------------------------
+public double[] fit(double[] initialGuess) {
+        return fit(new HarmonicOscillator.Parametric(), initialGuess);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.optimization.fitting.HarmonicFitter.fit(double[])
+------------------------------------------------------------------------------------------
+public double[] fit(double[] initialGuess) {
+        return fit(new HarmonicOscillator.Parametric(), initialGuess);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.optimization.fitting.GaussianFitter.fit()
+------------------------------------------------------------------------------------------
+public double[] fit(double[] initialGuess) {
+        final Gaussian.Parametric f = new Gaussian.Parametric() {
+                @Override
+                public double value(double x, double ... p) {
+                    double v = Double.POSITIVE_INFINITY;
+                    try {
+                        v = super.value(x, p);
+                    } catch (NotStrictlyPositiveException e) { // NOPMD
+                        // Do nothing.
+                    }
+                    return v;
+                }
+
+                @Override
+                public double[] gradient(double x, double ... p) {
+                    double[] v = { Double.POSITIVE_INFINITY,
+                                   Double.POSITIVE_INFINITY,
+                                   Double.POSITIVE_INFINITY };
+                    try {
+                        v = super.gradient(x, p);
+                    } catch (NotStrictlyPositiveException e) { // NOPMD
+                        // Do nothing.
+                    }
+                    return v;
+                }
+            };
+
+        return fit(f, initialGuess);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.optimization.fitting.HarmonicFitter.HarmonicFitter(DifferentiableMultivariateVectorOptimizer)
+------------------------------------------------------------------------------------------
+public HarmonicFitter(final DifferentiableMultivariateVectorOptimizer optimizer) {
+        super(optimizer);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.analysis.function.HarmonicOscillator.HarmonicOscillator(double,double,double)
+------------------------------------------------------------------------------------------
+public HarmonicOscillator(double amplitude,
+                              double omega,
+                              double phase) {
+        this.amplitude = amplitude;
+        this.omega = omega;
+        this.phase = phase;
+    }
+
+------------------------------------------------------------------------------------------
+

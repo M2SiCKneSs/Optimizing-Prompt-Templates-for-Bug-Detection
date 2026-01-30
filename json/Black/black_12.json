@@ -1,0 +1,31 @@
+{
+  "project": "black",
+  "bug_id": 12,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "black##format_stdin_to_stdout(fast)",
+      "score": 0.998964
+    },
+    {
+      "rank": 2,
+      "method": "black##main(ctx,line_length,check,diff,fast,pyi,py36,skip_string_normalization,quiet,verbose,include,exclude,src,config)",
+      "score": 0.879181
+    },
+    {
+      "rank": 3,
+      "method": "black##get_imports_from_children(children)",
+      "score": 0.759957
+    },
+    {
+      "rank": 4,
+      "method": "black##append_to_line(leaf)",
+      "score": 0.639894
+    },
+    {
+      "rank": 5,
+      "method": "black$Ok#__init__(value)",
+      "score": 0.51875
+    }
+  ]
+}

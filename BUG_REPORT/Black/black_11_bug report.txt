@@ -1,0 +1,1 @@
+Add support for special comments in multiline functions (#642)

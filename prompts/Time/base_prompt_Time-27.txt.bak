@@ -1,0 +1,262 @@
+### BUG_REPORT
+Title: #64 Different behaviour of PeriodFormatter
+
+Description:
+PeriodFormatter pfmt2 = pfmtbuilder2.append(ISOPeriodFormat.standard() ).toFormatter(); is not the same as 
+PeriodFormatterBuilder pfmtbuilder1 = new PeriodFormatterBuilder()
+.appendLiteral("P")
+.appendYears()
+.appendSuffix("Y")
+.appendMonths()
+.appendSuffix("M")
+.appendWeeks()
+.appendSuffix("W")
+.appendDays()
+.appendSuffix("D")
+.appendSeparatorIfFieldsAfter("T")
+.appendHours()
+.appendSuffix("H")
+.appendMinutes()
+.appendSuffix("M")
+.appendSecondsWithOptionalMillis()
+.appendSuffix("S");
+which is copied from ISOPeriodFormat.standard() method
+
+
+### FAILING_TEST
+org.joda.time.format.PeriodFormatterBuilder.append(PeriodFormatter)
+org.joda.time.format.PeriodFormatterBuilder.appendSuffix(String)
+org.joda.time.format.PeriodFormatterBuilder.appendSuffix(String,String)
+org.joda.time.format.ISOPeriodFormat.standard()
+org.joda.time.format.PeriodFormatter.parseMutablePeriod(String)
+org.joda.time.format.PeriodFormatterBuilder.append(PeriodFormatter)
+org.joda.time.PeriodType.yearWeekDay()
+org.joda.time.PeriodType.yearDay()
+org.joda.time.PeriodType.forFields(DurationFieldType[])
+org.joda.time.PeriodType.withYearsRemoved()
+
+### CODE_SNIPPETS
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.format.PeriodFormatterBuilder.append(PeriodFormatter)
+------------------------------------------------------------------------------------------
+public PeriodFormatterBuilder append(PeriodFormatter formatter) {
+        if (formatter == null) {
+            throw new IllegalArgumentException("No formatter supplied");
+        }
+        clearPrefix();
+        append0(formatter.getPrinter(), formatter.getParser());
+        return this;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.format.PeriodFormatterBuilder.appendSuffix(String)
+------------------------------------------------------------------------------------------
+public PeriodFormatterBuilder appendSuffix(String text) {
+        if (text == null) {
+            throw new IllegalArgumentException();
+        }
+        return appendSuffix(new SimpleAffix(text));
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.format.PeriodFormatterBuilder.appendSuffix(String,String)
+------------------------------------------------------------------------------------------
+public PeriodFormatterBuilder appendSuffix(String text) {
+        if (text == null) {
+            throw new IllegalArgumentException();
+        }
+        return appendSuffix(new SimpleAffix(text));
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.format.ISOPeriodFormat.standard()
+------------------------------------------------------------------------------------------
+public static PeriodFormatter standard() {
+        if (cStandard == null) {
+            cStandard = new PeriodFormatterBuilder()
+                .appendLiteral("P")
+                .appendYears()
+                .appendSuffix("Y")
+                .appendMonths()
+                .appendSuffix("M")
+                .appendWeeks()
+                .appendSuffix("W")
+                .appendDays()
+                .appendSuffix("D")
+                .appendSeparatorIfFieldsAfter("T")
+                .appendHours()
+                .appendSuffix("H")
+                .appendMinutes()
+                .appendSuffix("M")
+                .appendSecondsWithOptionalMillis()
+                .appendSuffix("S")
+                .toFormatter();
+        }
+        return cStandard;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.format.PeriodFormatter.parseMutablePeriod(String)
+------------------------------------------------------------------------------------------
+public MutablePeriod parseMutablePeriod(String text) {
+        checkParser();
+        
+        MutablePeriod period = new MutablePeriod(0, iParseType);
+        int newPos = getParser().parseInto(period, text, 0, iLocale);
+        if (newPos >= 0) {
+            if (newPos >= text.length()) {
+                return period;
+            }
+        } else {
+            newPos = ~newPos;
+        }
+        throw new IllegalArgumentException(FormatUtils.createErrorMessage(text, newPos));
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.format.PeriodFormatterBuilder.append(PeriodFormatter)
+------------------------------------------------------------------------------------------
+public PeriodFormatterBuilder append(PeriodFormatter formatter) {
+        if (formatter == null) {
+            throw new IllegalArgumentException("No formatter supplied");
+        }
+        clearPrefix();
+        append0(formatter.getPrinter(), formatter.getParser());
+        return this;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.PeriodType.yearWeekDay()
+------------------------------------------------------------------------------------------
+public static PeriodType yearWeekDay() {
+        PeriodType type = cYWD;
+        if (type == null) {
+            type = new PeriodType(
+                "YearWeekDay",
+                new DurationFieldType[] {
+                    DurationFieldType.years(),
+                    DurationFieldType.weeks(), DurationFieldType.days(),
+                },
+                new int[] { 0, -1, 1, 2, -1, -1, -1, -1, }
+            );
+            cYWD = type;
+        }
+        return type;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.PeriodType.yearDay()
+------------------------------------------------------------------------------------------
+public static PeriodType yearDay() {
+        PeriodType type = cYD;
+        if (type == null) {
+            type = new PeriodType(
+                "YearDay",
+                new DurationFieldType[] {
+                    DurationFieldType.years(), DurationFieldType.days(),
+                },
+                new int[] { 0, -1, -1, 1, -1, -1, -1, -1, }
+            );
+            cYD = type;
+        }
+        return type;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.PeriodType.forFields(DurationFieldType[])
+------------------------------------------------------------------------------------------
+public static synchronized PeriodType forFields(DurationFieldType[] types) {
+        if (types == null || types.length == 0) {
+            throw new IllegalArgumentException("Types array must not be null or empty");
+        }
+        for (int i = 0; i < types.length; i++) {
+            if (types[i] == null) {
+                throw new IllegalArgumentException("Types array must not contain null");
+            }
+        }
+        Map<PeriodType, Object> cache = cTypes;
+        if (cache.isEmpty()) {
+            cache.put(standard(), standard());
+            cache.put(yearMonthDayTime(), yearMonthDayTime());
+            cache.put(yearMonthDay(), yearMonthDay());
+            cache.put(yearWeekDayTime(), yearWeekDayTime());
+            cache.put(yearWeekDay(), yearWeekDay());
+            cache.put(yearDayTime(), yearDayTime());
+            cache.put(yearDay(), yearDay());
+            cache.put(dayTime(), dayTime());
+            cache.put(time(), time());
+            cache.put(years(), years());
+            cache.put(months(), months());
+            cache.put(weeks(), weeks());
+            cache.put(days(), days());
+            cache.put(hours(), hours());
+            cache.put(minutes(), minutes());
+            cache.put(seconds(), seconds());
+            cache.put(millis(), millis());
+        }
+        PeriodType inPartType = new PeriodType(null, types, null);
+        Object cached = cache.get(inPartType);
+        if (cached instanceof PeriodType) {
+            return (PeriodType) cached;
+        }
+        if (cached != null) {
+            throw new IllegalArgumentException("PeriodType does not support fields: " + cached);
+        }
+        PeriodType type = standard();
+        List<DurationFieldType> list = new ArrayList<DurationFieldType>(Arrays.asList(types));
+        if (list.remove(DurationFieldType.years()) == false) {
+            type = type.withYearsRemoved();
+        }
+        if (list.remove(DurationFieldType.months()) == false) {
+            type = type.withMonthsRemoved();
+        }
+        if (list.remove(DurationFieldType.weeks()) == false) {
+            type = type.withWeeksRemoved();
+        }
+        if (list.remove(DurationFieldType.days()) == false) {
+            type = type.withDaysRemoved();
+        }
+        if (list.remove(DurationFieldType.hours()) == false) {
+            type = type.withHoursRemoved();
+        }
+        if (list.remove(DurationFieldType.minutes()) == false) {
+            type = type.withMinutesRemoved();
+        }
+        if (list.remove(DurationFieldType.seconds()) == false) {
+            type = type.withSecondsRemoved();
+        }
+        if (list.remove(DurationFieldType.millis()) == false) {
+            type = type.withMillisRemoved();
+        }
+        if (list.size() > 0) {
+            cache.put(inPartType, list);
+            throw new IllegalArgumentException("PeriodType does not support fields: " + list);
+        }
+        // recheck cache in case initial array order was wrong
+        PeriodType checkPartType = new PeriodType(null, type.iTypes, null);
+        PeriodType checkedType = (PeriodType) cache.get(checkPartType);
+        if (checkedType != null) {
+            cache.put(checkPartType, checkedType);
+            return checkedType;
+        }
+        cache.put(checkPartType, type);
+        return type;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.PeriodType.withYearsRemoved()
+------------------------------------------------------------------------------------------
+public PeriodType withYearsRemoved() {
+        return withFieldRemoved(0, "NoYears");
+    }
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.joda.time.format.TestPeriodFormatterBuilder#testBug2495455
+Runtime: 3579577
+------------------------------------------------------------------------------------------
+java.lang.IllegalArgumentException: Invalid format: "PT1003199059S" is malformed at "1003199059S" at org.joda.time.format.PeriodFormatter.parseMutablePeriod(PeriodFormatter.java:326) at org.joda.time.format.PeriodFormatter.parsePeriod(PeriodFormatter.java:304) at org.joda.time.format.TestPeriodFormatterBuilder.testBug2495455(TestPeriodFormatterBuilder.java:869) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

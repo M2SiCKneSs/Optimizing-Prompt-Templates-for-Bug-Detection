@@ -1,0 +1,2 @@
+fix(rules.ls_lah): make sure script starts with ls
+Fix #271

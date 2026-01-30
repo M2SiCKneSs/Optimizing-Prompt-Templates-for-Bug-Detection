@@ -1,0 +1,31 @@
+{
+  "project": "Lang",
+  "bug_id": 8,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.lang3.time.FastDatePrinter.TimeZoneNameRule.appendTo(java.lang.StringBuffer",
+      "score": 0.991171
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.lang3.time.DurationFormatUtils.formatPeriod(long",
+      "score": 0.879753
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.lang3.time.FastDatePrinter.TwelveHourField.appendTo(StringBuffer",
+      "score": 0.758084
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.lang3.time.FastDatePrinter.TimeZoneNameRule.appendTo(StringBuffer",
+      "score": 0.633468
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.lang3.time.FastDatePrinter.format(Date)",
+      "score": 0.510596
+    }
+  ]
+}

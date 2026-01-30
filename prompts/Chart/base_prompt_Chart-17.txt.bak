@@ -1,0 +1,214 @@
+### BUG_REPORT
+Title: #803 cloning of TimeSeries
+
+Description:
+It's just a minor bug!
+When I clone a TimeSeries which has no items, I get an IllegalArgumentException ("Requires start <= end").
+But I don't think the user should be responsible for checking whether the TimeSeries has any items or not.
+
+
+### FAILING_TEST
+org.jfree.data.time.TimeSeries.createCopy(int,int)
+org.jfree.data.time.TimeSeries.clone()
+org.jfree.data.time.TimeSeries.createCopy(RegularTimePeriod,RegularTimePeriod)
+org.jfree.data.time.TimeSeries.TimeSeries(Comparable)
+org.jfree.data.time.TimeSeries.addOrUpdate(RegularTimePeriod,Number)
+org.jfree.data.time.TimeSeries.clone()
+org.jfree.data.time.TimeSeries.createCopy(int,int)
+org.jfree.data.time.TimeSeries.TimeSeries(Comparable)
+org.jfree.data.time.Year.getSerialIndex()
+org.jfree.data.time.TimeSeries.add(RegularTimePeriod,Number)
+
+### CODE_SNIPPETS
+
+------------------------------------------------------------------------------------------
+Function: org.jfree.data.time.TimeSeries.createCopy(int,int)
+------------------------------------------------------------------------------------------
+public TimeSeries createCopy(int start, int end)
+            throws CloneNotSupportedException {
+        if (start < 0) {
+            throw new IllegalArgumentException("Requires start >= 0.");
+        }
+        if (end < start) {
+            throw new IllegalArgumentException("Requires start <= end.");
+        }
+        TimeSeries copy = (TimeSeries) super.clone();
+        copy.minY = Double.NaN;
+        copy.maxY = Double.NaN;
+        copy.data = new java.util.ArrayList();
+        if (this.data.size() > 0) {
+            for (int index = start; index <= end; index++) {
+                TimeSeriesDataItem item
+                        = (TimeSeriesDataItem) this.data.get(index);
+                TimeSeriesDataItem clone = (TimeSeriesDataItem) item.clone();
+                try {
+                    copy.add(clone);
+                }
+                catch (SeriesException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return copy;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.jfree.data.time.TimeSeries.clone()
+------------------------------------------------------------------------------------------
+public Object clone() throws CloneNotSupportedException {
+        TimeSeries clone = (TimeSeries) super.clone();
+        clone.data = (List) ObjectUtilities.deepClone(this.data);
+        return clone;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.jfree.data.time.TimeSeries.createCopy(RegularTimePeriod,RegularTimePeriod)
+------------------------------------------------------------------------------------------
+public TimeSeries createCopy(int start, int end)
+            throws CloneNotSupportedException {
+        if (start < 0) {
+            throw new IllegalArgumentException("Requires start >= 0.");
+        }
+        if (end < start) {
+            throw new IllegalArgumentException("Requires start <= end.");
+        }
+        TimeSeries copy = (TimeSeries) super.clone();
+        copy.minY = Double.NaN;
+        copy.maxY = Double.NaN;
+        copy.data = new java.util.ArrayList();
+        if (this.data.size() > 0) {
+            for (int index = start; index <= end; index++) {
+                TimeSeriesDataItem item
+                        = (TimeSeriesDataItem) this.data.get(index);
+                TimeSeriesDataItem clone = (TimeSeriesDataItem) item.clone();
+                try {
+                    copy.add(clone);
+                }
+                catch (SeriesException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return copy;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.jfree.data.time.TimeSeries.TimeSeries(Comparable)
+------------------------------------------------------------------------------------------
+public TimeSeries(Comparable name) {
+        this(name, DEFAULT_DOMAIN_DESCRIPTION, DEFAULT_RANGE_DESCRIPTION);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.jfree.data.time.TimeSeries.addOrUpdate(RegularTimePeriod,Number)
+------------------------------------------------------------------------------------------
+public TimeSeriesDataItem addOrUpdate(RegularTimePeriod period,
+                                          double value) {
+        return addOrUpdate(period, new Double(value));
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.jfree.data.time.TimeSeries.clone()
+------------------------------------------------------------------------------------------
+public Object clone() throws CloneNotSupportedException {
+        TimeSeries clone = (TimeSeries) super.clone();
+        clone.data = (List) ObjectUtilities.deepClone(this.data);
+        return clone;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.jfree.data.time.TimeSeries.createCopy(int,int)
+------------------------------------------------------------------------------------------
+public TimeSeries createCopy(int start, int end)
+            throws CloneNotSupportedException {
+        if (start < 0) {
+            throw new IllegalArgumentException("Requires start >= 0.");
+        }
+        if (end < start) {
+            throw new IllegalArgumentException("Requires start <= end.");
+        }
+        TimeSeries copy = (TimeSeries) super.clone();
+        copy.minY = Double.NaN;
+        copy.maxY = Double.NaN;
+        copy.data = new java.util.ArrayList();
+        if (this.data.size() > 0) {
+            for (int index = start; index <= end; index++) {
+                TimeSeriesDataItem item
+                        = (TimeSeriesDataItem) this.data.get(index);
+                TimeSeriesDataItem clone = (TimeSeriesDataItem) item.clone();
+                try {
+                    copy.add(clone);
+                }
+                catch (SeriesException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return copy;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.jfree.data.time.TimeSeries.TimeSeries(Comparable)
+------------------------------------------------------------------------------------------
+public TimeSeries(Comparable name) {
+        this(name, DEFAULT_DOMAIN_DESCRIPTION, DEFAULT_RANGE_DESCRIPTION);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.jfree.data.time.Year.getSerialIndex()
+------------------------------------------------------------------------------------------
+public long getSerialIndex() {
+        return this.year;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.jfree.data.time.TimeSeries.add(RegularTimePeriod,Number)
+------------------------------------------------------------------------------------------
+public void add(TimeSeriesDataItem item) {
+        add(item, true);
+    }
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.jfree.chart.plot.junit.XYPlotTests#test1654215
+Runtime: 17949866
+------------------------------------------------------------------------------------------
+java.lang.UnsatisfiedLinkError: /usr/lib/jvm/jdk-11.0.17/lib/libfontmanager.so: libfreetype.so.6: cannot open shared object file: No such file or directory at java.base/java.lang.ClassLoader$NativeLibrary.load0(Native Method) at java.base/java.lang.ClassLoader$NativeLibrary.load(ClassLoader.java:2432) at java.base/java.lang.ClassLoader$NativeLibrary.loadLibrary(ClassLoader.java:2489) at java.base/java.lang.ClassLoader.loadLibrary0(ClassLoader.java:2689) at java.base/java.lang.ClassLoader.loadLibrary(ClassLoader.java:2640) at java.base/java.lang.Runtime.loadLibrary0(Runtime.java:827) at java.base/java.lang.System.loadLibrary(System.java:1871) at java.desktop/sun.font.FontManagerNativeLibrary$1.run(FontManagerNativeLibrary.java:57) at java.base/java.security.AccessController.doPrivileged(Native Method) at java.desktop/sun.font.FontManagerNativeLibrary.<clinit>(FontManagerNativeLibrary.java:32) at java.desktop/sun.font.SunFontManager$1.run(SunFontManager.java:279) at java.base/java.security.AccessController.doPrivileged(Native Method) at java.desktop/sun.font.SunFontManager.<clinit>(SunFontManager.java:275) at java.desktop/sun.font.FontDesignMetrics.getMetrics(FontDesignMetrics.java:265) at java.desktop/sun.java2d.SunGraphics2D.getFontMetrics(SunGraphics2D.java:861) at org.jfree.chart.text.G2TextMeasurer.getStringWidth(G2TextMeasurer.java:75) at org.jfree.chart.text.TextUtilities.nextLineBreak(TextUtilities.java:251) at org.jfree.chart.text.TextUtilities.createTextBlock(TextUtilities.java:193) at org.jfree.chart.text.TextUtilities.createTextBlock(TextUtilities.java:165) at org.jfree.chart.title.TextTitle.arrangeRR(TextTitle.java:498) at org.jfree.chart.title.TextTitle.arrange(TextTitle.java:459) at org.jfree.chart.JFreeChart.drawTitle(JFreeChart.java:1303) at org.jfree.chart.JFreeChart.draw(JFreeChart.java:1193) at org.jfree.chart.plot.junit.XYPlotTests.test1654215(XYPlotTests.java:903) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #2
+Test: org.jfree.chart.plot.junit.XYPlotTests#testDrawRangeGridlines
+Runtime: 11047860
+------------------------------------------------------------------------------------------
+java.lang.NoClassDefFoundError: Could not initialize class sun.font.SunFontManager at java.desktop/sun.font.FontDesignMetrics.getMetrics(FontDesignMetrics.java:265) at java.desktop/sun.java2d.SunGraphics2D.getFontMetrics(SunGraphics2D.java:861) at org.jfree.chart.text.G2TextMeasurer.getStringWidth(G2TextMeasurer.java:75) at org.jfree.chart.text.TextUtilities.nextLineBreak(TextUtilities.java:251) at org.jfree.chart.text.TextUtilities.createTextBlock(TextUtilities.java:193) at org.jfree.chart.text.TextUtilities.createTextBlock(TextUtilities.java:165) at org.jfree.chart.title.TextTitle.arrangeRR(TextTitle.java:498) at org.jfree.chart.title.TextTitle.arrange(TextTitle.java:459) at org.jfree.chart.JFreeChart.drawTitle(JFreeChart.java:1303) at org.jfree.chart.JFreeChart.draw(JFreeChart.java:1193) at org.jfree.chart.plot.junit.XYPlotTests.testDrawRangeGridlines(XYPlotTests.java:929) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #3
+Test: org.jfree.chart.plot.junit.XYPlotTests#testDrawSeriesWithZeroItems
+Runtime: 11138421
+------------------------------------------------------------------------------------------
+java.lang.NoClassDefFoundError: Could not initialize class sun.font.SunFontManager at java.desktop/sun.font.FontDesignMetrics.getMetrics(FontDesignMetrics.java:265) at java.desktop/sun.java2d.SunGraphics2D.getFontMetrics(SunGraphics2D.java:861) at org.jfree.chart.text.G2TextMeasurer.getStringWidth(G2TextMeasurer.java:75) at org.jfree.chart.text.TextUtilities.nextLineBreak(TextUtilities.java:251) at org.jfree.chart.text.TextUtilities.createTextBlock(TextUtilities.java:193) at org.jfree.chart.text.TextUtilities.createTextBlock(TextUtilities.java:165) at org.jfree.chart.title.TextTitle.arrangeRR(TextTitle.java:498) at org.jfree.chart.title.TextTitle.arrange(TextTitle.java:459) at org.jfree.chart.JFreeChart.drawTitle(JFreeChart.java:1303) at org.jfree.chart.JFreeChart.draw(JFreeChart.java:1193) at org.jfree.chart.plot.junit.XYPlotTests.testDrawSeriesWithZeroItems(XYPlotTests.java:955) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #4
+Test: org.jfree.chart.plot.junit.XYPlotTests#testSerialization3
+Runtime: 21638461
+------------------------------------------------------------------------------------------
+java.lang.NoClassDefFoundError: Could not initialize class sun.font.SunFontManager at java.desktop/sun.font.FontDesignMetrics.getMetrics(FontDesignMetrics.java:265) at java.desktop/sun.java2d.SunGraphics2D.getFontMetrics(SunGraphics2D.java:861) at org.jfree.chart.text.G2TextMeasurer.getStringWidth(G2TextMeasurer.java:75) at org.jfree.chart.text.TextUtilities.nextLineBreak(TextUtilities.java:251) at org.jfree.chart.text.TextUtilities.createTextBlock(TextUtilities.java:193) at org.jfree.chart.text.TextUtilities.createTextBlock(TextUtilities.java:165) at org.jfree.chart.title.TextTitle.arrangeRR(TextTitle.java:498) at org.jfree.chart.title.TextTitle.arrange(TextTitle.java:459) at org.jfree.chart.JFreeChart.drawTitle(JFreeChart.java:1303) at org.jfree.chart.JFreeChart.draw(JFreeChart.java:1193) at org.jfree.chart.JFreeChart.createBufferedImage(JFreeChart.java:1391) at org.jfree.chart.JFreeChart.createBufferedImage(JFreeChart.java:1371) at org.jfree.chart.JFreeChart.createBufferedImage(JFreeChart.java:1356) at org.jfree.chart.plot.junit.XYPlotTests.testSerialization3(XYPlotTests.java:615) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #5
+Test: org.jfree.chart.plot.junit.XYPlotTests#testSerialization4
+Runtime: 21762324
+------------------------------------------------------------------------------------------
+java.lang.NoClassDefFoundError: Could not initialize class sun.font.SunFontManager at java.desktop/sun.font.FontDesignMetrics.getMetrics(FontDesignMetrics.java:265) at java.desktop/sun.java2d.SunGraphics2D.getFontMetrics(SunGraphics2D.java:861) at org.jfree.chart.text.G2TextMeasurer.getStringWidth(G2TextMeasurer.java:75) at org.jfree.chart.text.TextUtilities.nextLineBreak(TextUtilities.java:251) at org.jfree.chart.text.TextUtilities.createTextBlock(TextUtilities.java:193) at org.jfree.chart.text.TextUtilities.createTextBlock(TextUtilities.java:165) at org.jfree.chart.title.TextTitle.arrangeRR(TextTitle.java:498) at org.jfree.chart.title.TextTitle.arrange(TextTitle.java:459) at org.jfree.chart.JFreeChart.drawTitle(JFreeChart.java:1303) at org.jfree.chart.JFreeChart.draw(JFreeChart.java:1193) at org.jfree.chart.JFreeChart.createBufferedImage(JFreeChart.java:1391) at org.jfree.chart.JFreeChart.createBufferedImage(JFreeChart.java:1371) at org.jfree.chart.JFreeChart.createBufferedImage(JFreeChart.java:1356) at org.jfree.chart.plot.junit.XYPlotTests.testSerialization4(XYPlotTests.java:668) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #6
+Test: org.jfree.data.time.junit.TimeSeriesTests#testBug1832432
+Runtime: 1082255
+------------------------------------------------------------------------------------------
+java.lang.IllegalArgumentException: Requires start <= end. at org.jfree.data.time.TimeSeries.createCopy(TimeSeries.java:880) at org.jfree.data.time.TimeSeries.clone(TimeSeries.java:857) at org.jfree.data.time.junit.TimeSeriesTests.testBug1832432(TimeSeriesTests.java:619) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

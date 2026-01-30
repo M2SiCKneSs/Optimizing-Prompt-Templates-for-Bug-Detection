@@ -1,0 +1,31 @@
+{
+  "project": "Lang",
+  "bug_id": 35,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.lang3.text.translate.LookupTranslator.LookupTranslator(CharSequence[])",
+      "score": 0.993135
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.lang3.LocaleUtils.LocaleUtils()",
+      "score": 0.87115
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.lang3.ArrayUtils.add(java.lang.Object[]",
+      "score": 0.757079
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.lang3.text.translate.AggregateTranslator.translate(CharSequence",
+      "score": 0.636967
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.lang3.time.DurationFormatUtils.formatPeriod(long",
+      "score": 0.513775
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+### BUG_REPORT
+Title: Line.revert() is imprecise
+
+Description:
+Line.revert() only maintains ~10 digits for the direction. This becomes an issue when the line's position is evaluated far from the origin. A simple fix would be to use Vector3D.negate() for the direction.
+Also, is there a reason why Line is not immutable? It is just comprised of two vectors.
+
+
+### FAILING_TEST
+org.apache.commons.math3.geometry.euclidean.threed.Line.revert()
+org.apache.commons.math3.geometry.euclidean.threed.Vector3D.toArray()
+org.apache.commons.math3.geometry.euclidean.threed.Line.getDirection()
+org.apache.commons.math3.geometry.euclidean.twod.Line.reset(Vector2D,double)
+org.apache.commons.math3.geometry.euclidean.threed.Line.reset(Vector3D,Vector3D)
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.geometry.euclidean.threed.Line.revert()
+------------------------------------------------------------------------------------------
+public Line revert() {
+        final Line reverted = new Line(this);
+        reverted.direction = reverted.direction.negate();
+        return reverted;
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.geometry.euclidean.threed.Vector3D.toArray()
+------------------------------------------------------------------------------------------
+public double[] toArray() {
+        return new double[] { x, y, z };
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.geometry.euclidean.threed.Line.getDirection()
+------------------------------------------------------------------------------------------
+public Vector3D getDirection() {
+        return direction;
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.geometry.euclidean.twod.Line.reset(Vector2D,double)
+------------------------------------------------------------------------------------------
+public void reset(final Vector2D p1, final Vector2D p2) {
+        final double dx = p2.getX() - p1.getX();
+        final double dy = p2.getY() - p1.getY();
+        final double d = FastMath.hypot(dx, dy);
+        if (d == 0.0) {
+            angle        = 0.0;
+            cos          = 1.0;
+            sin          = 0.0;
+            originOffset = p1.getY();
+        } else {
+            angle        = FastMath.PI + FastMath.atan2(-dy, -dx);
+            cos          = FastMath.cos(angle);
+            sin          = FastMath.sin(angle);
+            originOffset = (p2.getX() * p1.getY() - p1.getX() * p2.getY()) / d;
+        }
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.geometry.euclidean.threed.Line.reset(Vector3D,Vector3D)
+------------------------------------------------------------------------------------------
+public void reset(final Vector3D p1, final Vector3D p2) throws MathIllegalArgumentException {
+        final Vector3D delta = p2.subtract(p1);
+        final double norm2 = delta.getNormSq();
+        if (norm2 == 0.0) {
+            throw new MathIllegalArgumentException(LocalizedFormats.ZERO_NORM);
+        }
+        this.direction = new Vector3D(1.0 / FastMath.sqrt(norm2), delta);
+        zero = new Vector3D(1.0, p1, -p1.dotProduct(delta) / norm2, delta);
+    }
+
+------------------------------------------------------------------------------------------
+
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.apache.commons.math3.geometry.euclidean.threed.LineTest#testRevert
+Runtime: 4639112
+------------------------------------------------------------------------------------------
+arrays first differed at element [0]; expected:<0.028581782127907646> but was:<0.028581782243293483> at org.junit.internal.ComparisonCriteria.arrayEquals(ComparisonCriteria.java:55) at org.junit.Assert.assertArrayEquals(Assert.java:469) at org.junit.Assert.assertArrayEquals(Assert.java:483) at org.apache.commons.math3.geometry.euclidean.threed.LineTest.testRevert(LineTest.java:144) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834) Caused by: java.lang.AssertionError: expected:<0.028581782127907646> but was:<0.028581782243293483> at org.junit.Assert.fail(Assert.java:88) at org.junit.Assert.failNotEquals(Assert.java:834) at org.junit.Assert.assertEquals(Assert.java:553) at org.junit.Assert.assertEquals(Assert.java:683) at org.junit.internal.InexactComparisonCriteria.assertElementsEqual(InexactComparisonCriteria.java:19) at org.junit.internal.ComparisonCriteria.arrayEquals(ComparisonCriteria.java:53) ... 26 more

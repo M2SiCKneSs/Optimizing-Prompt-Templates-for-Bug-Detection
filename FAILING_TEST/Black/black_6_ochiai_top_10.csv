@@ -1,0 +1,11 @@
+Method,Ochiai_Score
+black$WriteBack#from_configuration(),0.14433756729740646
+black$TargetVersion#is_python2(),0.14433756729740646
+black$FileMode#get_cache_key(),0.14433756729740646
+"black##supports_feature(target_versions,feature)",0.14433756729740646
+"black##read_pyproject_toml(ctx,param,value)",0.14433756729740646
+"black##main(ctx,code,line_length,target_version,check,diff,fast,pyi,py36,skip_string_normalization,quiet,verbose,include,exclude,src,config)",0.14433756729740646
+"black##reformat_one(src,fast,write_back,mode,report)",0.14433756729740646
+"black##reformat_many(sources,fast,write_back,mode,report)",0.14433756729740646
+"black##schedule_formatting(sources,fast,write_back,mode,report,loop,executor)",0.14433756729740646
+"black##format_file_in_place(src,fast,mode,write_back,lock)",0.14433756729740646

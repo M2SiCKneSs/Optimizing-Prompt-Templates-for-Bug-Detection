@@ -1,0 +1,31 @@
+{
+  "project": "Math",
+  "bug_id": 16,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.math3.random.MersenneTwister.MersenneTwister(long)",
+      "score": 0.996705
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.math3.util.FastMath.sinh(double)",
+      "score": 0.875568
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.math3.util.FastMath.cosh(double)",
+      "score": 0.750575
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.math3.util.FastMath.exp(double",
+      "score": 0.63618
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.math3.complex.Complex.sinh()",
+      "score": 0.510907
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "project": "Lang",
+  "bug_id": 31,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.lang3.StringUtils.containsAny(java.lang.CharSequence",
+      "score": 0.999451
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.lang3.text.translate.UnicodeEscaper.between(int",
+      "score": 0.878201
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.lang3.StringUtils.splitWorker(String",
+      "score": 0.756087
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.lang3.math.NumberUtils.createBigInteger(String)",
+      "score": 0.635115
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.lang3.math.NumberUtils.isAllZeros(String)",
+      "score": 0.517216
+    }
+  ]
+}

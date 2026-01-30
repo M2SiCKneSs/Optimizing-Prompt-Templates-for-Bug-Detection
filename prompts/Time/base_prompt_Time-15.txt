@@ -1,0 +1,90 @@
+### BUG_REPORT
+Title: #147 possibly a bug in org.joda.time.field.FieldUtils.safeMultipl
+
+Description:
+It seems to me that as currently written in joda-time-2.1.jar
+org.joda.time.field.FieldUtils.safeMultiply(long val1, int scalar)
+doesn't detect the overflow if the long val1 == Long.MIN_VALUE and the int scalar == -1.
+The attached file demonstrates what I think is the bug and suggests a patch.
+I looked at the Joda Time bugs list in SourceForge but couldn't see anything that looked relevant: my apologies if I've missed something, or if I'm making a mistake with this bug report.
+Colin Bartlett
+
+
+### FAILING_TEST
+org.joda.time.field.FieldUtils.safeMultiply(long,int)
+org.joda.time.field.FieldUtils.safeAdd(int,int)
+org.joda.time.field.FieldUtils.getWrappedValue(int,int,int)
+org.joda.time.field.FieldUtils.safeMultiplyToInt(long,long)
+org.joda.time.field.FieldUtils.safeMultiply(long,long)
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.field.FieldUtils.safeMultiply(long,int)
+------------------------------------------------------------------------------------------
+public static int safeMultiply(int val1, int val2) {
+        long total = (long) val1 * (long) val2;
+        if (total < Integer.MIN_VALUE || total > Integer.MAX_VALUE) {
+          throw new ArithmeticException("Multiplication overflows an int: " + val1 + " * " + val2);
+        }
+        return (int) total;
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.field.FieldUtils.safeAdd(int,int)
+------------------------------------------------------------------------------------------
+public static int safeAdd(int val1, int val2) {
+        int sum = val1 + val2;
+        // If there is a sign change, but the two values have the same sign...
+        if ((val1 ^ sum) < 0 && (val1 ^ val2) >= 0) {
+            throw new ArithmeticException
+                ("The calculation caused an overflow: " + val1 + " + " + val2);
+        }
+        return sum;
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.field.FieldUtils.getWrappedValue(int,int,int)
+------------------------------------------------------------------------------------------
+public static int getWrappedValue(int currentValue, int wrapValue,
+                                      int minValue, int maxValue) {
+        return getWrappedValue(currentValue + wrapValue, minValue, maxValue);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.field.FieldUtils.safeMultiplyToInt(long,long)
+------------------------------------------------------------------------------------------
+public static int safeMultiplyToInt(long val1, long val2) {
+        long val = FieldUtils.safeMultiply(val1, val2);
+        return FieldUtils.safeToInt(val);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.field.FieldUtils.safeMultiply(long,long)
+------------------------------------------------------------------------------------------
+public static int safeMultiply(int val1, int val2) {
+        long total = (long) val1 * (long) val2;
+        if (total < Integer.MIN_VALUE || total > Integer.MAX_VALUE) {
+          throw new ArithmeticException("Multiplication overflows an int: " + val1 + " * " + val2);
+        }
+        return (int) total;
+    }
+
+------------------------------------------------------------------------------------------
+
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.joda.time.field.TestFieldUtils#testSafeMultiplyLongInt
+Runtime: 983548
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError at junit.framework.Assert.fail(Assert.java:55) at junit.framework.Assert.fail(Assert.java:64) at junit.framework.TestCase.fail(TestCase.java:235) at org.joda.time.field.TestFieldUtils.testSafeMultiplyLongInt(TestFieldUtils.java:261) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

@@ -1,0 +1,93 @@
+### BUG_REPORT
+Title: StringEscapeUtils.escapeXml(input) outputs wrong results when an input contains characters in Supplementary Planes.
+
+Description:
+Hello.
+I use StringEscapeUtils.escapeXml(input) to escape special characters for XML.
+This method outputs wrong results when input contains characters in Supplementary Planes.
+String str1 = "\uD842\uDFB7" + "A";
+String str2 = StringEscapeUtils.escapeXml(str1);
+// The value of str2 must be equal to the one of str1,
+// because str1 does not contain characters to be escaped.
+// However, str2 is diffrent from str1.
+System.out.println(URLEncoder.encode(str1, "UTF-16BE")); //%D8%42%DF%B7A
+System.out.println(URLEncoder.encode(str2, "UTF-16BE")); //%D8%42%DF%B7%FF%FD
+The cause of this problem is that the loop to translate input character by character is wrong.
+In CharSequenceTranslator.translate(CharSequence input, Writer out),
+loop counter "i" moves from 0 to Character.codePointCount(input, 0, input.length()),
+but it should move from 0 to input.length().
+
+
+### FAILING_TEST
+org.apache.commons.lang3.StringEscapeUtils.escapeXml(String)
+org.apache.commons.lang3.StringEscapeUtils.unescapeXml(String)
+org.apache.commons.lang3.text.translate.AggregateTranslator.translate(CharSequence,int,Writer)
+org.apache.commons.lang3.text.translate.LookupTranslator.translate(CharSequence,int,Writer)
+org.apache.commons.lang3.StringEscapeUtils.escapeEcmaScript(String)
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.StringEscapeUtils.escapeXml(String)
+------------------------------------------------------------------------------------------
+public static final String escapeXml(final String input) {
+        return ESCAPE_XML.translate(input);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.StringEscapeUtils.unescapeXml(String)
+------------------------------------------------------------------------------------------
+public static final String unescapeXml(final String input) {
+        return UNESCAPE_XML.translate(input);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.text.translate.AggregateTranslator.translate(CharSequence,int,Writer)
+------------------------------------------------------------------------------------------
+@Override
+    public int translate(final CharSequence input, final int index, final Writer out) throws IOException {
+        for (final CharSequenceTranslator translator : translators) {
+            final int consumed = translator.translate(input, index, out);
+            if(consumed != 0) {
+                return consumed;
+            }
+        }
+        return 0;
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.text.translate.LookupTranslator.translate(CharSequence,int,Writer)
+------------------------------------------------------------------------------------------
+@Override
+    public int translate(final CharSequence input, final int index, final Writer out) throws IOException {
+        int max = longest;
+        if (index + longest > input.length()) {
+            max = input.length() - index;
+        }
+        // descend so as to get a greedy algorithm
+        for (int i = max; i >= shortest; i--) {
+            final CharSequence subSeq = input.subSequence(index, index + i);
+            final CharSequence result = lookupMap.get(subSeq.toString());
+            if (result != null) {
+                out.write(result.toString());
+                return i;
+            }
+        }
+        return 0;
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.StringEscapeUtils.escapeEcmaScript(String)
+------------------------------------------------------------------------------------------
+public static final String escapeEcmaScript(final String input) {
+        return ESCAPE_ECMASCRIPT.translate(input);
+    }
+
+------------------------------------------------------------------------------------------
+

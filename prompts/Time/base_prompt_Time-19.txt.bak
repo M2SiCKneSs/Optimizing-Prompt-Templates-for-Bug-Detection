@@ -1,0 +1,274 @@
+### BUG_REPORT
+Title: #124 Inconsistent interpretation of ambiguous time during DST
+
+Description:
+The inconsistency appears for timezone Europe/London.
+Consider the following code
+…
+DateTime britishDate = new DateTime(2011, 10, 30, 1, 59, 0, 0, DateTimeZone.forID("Europe/London"));
+DateTime norwDate = new DateTime(2011, 10, 30, 2, 59, 0, 0, DateTimeZone.forID("Europe/Oslo"));
+DateTime finnishDate = new DateTime(2011, 10, 30, 3, 59, 0, 0, DateTimeZone.forID("Europe/Helsinki"));
+    System.out.println(britishDate);
+    System.out.println(norwDate);
+    System.out.println(finnishDate);
+
+…
+These three DateTime objects should all represent the same moment in time even if they are ambiguous. And using jodatime 1.6.2 this is the case. The code produces the following output:
+2011-10-30T01:59:00.000Z
+2011-10-30T02:59:00.000+01:00
+2011-10-30T03:59:00.000+02:00
+Using jodatime 2.0 however, the output is:
+2011-10-30T01:59:00.000Z
+2011-10-30T02:59:00.000+02:00
+2011-10-30T03:59:00.000+03:00
+which IMO is wrong for Europe/London. Correct output should have been 
+2011-10-30T01:59:00.000+01:00
+The release notes for 2.0 states that: 
+"Now, it always returns the earlier instant (summer time) during an overlap. …"
+
+
+### FAILING_TEST
+org.joda.time.DateTime.DateTime(int,int,int,int,int,DateTimeZone)
+org.joda.time.tz.ZoneInfoCompiler.compile(File,File[])
+org.joda.time.chrono.BasicGJChronology.setYear(long,int)
+org.joda.time.format.ISODateTimeFormat.dateTime()
+org.joda.time.DateTimeZone.getDefault()
+org.joda.time.DateTime.DateTime(int,int,int,int,int,DateTimeZone)
+org.joda.time.base.AbstractInstant.toString()
+org.joda.time.base.BaseDateTime.BaseDateTime(int,int,int,int,int,int,int,DateTimeZone)
+org.joda.time.format.ISODateTimeFormat.dateTime()
+org.joda.time.format.ISODateTimeFormat.tTime()
+
+### CODE_SNIPPETS
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.DateTime.DateTime(int,int,int,int,int,DateTimeZone)
+------------------------------------------------------------------------------------------
+public DateTime() {
+        super();
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.tz.ZoneInfoCompiler.compile(File,File[])
+------------------------------------------------------------------------------------------
+public Map<String, DateTimeZone> compile(File outputDir, File[] sources) throws IOException {
+        if (sources != null) {
+            for (int i=0; i<sources.length; i++) {
+                BufferedReader in = new BufferedReader(new FileReader(sources[i]));
+                parseDataFile(in);
+                in.close();
+            }
+        }
+
+        if (outputDir != null) {
+            if (!outputDir.exists()) {
+                if (!outputDir.mkdirs()) {
+                    throw new IOException("Destination directory doesn't exist and cannot be created: " + outputDir);
+                }
+            }
+            if (!outputDir.isDirectory()) {
+                throw new IOException("Destination is not a directory: " + outputDir);
+            }
+        }
+
+        Map<String, DateTimeZone> map = new TreeMap<String, DateTimeZone>();
+
+        System.out.println("Writing zoneinfo files");
+        for (int i=0; i<iZones.size(); i++) {
+            Zone zone = iZones.get(i);
+            DateTimeZoneBuilder builder = new DateTimeZoneBuilder();
+            zone.addToBuilder(builder, iRuleSets);
+            final DateTimeZone original = builder.toDateTimeZone(zone.iName, true);
+            DateTimeZone tz = original;
+            if (test(tz.getID(), tz)) {
+                map.put(tz.getID(), tz);
+                if (outputDir != null) {
+                    if (ZoneInfoCompiler.verbose()) {
+                        System.out.println("Writing " + tz.getID());
+                    }
+                    File file = new File(outputDir, tz.getID());
+                    if (!file.getParentFile().exists()) {
+                        file.getParentFile().mkdirs();
+                    }
+                    OutputStream out = new FileOutputStream(file);
+                    try {
+                        builder.writeTo(zone.iName, out);
+                    } finally {
+                        out.close();
+                    }
+
+                    // Test if it can be read back.
+                    InputStream in = new FileInputStream(file);
+                    DateTimeZone tz2 = DateTimeZoneBuilder.readFrom(in, tz.getID());
+                    in.close();
+
+                    if (!original.equals(tz2)) {
+                        System.out.println("*e* Error in " + tz.getID() +
+                                           ": Didn't read properly from file");
+                    }
+                }
+            }
+        }
+
+        for (int pass=0; pass<2; pass++) {
+            for (int i=0; i<iLinks.size(); i += 2) {
+                String id = iLinks.get(i);
+                String alias = iLinks.get(i + 1);
+                DateTimeZone tz = map.get(id);
+                if (tz == null) {
+                    if (pass > 0) {
+                        System.out.println("Cannot find time zone '" + id +
+                                           "' to link alias '" + alias + "' to");
+                    }
+                } else {
+                    map.put(alias, tz);
+                }
+            }
+        }
+
+        if (outputDir != null) {
+            System.out.println("Writing ZoneInfoMap");
+            File file = new File(outputDir, "ZoneInfoMap");
+            if (!file.getParentFile().exists()) {
+                file.getParentFile().mkdirs();
+            }
+
+            OutputStream out = new FileOutputStream(file);
+            DataOutputStream dout = new DataOutputStream(out);
+            try {
+                // Sort and filter out any duplicates that match case.
+                Map<String, DateTimeZone> zimap = new TreeMap<String, DateTimeZone>(String.CASE_INSENSITIVE_ORDER);
+                zimap.putAll(map);
+                writeZoneInfoMap(dout, zimap);
+            } finally {
+                dout.close();
+            }
+        }
+
+        return map;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.chrono.BasicGJChronology.setYear(long,int)
+------------------------------------------------------------------------------------------
+long setYear(long instant, int year) {
+        int thisYear = getYear(instant);
+        int dayOfYear = getDayOfYear(instant, thisYear);
+        int millisOfDay = getMillisOfDay(instant);
+
+        if (dayOfYear > (31 + 28)) { // after Feb 28
+            if (isLeapYear(thisYear)) {
+                // Current date is Feb 29 or later.
+                if (!isLeapYear(year)) {
+                    // Moving to a non-leap year, Feb 29 does not exist.
+                    dayOfYear--;
+                }
+            } else {
+                // Current date is Mar 01 or later.
+                if (isLeapYear(year)) {
+                    // Moving to a leap year, account for Feb 29.
+                    dayOfYear++;
+                }
+            }
+        }
+
+        instant = getYearMonthDayMillis(year, 1, dayOfYear);
+        instant += millisOfDay;
+
+        return instant;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.format.ISODateTimeFormat.dateTime()
+------------------------------------------------------------------------------------------
+public static DateTimeFormatter dateTime() {
+        return Constants.dt;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.DateTimeZone.getDefault()
+------------------------------------------------------------------------------------------
+public static DateTimeZone getDefault() {
+        DateTimeZone zone = cDefault;
+        if (zone == null) {
+            synchronized(DateTimeZone.class) {
+                zone = cDefault;
+                if (zone == null) {
+                    DateTimeZone temp = null;
+                    try {
+                        try {
+                            String id = System.getProperty("user.timezone");
+                            if (id != null) {  // null check avoids stack overflow
+                                temp = forID(id);
+                            }
+                        } catch (RuntimeException ex) {
+                            // ignored
+                        }
+                        if (temp == null) {
+                            temp = forTimeZone(TimeZone.getDefault());
+                        }
+                    } catch (IllegalArgumentException ex) {
+                        // ignored
+                    }
+                    if (temp == null) {
+                        temp = UTC;
+                    }
+                    cDefault = zone = temp;
+                }
+            }
+        }
+        return zone;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.DateTime.DateTime(int,int,int,int,int,DateTimeZone)
+------------------------------------------------------------------------------------------
+public DateTime() {
+        super();
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.base.AbstractInstant.toString()
+------------------------------------------------------------------------------------------
+@ToString
+    public String toString() {
+        return ISODateTimeFormat.dateTime().print(this);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.base.BaseDateTime.BaseDateTime(int,int,int,int,int,int,int,DateTimeZone)
+------------------------------------------------------------------------------------------
+public BaseDateTime() {
+        this(DateTimeUtils.currentTimeMillis(), ISOChronology.getInstance());
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.format.ISODateTimeFormat.dateTime()
+------------------------------------------------------------------------------------------
+public static DateTimeFormatter dateTime() {
+        return Constants.dt;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.format.ISODateTimeFormat.tTime()
+------------------------------------------------------------------------------------------
+public static DateTimeFormatter tTime() {
+        return Constants.tt;
+    }
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.joda.time.TestDateTimeZoneCutover#testDateTimeCreation_london
+Runtime: 6655014
+------------------------------------------------------------------------------------------
+junit.framework.ComparisonFailure: expected:<...1-10-30T01:15:00.000[+01:00]> but was:<...1-10-30T01:15:00.000[Z]> at junit.framework.Assert.assertEquals(Assert.java:100) at junit.framework.Assert.assertEquals(Assert.java:107) at junit.framework.TestCase.assertEquals(TestCase.java:269) at org.joda.time.TestDateTimeZoneCutover.testDateTimeCreation_london(TestDateTimeZoneCutover.java:1266) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #2
+Test: org.joda.time.TestPeriodType#testForFields4
+Runtime: 780806
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<true> but was:<false> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:174) at junit.framework.Assert.assertEquals(Assert.java:181) at junit.framework.TestCase.assertEquals(TestCase.java:341) at org.joda.time.TestPeriodType.testForFields4(TestPeriodType.java:534) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

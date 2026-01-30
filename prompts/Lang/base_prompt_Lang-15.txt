@@ -1,0 +1,103 @@
+### BUG_REPORT
+Title: TypeUtils.getTypeArguments() misses type arguments for partially-assigned classes
+
+Description:
+failing test code to add to TypeUtilsTest.testGetTypeArguments():
+
+typeVarAssigns = TypeUtils.getTypeArguments(Other.class, This.class);
+Assert.assertEquals(2, typeVarAssigns.size());
+Assert.assertEquals(String.class, typeVarAssigns.get(This.class.getTypeParameters()[0]));
+Assert.assertEquals(Other.class.getTypeParameters()[0], typeVarAssigns.get(This.class.getTypeParameters()[1]));
+
+
+These should pass based on:
+
+
+public interface This<K, V> {
+}
+
+public class Other<T> implements This<String, T> {
+}
+
+
+This case fails because the current code ignores the Other class due to its specifying its own type variables, which is obviously incorrect.  This report is extrapolated from an offline report received by Hen.
+
+
+### FAILING_TEST
+org.apache.commons.lang3.reflect.TypeUtils.getTypeArguments(ParameterizedType,Class<?>,Map<TypeVariable<?>,Type>)
+org.apache.commons.lang3.reflect.TypeUtils.getClosestParentType(Class<?>,Class<?>)
+org.apache.commons.lang3.math.Fraction.hashCode()
+org.apache.commons.lang3.text.translate.EntityArrays.ISO8859_1_ESCAPE()
+org.apache.commons.lang3.reflect.TypeUtils.isAssignable(Type,WildcardType,Map<TypeVariable<?>,Type>)
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.reflect.TypeUtils.getTypeArguments(ParameterizedType,Class<?>,Map<TypeVariable<?>,Type>)
+------------------------------------------------------------------------------------------
+final Map<TypeVariable<?>, Type> fromTypeVarAssigns = getTypeArguments(type, toClass, null);
+
+        // null means the two types are not compatible
+        if (fromTypeVarAssigns == null) {
+            return false;
+        }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.reflect.TypeUtils.getClosestParentType(Class<?>,Class<?>)
+------------------------------------------------------------------------------------------
+final Type midType = getClosestParentType(cls, superClass);
+
+        // can only be a class or a parameterized type
+        if (midType instanceof Class<?>) {
+            return determineTypeArguments((Class<?>) midType, superType);
+        }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.math.Fraction.hashCode()
+------------------------------------------------------------------------------------------
+@Override
+    public int hashCode() {
+        if (hashCode == 0) {
+            // hashcode update should be atomic.
+            hashCode = 37 * (37 * 17 + getNumerator()) + getDenominator();
+        }
+        return hashCode;
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.text.translate.EntityArrays.ISO8859_1_ESCAPE()
+------------------------------------------------------------------------------------------
+public static String[][] ISO8859_1_ESCAPE() { return ISO8859_1_ESCAPE.clone(); }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.reflect.TypeUtils.isAssignable(Type,WildcardType,Map<TypeVariable<?>,Type>)
+------------------------------------------------------------------------------------------
+public static boolean isAssignable(final Type type, final Type toType) {
+        return isAssignable(type, toType, null);
+    }
+
+------------------------------------------------------------------------------------------
+
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.apache.commons.lang3.reflect.TypeUtilsTest#testGetTypeArguments
+Runtime: 3329464
+------------------------------------------------------------------------------------------
+java.lang.AssertionError: expected:<2> but was:<0> at org.junit.Assert.fail(Assert.java:88) at org.junit.Assert.failNotEquals(Assert.java:834) at org.junit.Assert.assertEquals(Assert.java:645) at org.junit.Assert.assertEquals(Assert.java:631) at org.apache.commons.lang3.reflect.TypeUtilsTest.testGetTypeArguments(TypeUtilsTest.java:505) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #2
+Test: org.apache.commons.lang3.reflect.TypeUtilsTest#testIsAssignable
+Runtime: 61983034
+------------------------------------------------------------------------------------------
+java.lang.AssertionError: type class org.apache.commons.lang3.reflect.TypeUtilsTest$Thing not assignable to org.apache.commons.lang3.reflect.TypeUtilsTest$This<java.lang.String

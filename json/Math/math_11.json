@@ -1,0 +1,31 @@
+{
+  "project": "Math",
+  "bug_id": 11,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.math3.distribution.MixtureMultivariateRealDistribution.MixtureMultivariateRealDistribution(RandomGenerator",
+      "score": 0.996808
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.math3.distribution.MultivariateNormalDistribution.density(double[])",
+      "score": 0.874075
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.math3.distribution.MultivariateNormalDistribution.getCovariances()",
+      "score": 0.755418
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.math3.random.RandomDataGenerator.RandomDataGenerator()",
+      "score": 0.634932
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.math3.distribution.MixtureMultivariateRealDistribution.density(double[])",
+      "score": 0.515894
+    }
+  ]
+}

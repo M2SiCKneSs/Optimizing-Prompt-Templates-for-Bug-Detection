@@ -1,0 +1,239 @@
+### BUG_REPORT
+Title: #834 Bug propgated from v1.0.5 on to present
+
+Description:
+The method getRowCount() in class org.jfree.data.category.DefaultIntervalCategoryDataset says that it "Returns the number of series in the dataset (possibly zero)." 
+The implementation from v1.0.5 on no longer checks for a null condition (which would then return a zero) on the seriesKeys as it did in v1.0.4 and previous. This now throws a Null Pointer if seriesKeys never got initialized and the getRowCount() method is called.
+
+
+### FAILING_TEST
+org.jfree.data.category.DefaultIntervalCategoryDataset.DefaultIntervalCategoryDataset(Comparable[],Comparable[],Number[][],Number[][])
+org.jfree.data.DataUtilities.createNumberArray2D(double[][])
+org.jfree.data.category.DefaultIntervalCategoryDataset.clone()
+org.jfree.data.category.DefaultIntervalCategoryDataset.setEndValue(int,Comparable,Number)
+org.jfree.data.category.DefaultIntervalCategoryDataset.setStartValue(int,Comparable,Number)
+org.jfree.data.category.DefaultIntervalCategoryDataset.DefaultIntervalCategoryDataset(double[][],double[][])
+org.jfree.data.category.DefaultIntervalCategoryDataset.DefaultIntervalCategoryDataset(Number[][],Number[][])
+org.jfree.data.category.DefaultIntervalCategoryDataset.DefaultIntervalCategoryDataset(Comparable[],Comparable[],Number[][],Number[][])
+org.jfree.data.DataUtilities.createNumberArray2D(double[][])
+org.jfree.data.category.DefaultIntervalCategoryDataset.setCategoryKeys(Comparable[])
+
+### CODE_SNIPPETS
+
+------------------------------------------------------------------------------------------
+Function: org.jfree.data.category.DefaultIntervalCategoryDataset.DefaultIntervalCategoryDataset(Comparable[],Comparable[],Number[][],Number[][])
+------------------------------------------------------------------------------------------
+public DefaultIntervalCategoryDataset(double[][] starts, double[][] ends) {
+        this(DataUtilities.createNumberArray2D(starts),
+                DataUtilities.createNumberArray2D(ends));
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.jfree.data.DataUtilities.createNumberArray2D(double[][])
+------------------------------------------------------------------------------------------
+public static Number[][] createNumberArray2D(double[][] data) {
+        if (data == null) {
+            throw new IllegalArgumentException("Null 'data' argument.");
+        }
+        int l1 = data.length;
+        Number[][] result = new Number[l1][];
+        for (int i = 0; i < l1; i++) {
+            result[i] = createNumberArray(data[i]);
+        }
+        return result;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.jfree.data.category.DefaultIntervalCategoryDataset.clone()
+------------------------------------------------------------------------------------------
+public Object clone() throws CloneNotSupportedException {
+        DefaultIntervalCategoryDataset clone
+                = (DefaultIntervalCategoryDataset) super.clone();
+        clone.categoryKeys = (Comparable[]) this.categoryKeys.clone();
+        clone.seriesKeys = (Comparable[]) this.seriesKeys.clone();
+        clone.startData = clone(this.startData);
+        clone.endData = clone(this.endData);
+        return clone;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.jfree.data.category.DefaultIntervalCategoryDataset.setEndValue(int,Comparable,Number)
+------------------------------------------------------------------------------------------
+public void setEndValue(int series, Comparable category, Number value) {
+
+        // does the series exist?
+        if ((series < 0) || (series > getSeriesCount() - 1)) {
+            throw new IllegalArgumentException(
+                "DefaultIntervalCategoryDataset.setValue: "
+                + "series outside valid range.");
+        }
+
+        // is the category valid?
+        int categoryIndex = getCategoryIndex(category);
+        if (categoryIndex < 0) {
+            throw new IllegalArgumentException(
+                "DefaultIntervalCategoryDataset.setValue: "
+                + "unrecognised category.");
+        }
+
+        // update the data...
+        this.endData[series][categoryIndex] = value;
+        fireDatasetChanged(new DatasetChangeInfo());
+        // TODO: fill in real change details
+
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.jfree.data.category.DefaultIntervalCategoryDataset.setStartValue(int,Comparable,Number)
+------------------------------------------------------------------------------------------
+public void setStartValue(int series, Comparable category, Number value) {
+
+        // does the series exist?
+        if ((series < 0) || (series > getSeriesCount() - 1)) {
+            throw new IllegalArgumentException(
+                "DefaultIntervalCategoryDataset.setValue: "
+                + "series outside valid range.");
+        }
+
+        // is the category valid?
+        int categoryIndex = getCategoryIndex(category);
+        if (categoryIndex < 0) {
+            throw new IllegalArgumentException(
+                "DefaultIntervalCategoryDataset.setValue: "
+                + "unrecognised category.");
+        }
+
+        // update the data...
+        this.startData[series][categoryIndex] = value;
+        fireDatasetChanged(new DatasetChangeInfo());
+        // TODO: fill in real change details
+
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.jfree.data.category.DefaultIntervalCategoryDataset.DefaultIntervalCategoryDataset(double[][],double[][])
+------------------------------------------------------------------------------------------
+public DefaultIntervalCategoryDataset(double[][] starts, double[][] ends) {
+        this(DataUtilities.createNumberArray2D(starts),
+                DataUtilities.createNumberArray2D(ends));
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.jfree.data.category.DefaultIntervalCategoryDataset.DefaultIntervalCategoryDataset(Number[][],Number[][])
+------------------------------------------------------------------------------------------
+public DefaultIntervalCategoryDataset(double[][] starts, double[][] ends) {
+        this(DataUtilities.createNumberArray2D(starts),
+                DataUtilities.createNumberArray2D(ends));
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.jfree.data.category.DefaultIntervalCategoryDataset.DefaultIntervalCategoryDataset(Comparable[],Comparable[],Number[][],Number[][])
+------------------------------------------------------------------------------------------
+public DefaultIntervalCategoryDataset(double[][] starts, double[][] ends) {
+        this(DataUtilities.createNumberArray2D(starts),
+                DataUtilities.createNumberArray2D(ends));
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.jfree.data.DataUtilities.createNumberArray2D(double[][])
+------------------------------------------------------------------------------------------
+public static Number[][] createNumberArray2D(double[][] data) {
+        if (data == null) {
+            throw new IllegalArgumentException("Null 'data' argument.");
+        }
+        int l1 = data.length;
+        Number[][] result = new Number[l1][];
+        for (int i = 0; i < l1; i++) {
+            result[i] = createNumberArray(data[i]);
+        }
+        return result;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.jfree.data.category.DefaultIntervalCategoryDataset.setCategoryKeys(Comparable[])
+------------------------------------------------------------------------------------------
+public void setCategoryKeys(Comparable[] categoryKeys) {
+        if (categoryKeys == null) {
+            throw new IllegalArgumentException("Null 'categoryKeys' argument.");
+        }
+        if (categoryKeys.length != getCategoryCount()) {
+            throw new IllegalArgumentException(
+                    "The number of categories does not match the data.");
+        }
+        for (int i = 0; i < categoryKeys.length; i++) {
+            if (categoryKeys[i] == null) {
+                throw new IllegalArgumentException(
+                    "DefaultIntervalCategoryDataset.setCategoryKeys(): "
+                    + "null category not permitted.");
+            }
+        }
+        this.categoryKeys = categoryKeys;
+        fireDatasetChanged(new DatasetChangeInfo());
+        // TODO: fill in real change details
+    }
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.jfree.chart.renderer.category.junit.IntervalBarRendererTests#testDrawWithNullInfo
+Runtime: 69066413
+------------------------------------------------------------------------------------------
+java.lang.UnsatisfiedLinkError: /usr/lib/jvm/jdk-11.0.17/lib/libfontmanager.so: libfreetype.so.6: cannot open shared object file: No such file or directory at java.base/java.lang.ClassLoader$NativeLibrary.load0(Native Method) at java.base/java.lang.ClassLoader$NativeLibrary.load(ClassLoader.java:2432) at java.base/java.lang.ClassLoader$NativeLibrary.loadLibrary(ClassLoader.java:2489) at java.base/java.lang.ClassLoader.loadLibrary0(ClassLoader.java:2689) at java.base/java.lang.ClassLoader.loadLibrary(ClassLoader.java:2640) at java.base/java.lang.Runtime.loadLibrary0(Runtime.java:827) at java.base/java.lang.System.loadLibrary(System.java:1871) at java.desktop/sun.font.FontManagerNativeLibrary$1.run(FontManagerNativeLibrary.java:57) at java.base/java.security.AccessController.doPrivileged(Native Method) at java.desktop/sun.font.FontManagerNativeLibrary.<clinit>(FontManagerNativeLibrary.java:32) at java.desktop/sun.font.SunFontManager$1.run(SunFontManager.java:279) at java.base/java.security.AccessController.doPrivileged(Native Method) at java.desktop/sun.font.SunFontManager.<clinit>(SunFontManager.java:275) at java.desktop/sun.font.FontDesignMetrics.getMetrics(FontDesignMetrics.java:265) at java.desktop/sun.java2d.SunGraphics2D.getFontMetrics(SunGraphics2D.java:869) at org.jfree.chart.text.TextFragment.calculateDimensions(TextFragment.java:221) at org.jfree.chart.text.TextLine.calculateDimensions(TextLine.java:182) at org.jfree.chart.text.TextBlock.calculateDimensions(TextBlock.java:167) at org.jfree.chart.block.LabelBlock.arrange(LabelBlock.java:247) at org.jfree.chart.block.BorderArrangement.arrangeNN(BorderArrangement.java:220) at org.jfree.chart.block.BorderArrangement.arrange(BorderArrangement.java:136) at org.jfree.chart.block.BlockContainer.arrange(BlockContainer.java:182) at org.jfree.chart.block.CenterArrangement.arrangeNN(CenterArrangement.java:285) at org.jfree.chart.block.CenterArrangement.arrange(CenterArrangement.java:99) at org.jfree.chart.block.BlockContainer.arrange(BlockContainer.java:182) at org.jfree.chart.block.FlowArrangement.arrangeNN(FlowArrangement.java:366) at org.jfree.chart.block.FlowArrangement.arrangeRR(FlowArrangement.java:284) at org.jfree.chart.block.FlowArrangement.arrange(FlowArrangement.java:159) at org.jfree.chart.block.BlockContainer.arrange(BlockContainer.java:182) at org.jfree.chart.title.LegendTitle.arrange(LegendTitle.java:479) at org.jfree.chart.JFreeChart.drawTitle(JFreeChart.java:1314) at org.jfree.chart.JFreeChart.draw(JFreeChart.java:1205) at org.jfree.chart.JFreeChart.createBufferedImage(JFreeChart.java:1393) at org.jfree.chart.JFreeChart.createBufferedImage(JFreeChart.java:1373) at org.jfree.chart.renderer.category.junit.IntervalBarRendererTests.testDrawWithNullInfo(IntervalBarRendererTests.java:166) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #2
+Test: org.jfree.data.category.junit.DefaultIntervalCategoryDatasetTests#testCloning2
+Runtime: 1648329
+------------------------------------------------------------------------------------------
+java.lang.NullPointerException at org.jfree.data.category.DefaultIntervalCategoryDataset.clone(DefaultIntervalCategoryDataset.java:748) at org.jfree.data.category.junit.DefaultIntervalCategoryDatasetTests.testCloning2(DefaultIntervalCategoryDatasetTests.java:265) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #3
+Test: org.jfree.data.category.junit.DefaultIntervalCategoryDatasetTests#testGetCategoryIndex
+Runtime: 1293552
+------------------------------------------------------------------------------------------
+java.lang.NullPointerException at org.jfree.data.category.DefaultIntervalCategoryDataset.getCategoryIndex(DefaultIntervalCategoryDataset.java:574) at org.jfree.data.category.junit.DefaultIntervalCategoryDatasetTests.testGetCategoryIndex(DefaultIntervalCategoryDatasetTests.java:415) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #4
+Test: org.jfree.data.category.junit.DefaultIntervalCategoryDatasetTests#testGetColumnCount
+Runtime: 1404932
+------------------------------------------------------------------------------------------
+java.lang.NullPointerException at org.jfree.data.category.DefaultIntervalCategoryDataset.getColumnCount(DefaultIntervalCategoryDataset.java:690) at org.jfree.data.category.junit.DefaultIntervalCategoryDatasetTests.testGetColumnCount(DefaultIntervalCategoryDatasetTests.java:479) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #5
+Test: org.jfree.data.category.junit.DefaultIntervalCategoryDatasetTests#testGetColumnIndex
+Runtime: 1268264
+------------------------------------------------------------------------------------------
+java.lang.NullPointerException at org.jfree.data.category.DefaultIntervalCategoryDataset.getCategoryIndex(DefaultIntervalCategoryDataset.java:574) at org.jfree.data.category.DefaultIntervalCategoryDataset.getColumnIndex(DefaultIntervalCategoryDataset.java:628) at org.jfree.data.category.junit.DefaultIntervalCategoryDatasetTests.testGetColumnIndex(DefaultIntervalCategoryDatasetTests.java:426) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #6
+Test: org.jfree.data.category.junit.DefaultIntervalCategoryDatasetTests#testGetRowCount
+Runtime: 1159089
+------------------------------------------------------------------------------------------
+java.lang.NullPointerException at org.jfree.data.category.DefaultIntervalCategoryDataset.getColumnCount(DefaultIntervalCategoryDataset.java:690) at org.jfree.data.category.junit.DefaultIntervalCategoryDatasetTests.testGetRowCount(DefaultIntervalCategoryDatasetTests.java:490) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #7
+Test: org.jfree.data.category.junit.DefaultIntervalCategoryDatasetTests#testGetRowIndex
+Runtime: 1410912
+------------------------------------------------------------------------------------------
+java.lang.NullPointerException at org.jfree.data.category.DefaultIntervalCategoryDataset.getSeriesIndex(DefaultIntervalCategoryDataset.java:242) at org.jfree.data.category.DefaultIntervalCategoryDataset.getRowIndex(DefaultIntervalCategoryDataset.java:641) at org.jfree.data.category.junit.DefaultIntervalCategoryDatasetTests.testGetRowIndex(DefaultIntervalCategoryDatasetTests.java:386) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #8
+Test: org.jfree.data.category.junit.DefaultIntervalCategoryDatasetTests#testGetSeriesIndex
+Runtime: 1204635
+------------------------------------------------------------------------------------------
+java.lang.NullPointerException at org.jfree.data.category.DefaultIntervalCategoryDataset.getSeriesIndex(DefaultIntervalCategoryDataset.java:242) at org.jfree.data.category.junit.DefaultIntervalCategoryDatasetTests.testGetSeriesIndex(DefaultIntervalCategoryDatasetTests.java:375) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #9
+Test: org.jfree.data.category.junit.DefaultIntervalCategoryDatasetTests#testSetCategoryKeys
+Runtime: 1615067
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError at junit.framework.Assert.fail(Assert.java:55) at junit.framework.Assert.assertTrue(Assert.java:22) at junit.framework.Assert.assertTrue(Assert.java:31) at junit.framework.TestCase.assertTrue(TestCase.java:201) at org.jfree.data.category.junit.DefaultIntervalCategoryDatasetTests.testSetCategoryKeys(DefaultIntervalCategoryDatasetTests.java:444) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

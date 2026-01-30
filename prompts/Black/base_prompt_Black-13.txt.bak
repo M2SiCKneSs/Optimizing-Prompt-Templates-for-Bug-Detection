@@ -1,0 +1,125 @@
+### TOP_METHODS (Ochiai)
+Source CSV: C:\Users\user\Desktop\uni\mark\FAILING_TEST\Black\black_13_ochiai_top_10.csv
+Source Code File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+
+1. black$WriteBack#from_configuration() | score=0.11704114719613057
+2. black$FileMode#from_configuration() | score=0.11704114719613057
+3. black##read_pyproject_toml(ctx,param,value) | score=0.11704114719613057
+4. black##main(ctx,line_length,check,diff,fast,pyi,py36,skip_string_normalization,quiet,verbose,include,exclude,src,config) | score=0.11704114719613057
+5. black##reformat_one(src,line_length,fast,write_back,mode,report) | score=0.11704114719613057
+6. black##schedule_formatting(sources,line_length,fast,write_back,mode,report,loop,executor) | score=0.11704114719613057
+7. black##format_file_in_place(src,line_length,fast,write_back,mode,lock) | score=0.11704114719613057
+8. black##format_stdin_to_stdout(line_length,fast,write_back,mode) | score=0.11704114719613057
+9. black##format_file_contents(src_contents) | score=0.11704114719613057
+10. black##format_str(src_contents,line_length) | score=0.11704114719613057
+
+### CODE_SNIPPETS
+
+---
+Rank: 1
+Method: black$WriteBack#from_configuration()
+Ochiai_Score: 0.11704114719613057
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: class WriteBack.from_configuration
+Status: OK
+Snippet:
+    def from_configuration(
+        cls, *, check: bool, diff: bool, color: bool = False
+    ) -> "WriteBack":
+        if check and not diff:
+            return cls.CHECK
+
+        if diff and color:
+            return cls.COLOR_DIFF
+
+        return cls.DIFF if diff else cls.YES
+
+---
+Rank: 2
+Method: black$FileMode#from_configuration()
+Ochiai_Score: 0.11704114719613057
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: class FileMode.from_configuration
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in black.py)
+
+---
+Rank: 3
+Method: black##read_pyproject_toml(ctx,param,value)
+Ochiai_Score: 0.11704114719613057
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: #read_pyproject_toml
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in black.py)
+
+---
+Rank: 4
+Method: black##main(ctx,line_length,check,diff,fast,pyi,py36,skip_string_normalization,quiet,verbose,include,exclude,src,config)
+Ochiai_Score: 0.11704114719613057
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: #main
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in black.py)
+
+---
+Rank: 5
+Method: black##reformat_one(src,line_length,fast,write_back,mode,report)
+Ochiai_Score: 0.11704114719613057
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: #reformat_one
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in black.py)
+
+---
+Rank: 6
+Method: black##schedule_formatting(sources,line_length,fast,write_back,mode,report,loop,executor)
+Ochiai_Score: 0.11704114719613057
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: #schedule_formatting
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in black.py)
+
+---
+Rank: 7
+Method: black##format_file_in_place(src,line_length,fast,write_back,mode,lock)
+Ochiai_Score: 0.11704114719613057
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: #format_file_in_place
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in black.py)
+
+---
+Rank: 8
+Method: black##format_stdin_to_stdout(line_length,fast,write_back,mode)
+Ochiai_Score: 0.11704114719613057
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: #format_stdin_to_stdout
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in black.py)
+
+---
+Rank: 9
+Method: black##format_file_contents(src_contents)
+Ochiai_Score: 0.11704114719613057
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: #format_file_contents
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in black.py)
+
+---
+Rank: 10
+Method: black##format_str(src_contents,line_length)
+Ochiai_Score: 0.11704114719613057
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: #format_str
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in black.py)

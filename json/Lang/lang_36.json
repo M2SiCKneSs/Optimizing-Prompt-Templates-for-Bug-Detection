@@ -1,0 +1,31 @@
+{
+  "project": "Lang",
+  "bug_id": 36,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.lang3.math.NumberUtils.createNumber(String)",
+      "score": 0.994548
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.lang3.text.StrTokenizer.size()",
+      "score": 0.874436
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.lang3.time.FastDateFormat.TimeZoneDisplayKey.equals(Object)",
+      "score": 0.750921
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.lang3.time.FastDateFormat.FastDateFormat(String",
+      "score": 0.630009
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.lang3.StringUtils.startsWith(CharSequence",
+      "score": 0.513013
+    }
+  ]
+}

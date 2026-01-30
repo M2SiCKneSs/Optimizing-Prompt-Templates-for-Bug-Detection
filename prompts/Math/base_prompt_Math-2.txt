@@ -1,0 +1,143 @@
+### BUG_REPORT
+Title: HypergeometricDistribution.sample suffers from integer overflow
+
+Description:
+Hi, I have an application which broke when ported from commons math 2.2 to 3.2. It looks like the HypergeometricDistribution.sample() method doesn't work as well as it used to with large integer values – the example code below should return a sample between 0 and 50, but usually returns -50.
+
+import org.apache.commons.math3.distribution.HypergeometricDistribution;
+
+public class Foo {
+  public static void main(String[] args) {
+    HypergeometricDistribution a = new HypergeometricDistribution(
+        43130568, 42976365, 50);
+    System.out.printf("%d %d%n", a.getSupportLowerBound(), a.getSupportUpperBound()); // Prints "0 50"
+    System.out.printf("%d%n",a.sample());                                             // Prints "-50"
+  }
+}
+
+
+In the debugger, I traced it as far as an integer overflow in HypergeometricDistribution.getNumericalMean() – instead of doing
+
+return (double) (getSampleSize() * getNumberOfSuccesses()) / (double) getPopulationSize();
+
+
+it could do:
+
+return getSampleSize() * ((double) getNumberOfSuccesses() / (double) getPopulationSize());
+
+
+This seemed to fix it, based on a quick test.
+
+
+### FAILING_TEST
+org.apache.commons.math3.random.Well19937c.next(int)
+org.apache.commons.math3.util.FastMathCalc.printarray(PrintStream,String,int,double[])
+org.apache.commons.math3.util.FastMathCalc.printarray(PrintStream,String,int,double[][])
+org.apache.commons.math3.random.RandomDataGenerator.nextSecureInt(int,int)
+org.apache.commons.math3.distribution.AbstractIntegerDistribution.sample()
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.random.Well19937c.next(int)
+------------------------------------------------------------------------------------------
+@Override
+    protected int next(final int bits) {
+
+        final int indexRm1 = iRm1[index];
+        final int indexRm2 = iRm2[index];
+
+        final int v0       = v[index];
+        final int vM1      = v[i1[index]];
+        final int vM2      = v[i2[index]];
+        final int vM3      = v[i3[index]];
+
+        final int z0 = (0x80000000 & v[indexRm1]) ^ (0x7FFFFFFF & v[indexRm2]);
+        final int z1 = (v0 ^ (v0 << 25))  ^ (vM1 ^ (vM1 >>> 27));
+        final int z2 = (vM2 >>> 9) ^ (vM3 ^ (vM3 >>> 1));
+        final int z3 = z1      ^ z2;
+        int z4 = z0 ^ (z1 ^ (z1 << 9)) ^ (z2 ^ (z2 << 21)) ^ (z3 ^ (z3 >>> 21));
+
+        v[index]     = z3;
+        v[indexRm1]  = z4;
+        v[indexRm2] &= 0x80000000;
+        index        = indexRm1;
+
+
+        // add Matsumoto-Kurita tempering
+        // to get a maximally-equidistributed generator
+        z4 = z4 ^ ((z4 <<  7) & 0xe46e1700);
+        z4 = z4 ^ ((z4 << 15) & 0x9b868000);
+
+        return z4 >>> (32 - bits);
+
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.util.FastMathCalc.printarray(PrintStream,String,int,double[])
+------------------------------------------------------------------------------------------
+static void printarray(PrintStream out, String name, int expectedLen, double[][] array2d) {
+        out.println(name);
+        checkLen(expectedLen, array2d.length);
+        out.println(TABLE_START_DECL + " ");
+        int i = 0;
+        for(double[] array : array2d) { // "double array[]" causes PMD parsing error
+            out.print("        {");
+            for(double d : array) { // assume inner array has very few entries
+                out.printf("%-25.25s", format(d)); // multiple entries per line
+            }
+            out.println("}, // " + i++);
+        }
+        out.println(TABLE_END_DECL);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.util.FastMathCalc.printarray(PrintStream,String,int,double[][])
+------------------------------------------------------------------------------------------
+static void printarray(PrintStream out, String name, int expectedLen, double[][] array2d) {
+        out.println(name);
+        checkLen(expectedLen, array2d.length);
+        out.println(TABLE_START_DECL + " ");
+        int i = 0;
+        for(double[] array : array2d) { // "double array[]" causes PMD parsing error
+            out.print("        {");
+            for(double d : array) { // assume inner array has very few entries
+                out.printf("%-25.25s", format(d)); // multiple entries per line
+            }
+            out.println("}, // " + i++);
+        }
+        out.println(TABLE_END_DECL);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.random.RandomDataGenerator.nextSecureInt(int,int)
+------------------------------------------------------------------------------------------
+public int nextSecureInt(final int lower, final int upper) throws NumberIsTooLargeException {
+        return new UniformIntegerDistribution(getSecRan(), lower, upper).sample();
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.distribution.AbstractIntegerDistribution.sample()
+------------------------------------------------------------------------------------------
+public int sample() {
+        return inverseCumulativeProbability(random.nextDouble());
+    }
+
+------------------------------------------------------------------------------------------
+
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.apache.commons.math3.distribution.HypergeometricDistributionTest#testMath1021
+Runtime: 4102381
+------------------------------------------------------------------------------------------
+java.lang.AssertionError: sample=-50 at org.junit.Assert.fail(Assert.java:88) at org.junit.Assert.assertTrue(Assert.java:41) at org.apache.commons.math3.distribution.HypergeometricDistributionTest.testMath1021(HypergeometricDistributionTest.java:297) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26) at org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:27) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

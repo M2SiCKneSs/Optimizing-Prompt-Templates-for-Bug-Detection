@@ -1,0 +1,11 @@
+Method,Ochiai_Score
+thefuck.main##print_alias(entry_point),0.31622776601683794
+"thefuck.main##run_command(old_cmd,command,settings)",0.31622776601683794
+"thefuck.main##get_command(settings,args)",0.31622776601683794
+thefuck.main##setup_user_dir(),0.31622776601683794
+thefuck.main##main(),0.31622776601683794
+thefuck.main##fix_command(),0.31622776601683794
+"thefuck.main##wait_output(settings,popen)",0.31622776601683794
+"thefuck.corrector##get_loaded_rules(rules,settings)",0.1889822365046136
+"thefuck.corrector##load_rule(rule,settings)",0.1889822365046136
+"thefuck.corrector##get_rules(user_dir,settings)",0.1889822365046136

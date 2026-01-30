@@ -1,0 +1,177 @@
+### BUG_REPORT
+Title: #112 Incorrect mapping of the MET time zone
+
+Description:
+This timezone is mapped to Asia/Tehran in DateTimeZone. It should be middle europena time.
+I know that this bug has been raised before (Incorrect mapping of the MET time zone - ID: 2012274), and there is a comment stating that you won't break backward compatibility to fix this bug.
+
+I disagree that this is a backward compatibility argument
+No matter how you look at it, it is a bug.
+
+You could very well state that ALL bugs won't be fixed, because of backward compatibility.
+I request again that this bug be fixed.
+
+
+### FAILING_TEST
+org.joda.time.DateTimeZone.getConvertedId(String)
+org.joda.time.DateTimeZone.setDefault(DateTimeZone)
+org.joda.time.DateTimeZone.forTimeZone(TimeZone)
+org.joda.time.tz.DateTimeZoneBuilder.readFrom(DataInput,String)
+org.joda.time.format.DateTimeFormatterBuilder.appendFixedSignedDecimal(DateTimeFieldType,int)
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.DateTimeZone.getConvertedId(String)
+------------------------------------------------------------------------------------------
+private static synchronized String getConvertedId(String id) {
+        Map<String, String> map = cZoneIdConversion;
+        if (map == null) {
+            // Backwards compatibility with TimeZone.
+            map = new HashMap<String, String>();
+            map.put("GMT", "UTC");
+            map.put("WET", "WET");
+            map.put("CET", "CET");
+            map.put("MET", "CET");
+            map.put("ECT", "CET");
+            map.put("EET", "EET");
+            map.put("MIT", "Pacific/Apia");
+            map.put("HST", "Pacific/Honolulu");  // JDK 1.1 compatible
+            map.put("AST", "America/Anchorage");
+            map.put("PST", "America/Los_Angeles");
+            map.put("MST", "America/Denver");  // JDK 1.1 compatible
+            map.put("PNT", "America/Phoenix");
+            map.put("CST", "America/Chicago");
+            map.put("EST", "America/New_York");  // JDK 1.1 compatible
+            map.put("IET", "America/Indiana/Indianapolis");
+            map.put("PRT", "America/Puerto_Rico");
+            map.put("CNT", "America/St_Johns");
+            map.put("AGT", "America/Argentina/Buenos_Aires");
+            map.put("BET", "America/Sao_Paulo");
+            map.put("ART", "Africa/Cairo");
+            map.put("CAT", "Africa/Harare");
+            map.put("EAT", "Africa/Addis_Ababa");
+            map.put("NET", "Asia/Yerevan");
+            map.put("PLT", "Asia/Karachi");
+            map.put("IST", "Asia/Kolkata");
+            map.put("BST", "Asia/Dhaka");
+            map.put("VST", "Asia/Ho_Chi_Minh");
+            map.put("CTT", "Asia/Shanghai");
+            map.put("JST", "Asia/Tokyo");
+            map.put("ACT", "Australia/Darwin");
+            map.put("AET", "Australia/Sydney");
+            map.put("SST", "Pacific/Guadalcanal");
+            map.put("NST", "Pacific/Auckland");
+            cZoneIdConversion = map;
+        }
+        return map.get(id);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.DateTimeZone.setDefault(DateTimeZone)
+------------------------------------------------------------------------------------------
+public static void setDefault(DateTimeZone zone) throws SecurityException {
+        SecurityManager sm = System.getSecurityManager();
+        if (sm != null) {
+            sm.checkPermission(new JodaTimePermission("DateTimeZone.setDefault"));
+        }
+        if (zone == null) {
+            throw new IllegalArgumentException("The datetime zone must not be null");
+        }
+        synchronized(DateTimeZone.class) {
+            cDefault = zone;
+        }
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.DateTimeZone.forTimeZone(TimeZone)
+------------------------------------------------------------------------------------------
+public static DateTimeZone forTimeZone(TimeZone zone) {
+        if (zone == null) {
+            return getDefault();
+        }
+        final String id = zone.getID();
+        if (id.equals("UTC")) {
+            return DateTimeZone.UTC;
+        }
+
+        // Convert from old alias before consulting provider since they may differ.
+        DateTimeZone dtz = null;
+        String convId = getConvertedId(id);
+        if (convId != null) {
+            dtz = cProvider.getZone(convId);
+        }
+        if (dtz == null) {
+            dtz = cProvider.getZone(id);
+        }
+        if (dtz != null) {
+            return dtz;
+        }
+
+        // Support GMT+/-hh:mm formats
+        if (convId == null) {
+            convId = zone.getID();
+            if (convId.startsWith("GMT+") || convId.startsWith("GMT-")) {
+                convId = convId.substring(3);
+                int offset = parseOffset(convId);
+                if (offset == 0L) {
+                    return DateTimeZone.UTC;
+                } else {
+                    convId = printOffset(offset);
+                    return fixedOffsetZone(convId, offset);
+                }
+            }
+        }
+        throw new IllegalArgumentException("The datetime zone id '" + id + "' is not recognised");
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.tz.DateTimeZoneBuilder.readFrom(DataInput,String)
+------------------------------------------------------------------------------------------
+public static DateTimeZone readFrom(InputStream in, String id) throws IOException {
+        if (in instanceof DataInput) {
+            return readFrom((DataInput)in, id);
+        } else {
+            return readFrom((DataInput)new DataInputStream(in), id);
+        }
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.format.DateTimeFormatterBuilder.appendFixedSignedDecimal(DateTimeFieldType,int)
+------------------------------------------------------------------------------------------
+public DateTimeFormatterBuilder appendFixedSignedDecimal(
+            DateTimeFieldType fieldType, int numDigits) {
+        if (fieldType == null) {
+            throw new IllegalArgumentException("Field type must not be null");
+        }
+        if (numDigits <= 0) {
+            throw new IllegalArgumentException("Illegal number of digits: " + numDigits);
+        }
+        return append0(new FixedNumber(fieldType, numDigits, true));
+    }
+
+------------------------------------------------------------------------------------------
+
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.joda.time.TestDateTimeZone#testForID_String_old
+Runtime: 1187399
+------------------------------------------------------------------------------------------
+junit.framework.ComparisonFailure: expected:<[WET]> but was:<[Europe/London]> at junit.framework.Assert.assertEquals(Assert.java:100) at junit.framework.Assert.assertEquals(Assert.java:107) at junit.framework.TestCase.assertEquals(TestCase.java:269) at org.joda.time.TestDateTimeZone.testForID_String_old(TestDateTimeZone.java:282) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #2
+Test: org.joda.time.TestPeriodType#testForFields4
+Runtime: 688172
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<true> but was:<false> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:174) at junit.framework.Assert.assertEquals(Assert.java:181) at junit.framework.TestCase.assertEquals(TestCase.java:341) at org.joda.time.TestPeriodType.testForFields4(TestPeriodType.java:534) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

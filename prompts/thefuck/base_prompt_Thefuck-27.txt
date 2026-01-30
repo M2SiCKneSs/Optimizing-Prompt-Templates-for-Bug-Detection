@@ -1,0 +1,71 @@
+### TOP_METHODS (Ochiai)
+1. thefuck.rules.open##get_new_command(command,settings) | score=0.3535533905932738
+2. thefuck.rules.open##match(command,settings) | score=0.3535533905932738
+3. thefuck.main##fix_command() | score=0.22360679774997896
+4. thefuck.main##main() | score=0.22360679774997896
+5. thefuck.main##wait_output(settings,popen) | score=0.22360679774997896
+
+
+### CODE_SNIPPETS
+
+
+
+---
+Rank: 1
+Method: thefuck.rules.open##get_new_command(command,settings)
+Ochiai_Score: 0.3535533905932738
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\rules\open.py
+Status: OK
+Snippet:
+def get_new_command(command):
+    output = command.output.strip()
+    if is_arg_url(command):
+        yield command.script.replace('open ', 'open http://')
+    elif output.startswith('The file ') and output.endswith(' does not exist.'):
+        arg = command.script.split(' ', 1)[1]
+        for option in ['touch', 'mkdir']:
+            yield shell.and_(u'{} {}'.format(option, arg), command.script)
+
+
+---
+Rank: 2
+Method: thefuck.rules.open##match(command,settings)
+Ochiai_Score: 0.3535533905932738
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\rules\open.py
+Status: OK
+Snippet:
+def match(command):
+    return (is_arg_url(command) or
+            command.output.strip().startswith('The file ') and
+            command.output.strip().endswith(' does not exist.'))
+
+
+---
+Rank: 3
+Method: thefuck.main##fix_command()
+Ochiai_Score: 0.22360679774997896
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\main.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+
+---
+Rank: 4
+Method: thefuck.main##main()
+Ochiai_Score: 0.22360679774997896
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\main.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+
+---
+Rank: 5
+Method: thefuck.main##wait_output(settings,popen)
+Ochiai_Score: 0.22360679774997896
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\main.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+

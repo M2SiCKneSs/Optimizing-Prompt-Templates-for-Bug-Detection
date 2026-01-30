@@ -1,0 +1,10 @@
+permits black to run in AWS Lambda: (#1141)
+AWS Lambda and some other virtualized environment may not permit access
+to /dev/shm on Linux and as such, trying to use ProcessPoolExecutor will
+fail.
+
+As using parallelism is only a 'nice to have' feature of black, if it fails
+we gracefully fallback to a monoprocess implementation, which permits black
+to finish normally.
+
+Co-authored-by: Allan Simon <asimon@yolaw.fr>

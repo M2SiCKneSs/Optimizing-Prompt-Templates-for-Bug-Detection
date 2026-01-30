@@ -1,0 +1,31 @@
+{
+  "project": "Chart",
+  "bug_id": 16,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.jfree.data.category.DefaultIntervalCategoryDataset.setCategoryKeys(Comparable[])",
+      "score": 0.994042
+    },
+    {
+      "rank": 2,
+      "method": "org.jfree.data.category.DefaultIntervalCategoryDataset.getSeriesKey(int)",
+      "score": 0.87297
+    },
+    {
+      "rank": 3,
+      "method": "org.jfree.data.category.DefaultIntervalCategoryDataset.DefaultIntervalCategoryDataset(Number[][]",
+      "score": 0.752693
+    },
+    {
+      "rank": 4,
+      "method": "org.jfree.data.category.DefaultIntervalCategoryDataset.getRowCount()",
+      "score": 0.631497
+    },
+    {
+      "rank": 5,
+      "method": "org.jfree.data.general.DatasetUtilities.findStackedRangeBounds(CategoryDataset",
+      "score": 0.510356
+    }
+  ]
+}

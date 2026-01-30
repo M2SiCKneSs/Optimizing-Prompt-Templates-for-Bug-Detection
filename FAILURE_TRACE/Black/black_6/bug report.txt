@@ -1,0 +1,11 @@
+Add support for always tokenizing async/await as keywords
+Fixes #593
+
+I looked into this bug with @ambv and @carljm, and we reached the
+conclusion was that it's not possible for the tokenizer to determine if
+async/await is a keyword inside all possible generators without breaking
+the grammar for older versions of Python.
+
+Instead, we introduce a new tokenizer mode for Python 3.7+ that will
+cause all async/await instances to get parsed as a reserved keyword,
+which should fix async/await inside generators.

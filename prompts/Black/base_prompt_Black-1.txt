@@ -1,0 +1,79 @@
+### TOP_METHODS (Ochiai)
+1. black$Ok#__init__(value) | score=0.08804509063256238
+2. black$Ok#ok() | score=0.08804509063256238
+3. black$Err#__init__(e) | score=0.08804509063256238
+4. black$Err#err() | score=0.08804509063256238
+5. black$WriteBack#from_configuration() | score=0.08804509063256238
+
+
+### CODE_SNIPPETS
+
+
+
+---
+Rank: 1
+Method: black$Ok#__init__(value)
+Ochiai_Score: 0.08804509063256238
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: class Ok.__init__
+Status: OK
+Snippet:
+    def __init__(self, value: T) -> None:
+        self._value = value
+
+
+---
+Rank: 2
+Method: black$Ok#ok()
+Ochiai_Score: 0.08804509063256238
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: class Ok.ok
+Status: OK
+Snippet:
+    def ok(self) -> T:
+        return self._value
+
+
+---
+Rank: 3
+Method: black$Err#__init__(e)
+Ochiai_Score: 0.08804509063256238
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: class Err.__init__
+Status: OK
+Snippet:
+    def __init__(self, e: E) -> None:
+        self._e = e
+
+
+---
+Rank: 4
+Method: black$Err#err()
+Ochiai_Score: 0.08804509063256238
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: class Err.err
+Status: OK
+Snippet:
+    def err(self) -> E:
+        return self._e
+
+
+---
+Rank: 5
+Method: black$WriteBack#from_configuration()
+Ochiai_Score: 0.08804509063256238
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: class WriteBack.from_configuration
+Status: OK
+Snippet:
+    def from_configuration(
+        cls, *, check: bool, diff: bool, color: bool = False
+    ) -> "WriteBack":
+        if check and not diff:
+            return cls.CHECK
+
+        if diff and color:
+            return cls.COLOR_DIFF
+
+        return cls.DIFF if diff else cls.YES
+

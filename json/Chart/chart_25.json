@@ -1,0 +1,31 @@
+{
+  "project": "Chart",
+  "bug_id": 25,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.jfree.chart.renderer.category.StatisticalBarRenderer.drawItem(Graphics2D",
+      "score": 0.99239
+    },
+    {
+      "rank": 2,
+      "method": "org.jfree.data.statistics.DefaultStatisticalCategoryDataset.getRowCount()",
+      "score": 0.87924
+    },
+    {
+      "rank": 3,
+      "method": "org.jfree.chart.plot.CategoryPlot.draw(Graphics2D",
+      "score": 0.75429
+    },
+    {
+      "rank": 4,
+      "method": "org.jfree.data.statistics.DefaultStatisticalCategoryDataset.getColumnKey(int)",
+      "score": 0.63607
+    },
+    {
+      "rank": 5,
+      "method": "org.jfree.data.KeyedObjects2D.getColumnKey(int)",
+      "score": 0.516681
+    }
+  ]
+}

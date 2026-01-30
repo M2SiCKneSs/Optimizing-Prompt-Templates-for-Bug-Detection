@@ -1,0 +1,186 @@
+### BUG_REPORT
+Title: #141 Bug on withLaterOffsetAtOverlap method
+
+Description:
+The method withLaterOffsetAtOverlap created to workaround the issue 3192457 seems to not be working at all.
+I won´t write many info about the problem to solve because the issue 3192457 have this info indeed.
+But If something is unclear I can answer on the comments.
+Problem demonstration:
+TimeZone.setDefault(TimeZone.getTimeZone("America/Sao_Paulo"));
+DateTimeZone.setDefault( DateTimeZone.forID("America/Sao_Paulo") );
+    DateTime dtch;
+    {
+        dtch = new DateTime(2012,2,25,5,5,5,5).millisOfDay().withMaximumValue();
+        System.out.println( dtch ); // prints: 2012-02-25T23:59:59.999-02:00 //Were are at the first 23:** of the day.
+        //At this point dtch have the -03:00 offset
+    }
+    {
+        dtch = dtch.plus(60001);
+        System.out.println( dtch ); // prints: 2012-02-25T23:01:00.000-03:00 //Were are at the first minute of the second 23:** of the day. Ok its correct
+        //At this point dtch have the -03:00 offset
+    }
+    {
+        dtch = dtch.withEarlierOffsetAtOverlap();
+        System.out.println( dtch ); // prints: 2012-02-25T23:01:00.000-02:00 //Were are at the first minute of the first 23:** of the day. Ok its correct
+        //At this point dtch have the -02:00 offset ( because we called withEarlierOffsetAtOverlap() ) // This method is working perfectly
+    }       
+    {
+        dtch = dtch.withLaterOffsetAtOverlap();
+        System.out.println( dtch ); // prints: 2012-02-25T23:01:00.000-02:00 //Were are at the first minute of the first 23:** of the day. 
+        // Here is the problem we should have a -03:00 offset here since we called withLaterOffsetAtOverlap() expecting to change to the second 23:** of the day
+    }
+
+On the last two brackets we can see that withLaterOffsetAtOverlap is not undoing withEarlierOffsetAtOverlap as it should ( and not even working at all )
+
+
+### FAILING_TEST
+org.joda.time.DateTime.withEarlierOffsetAtOverlap()
+org.joda.time.DateTimeZone.adjustOffset(long,boolean)
+org.joda.time.DateTimeZone.getConvertedId(String)
+org.joda.time.DateTime.withLaterOffsetAtOverlap()
+org.joda.time.DateTimeZone.forID(String)
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.DateTime.withEarlierOffsetAtOverlap()
+------------------------------------------------------------------------------------------
+public DateTime withEarlierOffsetAtOverlap() {
+        long newMillis = getZone().adjustOffset(getMillis(), false);
+        return withMillis(newMillis);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.DateTimeZone.adjustOffset(long,boolean)
+------------------------------------------------------------------------------------------
+public long adjustOffset(long instant, boolean earlierOrLater) {
+        // a bit messy, but will work in all non-pathological cases
+        
+        // evaluate 3 hours before and after to work out if anything is happening
+        long instantBefore = instant - 3 * DateTimeConstants.MILLIS_PER_HOUR;
+        long instantAfter = instant + 3 * DateTimeConstants.MILLIS_PER_HOUR;
+        long offsetBefore = getOffset(instantBefore);
+        long offsetAfter = getOffset(instantAfter);
+        if (offsetBefore <= offsetAfter) {
+            return instant;  // not an overlap (less than is a gap, equal is normal case)
+        }
+        
+        // work out range of instants that have duplicate local times
+        long diff = offsetBefore - offsetAfter;
+        long transition = nextTransition(instantBefore);
+        long overlapStart = transition - diff;
+        long overlapEnd = transition + diff;
+        if (instant < overlapStart || instant >= overlapEnd) {
+          return instant;  // not an overlap
+        }
+        
+        // calculate result
+        long afterStart = instant - overlapStart;
+        if (afterStart >= diff) {
+          // currently in later offset
+          return earlierOrLater ? instant : instant - diff;
+        } else {
+          // currently in earlier offset
+          return earlierOrLater ? instant + diff : instant;
+        }
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.DateTimeZone.getConvertedId(String)
+------------------------------------------------------------------------------------------
+private static synchronized String getConvertedId(String id) {
+        Map<String, String> map = cZoneIdConversion;
+        if (map == null) {
+            // Backwards compatibility with TimeZone.
+            map = new HashMap<String, String>();
+            map.put("GMT", "UTC");
+            map.put("WET", "WET");
+            map.put("CET", "CET");
+            map.put("MET", "CET");
+            map.put("ECT", "CET");
+            map.put("EET", "EET");
+            map.put("MIT", "Pacific/Apia");
+            map.put("HST", "Pacific/Honolulu");  // JDK 1.1 compatible
+            map.put("AST", "America/Anchorage");
+            map.put("PST", "America/Los_Angeles");
+            map.put("MST", "America/Denver");  // JDK 1.1 compatible
+            map.put("PNT", "America/Phoenix");
+            map.put("CST", "America/Chicago");
+            map.put("EST", "America/New_York");  // JDK 1.1 compatible
+            map.put("IET", "America/Indiana/Indianapolis");
+            map.put("PRT", "America/Puerto_Rico");
+            map.put("CNT", "America/St_Johns");
+            map.put("AGT", "America/Argentina/Buenos_Aires");
+            map.put("BET", "America/Sao_Paulo");
+            map.put("ART", "Africa/Cairo");
+            map.put("CAT", "Africa/Harare");
+            map.put("EAT", "Africa/Addis_Ababa");
+            map.put("NET", "Asia/Yerevan");
+            map.put("PLT", "Asia/Karachi");
+            map.put("IST", "Asia/Kolkata");
+            map.put("BST", "Asia/Dhaka");
+            map.put("VST", "Asia/Ho_Chi_Minh");
+            map.put("CTT", "Asia/Shanghai");
+            map.put("JST", "Asia/Tokyo");
+            map.put("ACT", "Australia/Darwin");
+            map.put("AET", "Australia/Sydney");
+            map.put("SST", "Pacific/Guadalcanal");
+            map.put("NST", "Pacific/Auckland");
+            cZoneIdConversion = map;
+        }
+        return map.get(id);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.DateTime.withLaterOffsetAtOverlap()
+------------------------------------------------------------------------------------------
+public DateTime withLaterOffsetAtOverlap() {
+        long newMillis = getZone().adjustOffset(getMillis(), true);
+        return withMillis(newMillis);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.DateTimeZone.forID(String)
+------------------------------------------------------------------------------------------
+@FromString
+    public static DateTimeZone forID(String id) {
+        if (id == null) {
+            return getDefault();
+        }
+        if (id.equals("UTC")) {
+            return DateTimeZone.UTC;
+        }
+        DateTimeZone zone = cProvider.getZone(id);
+        if (zone != null) {
+            return zone;
+        }
+        if (id.startsWith("+") || id.startsWith("-")) {
+            int offset = parseOffset(id);
+            if (offset == 0L) {
+                return DateTimeZone.UTC;
+            } else {
+                id = printOffset(offset);
+                return fixedOffsetZone(id, offset);
+            }
+        }
+        throw new IllegalArgumentException("The datetime zone id '" + id + "' is not recognised");
+    }
+
+------------------------------------------------------------------------------------------
+
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.joda.time.TestDateTimeZoneCutover#testBug3476684_adjustOffset
+Runtime: 7059596
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<2012-02-25T23:15:00.000-03:00> but was:<2012-02-25T23:15:00.000-02:00> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:86) at junit.framework.TestCase.assertEquals(TestCase.java:253) at org.joda.time.TestDateTimeZoneCutover.testBug3476684_adjustOffset(TestDateTimeZoneCutover.java:1259) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

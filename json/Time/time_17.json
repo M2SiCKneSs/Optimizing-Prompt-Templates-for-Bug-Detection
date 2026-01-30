@@ -1,0 +1,31 @@
+{
+  "project": "Time",
+  "bug_id": 17,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.joda.time.DateTime.DateTime(int",
+      "score": 0.990084
+    },
+    {
+      "rank": 2,
+      "method": "org.joda.time.DateTime.withLaterOffsetAtOverlap()",
+      "score": 0.871882
+    },
+    {
+      "rank": 3,
+      "method": "org.joda.time.DateTimeZone.adjustOffset(long",
+      "score": 0.755848
+    },
+    {
+      "rank": 4,
+      "method": "org.joda.time.DateTime.Property.withMinimumValue()",
+      "score": 0.634181
+    },
+    {
+      "rank": 5,
+      "method": "org.joda.time.DateTime.withMillis(long)",
+      "score": 0.516798
+    }
+  ]
+}

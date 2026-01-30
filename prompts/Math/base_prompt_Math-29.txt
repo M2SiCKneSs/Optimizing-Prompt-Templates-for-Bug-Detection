@@ -1,0 +1,134 @@
+### BUG_REPORT
+Title: Bugs in RealVector.ebeMultiply(RealVector) and ebeDivide(RealVector)
+
+Description:
+OpenMapRealVector.ebeMultiply(RealVector) and OpenMapRealVector.ebeDivide(RealVector) return wrong values when one entry of the specified RealVector is nan or infinity. The bug is easy to understand. Here is the current implementation of ebeMultiply
+
+    public OpenMapRealVector ebeMultiply(RealVector v) {
+        checkVectorDimensions(v.getDimension());
+        OpenMapRealVector res = new OpenMapRealVector(this);
+        Iterator iter = entries.iterator();
+        while (iter.hasNext()) {
+            iter.advance();
+            res.setEntry(iter.key(), iter.value() * v.getEntry(iter.key()));
+        }
+        return res;
+    }
+
+
+The assumption is that for any double x, x * 0d == 0d holds, which is not true. The bug is easy enough to identify, but more complex to solve. The only solution I can come up with is to loop through all entries of v (instead of those entries which correspond to non-zero entries of this). I'm afraid about performance losses.
+
+
+### FAILING_TEST
+org.apache.commons.math3.linear.OpenMapRealVector.ebeMultiply(RealVector)
+org.apache.commons.math3.linear.OpenMapRealVector.subtract(OpenMapRealVector)
+org.apache.commons.math3.linear.OpenMapRealVector.toArray()
+org.apache.commons.math3.util.OpenIntToDoubleHashMap.findInsertionIndex(int[],byte[],int,int)
+org.apache.commons.math3.linear.OpenMapRealVector.ebeDivide(RealVector)
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.linear.OpenMapRealVector.ebeMultiply(RealVector)
+------------------------------------------------------------------------------------------
+@Override
+    public OpenMapRealVector ebeMultiply(RealVector v)
+        throws DimensionMismatchException {
+        checkVectorDimensions(v.getDimension());
+        OpenMapRealVector res = new OpenMapRealVector(this);
+        Iterator iter = entries.iterator();
+        while (iter.hasNext()) {
+            iter.advance();
+            res.setEntry(iter.key(), iter.value() * v.getEntry(iter.key()));
+        }
+        /*
+         * MATH-803: the above loop assumes that 0d * x  = 0d for any double x,
+         * which allows to consider only the non-zero entries of this. However,
+         * this fails if this[i] == 0d and (v[i] = NaN or v[i] = Infinity).
+         *
+         * These special cases are handled below.
+         */
+        if (v.isNaN() || v.isInfinite()) {
+            final int n = getDimension();
+            for (int i = 0; i < n; i++) {
+                final double y = v.getEntry(i);
+                if (Double.isNaN(y)) {
+                    res.setEntry(i, Double.NaN);
+                } else if (Double.isInfinite(y)) {
+                    final double x = this.getEntry(i);
+                    res.setEntry(i, x * y);
+                }
+            }
+        }
+        return res;
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.linear.OpenMapRealVector.subtract(OpenMapRealVector)
+------------------------------------------------------------------------------------------
+public OpenMapRealVector subtract(OpenMapRealVector v)
+        throws DimensionMismatchException {
+        checkVectorDimensions(v.getDimension());
+        OpenMapRealVector res = copy();
+        Iterator iter = v.getEntries().iterator();
+        while (iter.hasNext()) {
+            iter.advance();
+            int key = iter.key();
+            if (entries.containsKey(key)) {
+                res.setEntry(key, entries.get(key) - iter.value());
+            } else {
+                res.setEntry(key, -iter.value());
+            }
+        }
+        return res;
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.linear.OpenMapRealVector.toArray()
+------------------------------------------------------------------------------------------
+@Override
+    public double[] toArray() {
+        double[] res = new double[virtualSize];
+        Iterator iter = entries.iterator();
+        while (iter.hasNext()) {
+            iter.advance();
+            res[iter.key()] = iter.value();
+        }
+        return res;
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.util.OpenIntToDoubleHashMap.findInsertionIndex(int[],byte[],int,int)
+------------------------------------------------------------------------------------------
+private int findInsertionIndex(final int key) {
+        return findInsertionIndex(keys, states, key, mask);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.linear.OpenMapRealVector.ebeDivide(RealVector)
+------------------------------------------------------------------------------------------
+@Override
+    public OpenMapRealVector ebeDivide(RealVector v)
+        throws DimensionMismatchException {
+        checkVectorDimensions(v.getDimension());
+        OpenMapRealVector res = new OpenMapRealVector(this);
+        /*
+         * MATH-803: it is not sufficient to loop through non zero entries of
+         * this only. Indeed, if this[i] = 0d and v[i] = 0d, then
+         * this[i] / v[i] = NaN, and not 0d.
+         */
+        final int n = getDimension();
+        for (int i = 0; i < n; i++) {
+            res.setEntry(i, this.getEntry(i) / v.getEntry(i));
+        }
+        return res;
+    }
+
+------------------------------------------------------------------------------------------
+

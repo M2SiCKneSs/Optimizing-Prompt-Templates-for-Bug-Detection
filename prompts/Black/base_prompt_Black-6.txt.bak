@@ -1,0 +1,126 @@
+### TOP_METHODS (Ochiai)
+Source CSV: C:\Users\user\Desktop\uni\mark\FAILING_TEST\Black\black_6_ochiai_top_10.csv
+Source Code File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+
+1. black$WriteBack#from_configuration() | score=0.14433756729740646
+2. black$TargetVersion#is_python2() | score=0.14433756729740646
+3. black$FileMode#get_cache_key() | score=0.14433756729740646
+4. black##supports_feature(target_versions,feature) | score=0.14433756729740646
+5. black##read_pyproject_toml(ctx,param,value) | score=0.14433756729740646
+6. black##main(ctx,code,line_length,target_version,check,diff,fast,pyi,py36,skip_string_normalization,quiet,verbose,include,exclude,src,config) | score=0.14433756729740646
+7. black##reformat_one(src,fast,write_back,mode,report) | score=0.14433756729740646
+8. black##reformat_many(sources,fast,write_back,mode,report) | score=0.14433756729740646
+9. black##schedule_formatting(sources,fast,write_back,mode,report,loop,executor) | score=0.14433756729740646
+10. black##format_file_in_place(src,fast,mode,write_back,lock) | score=0.14433756729740646
+
+### CODE_SNIPPETS
+
+---
+Rank: 1
+Method: black$WriteBack#from_configuration()
+Ochiai_Score: 0.14433756729740646
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: class WriteBack.from_configuration
+Status: OK
+Snippet:
+    def from_configuration(
+        cls, *, check: bool, diff: bool, color: bool = False
+    ) -> "WriteBack":
+        if check and not diff:
+            return cls.CHECK
+
+        if diff and color:
+            return cls.COLOR_DIFF
+
+        return cls.DIFF if diff else cls.YES
+
+---
+Rank: 2
+Method: black$TargetVersion#is_python2()
+Ochiai_Score: 0.14433756729740646
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: class TargetVersion.is_python2
+Status: OK
+Snippet:
+    def is_python2(self) -> bool:
+        return self is TargetVersion.PY27
+
+---
+Rank: 3
+Method: black$FileMode#get_cache_key()
+Ochiai_Score: 0.14433756729740646
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: class FileMode.get_cache_key
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in black.py)
+
+---
+Rank: 4
+Method: black##supports_feature(target_versions,feature)
+Ochiai_Score: 0.14433756729740646
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: #supports_feature
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in black.py)
+
+---
+Rank: 5
+Method: black##read_pyproject_toml(ctx,param,value)
+Ochiai_Score: 0.14433756729740646
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: #read_pyproject_toml
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in black.py)
+
+---
+Rank: 6
+Method: black##main(ctx,code,line_length,target_version,check,diff,fast,pyi,py36,skip_string_normalization,quiet,verbose,include,exclude,src,config)
+Ochiai_Score: 0.14433756729740646
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: #main
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in black.py)
+
+---
+Rank: 7
+Method: black##reformat_one(src,fast,write_back,mode,report)
+Ochiai_Score: 0.14433756729740646
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: #reformat_one
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in black.py)
+
+---
+Rank: 8
+Method: black##reformat_many(sources,fast,write_back,mode,report)
+Ochiai_Score: 0.14433756729740646
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: #reformat_many
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in black.py)
+
+---
+Rank: 9
+Method: black##schedule_formatting(sources,fast,write_back,mode,report,loop,executor)
+Ochiai_Score: 0.14433756729740646
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: #schedule_formatting
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in black.py)
+
+---
+Rank: 10
+Method: black##format_file_in_place(src,fast,mode,write_back,lock)
+Ochiai_Score: 0.14433756729740646
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: #format_file_in_place
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in black.py)

@@ -1,0 +1,201 @@
+### BUG_REPORT
+Title: FastDateParser does not handle unterminated quotes correctly
+
+Description:
+FDP does not handled unterminated quotes the same way as SimpleDateFormat
+For example:
+Format: 'd'd'
+Date: d3
+This should fail to parse the format and date but it actually works.
+The format is parsed as:
+Pattern: d(\p
+{IsNd}
+++)
+
+
+### FAILING_TEST
+org.apache.commons.lang3.time.FastDateParser.parse(String)
+org.apache.commons.lang3.time.FastDateParser.getParsePattern()
+org.apache.commons.lang3.time.FastDateParser.parse(String,ParsePosition)
+org.apache.commons.lang3.time.FastDateParser.getStrategy(String)
+org.apache.commons.lang3.time.FastDateFormat.FastDateFormat(String,TimeZone,Locale)
+org.apache.commons.lang3.time.FastDateParser.getParsePattern()
+org.apache.commons.lang3.time.FastDateParser.NumberStrategy.setCalendar(FastDateParser,Calendar,String)
+org.apache.commons.lang3.time.FastDateParser.NumberStrategy.modify(int)
+org.apache.commons.lang3.time.FastDateParser.parse(String)
+org.apache.commons.lang3.time.FastDateParser.parse(String,ParsePosition)
+
+### CODE_SNIPPETS
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.time.FastDateParser.parse(String)
+------------------------------------------------------------------------------------------
+@Override
+    public Date parse(final String source) throws ParseException {
+        final Date date= parse(source, new ParsePosition(0));
+        if(date==null) {
+            // Add a note re supported date range
+            if (locale.equals(JAPANESE_IMPERIAL)) {
+                throw new ParseException(
+                        "(The " +locale + " locale does not support dates before 1868 AD)\n" +
+                                "Unparseable date: \""+source+"\" does not match "+parsePattern.pattern(), 0);
+            }
+            throw new ParseException("Unparseable date: \""+source+"\" does not match "+parsePattern.pattern(), 0);
+        }
+        return date;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.time.FastDateParser.getParsePattern()
+------------------------------------------------------------------------------------------
+Pattern getParsePattern() {
+        return parsePattern;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.time.FastDateParser.parse(String,ParsePosition)
+------------------------------------------------------------------------------------------
+@Override
+    public Date parse(final String source) throws ParseException {
+        final Date date= parse(source, new ParsePosition(0));
+        if(date==null) {
+            // Add a note re supported date range
+            if (locale.equals(JAPANESE_IMPERIAL)) {
+                throw new ParseException(
+                        "(The " +locale + " locale does not support dates before 1868 AD)\n" +
+                                "Unparseable date: \""+source+"\" does not match "+parsePattern.pattern(), 0);
+            }
+            throw new ParseException("Unparseable date: \""+source+"\" does not match "+parsePattern.pattern(), 0);
+        }
+        return date;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.time.FastDateParser.getStrategy(String)
+------------------------------------------------------------------------------------------
+private Strategy getStrategy(String formatField, final Calendar definingCalendar) {
+        switch(formatField.charAt(0)) {
+        case '\'':
+            if(formatField.length()>2) {
+                formatField= formatField.substring(1, formatField.length()-1);
+            }
+            //$FALL-THROUGH$
+        default:
+            return new CopyQuotedStrategy(formatField);
+        case 'D':
+            return DAY_OF_YEAR_STRATEGY;
+        case 'E':
+            return getLocaleSpecificStrategy(Calendar.DAY_OF_WEEK, definingCalendar);
+        case 'F':
+            return DAY_OF_WEEK_IN_MONTH_STRATEGY;
+        case 'G':
+            return getLocaleSpecificStrategy(Calendar.ERA, definingCalendar);
+        case 'H':
+            return MODULO_HOUR_OF_DAY_STRATEGY;
+        case 'K':
+            return HOUR_STRATEGY;
+        case 'M':
+            return formatField.length()>=3 ?getLocaleSpecificStrategy(Calendar.MONTH, definingCalendar) :NUMBER_MONTH_STRATEGY;
+        case 'S':
+            return MILLISECOND_STRATEGY;
+        case 'W':
+            return WEEK_OF_MONTH_STRATEGY;
+        case 'a':
+            return getLocaleSpecificStrategy(Calendar.AM_PM, definingCalendar);
+        case 'd':
+            return DAY_OF_MONTH_STRATEGY;
+        case 'h':
+            return MODULO_HOUR_STRATEGY;
+        case 'k':
+            return HOUR_OF_DAY_STRATEGY;
+        case 'm':
+            return MINUTE_STRATEGY;
+        case 's':
+            return SECOND_STRATEGY;
+        case 'w':
+            return WEEK_OF_YEAR_STRATEGY;
+        case 'y':
+            return formatField.length()>2 ?LITERAL_YEAR_STRATEGY :ABBREVIATED_YEAR_STRATEGY;
+        case 'Z':
+        case 'z':
+            return getLocaleSpecificStrategy(Calendar.ZONE_OFFSET, definingCalendar);
+        }
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.time.FastDateFormat.FastDateFormat(String,TimeZone,Locale)
+------------------------------------------------------------------------------------------
+protected FastDateFormat(final String pattern, final TimeZone timeZone, final Locale locale) {
+        printer= new FastDatePrinter(pattern, timeZone, locale);
+        parser= new FastDateParser(pattern, timeZone, locale);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.time.FastDateParser.getParsePattern()
+------------------------------------------------------------------------------------------
+Pattern getParsePattern() {
+        return parsePattern;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.time.FastDateParser.NumberStrategy.setCalendar(FastDateParser,Calendar,String)
+------------------------------------------------------------------------------------------
+[NOT FOUND] Source file not found: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Lang\src\main\java\org\apache\commons\lang3\time\FastDateParser\NumberStrategy.java
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.time.FastDateParser.NumberStrategy.modify(int)
+------------------------------------------------------------------------------------------
+[NOT FOUND] Source file not found: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Lang\src\main\java\org\apache\commons\lang3\time\FastDateParser\NumberStrategy.java
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.time.FastDateParser.parse(String)
+------------------------------------------------------------------------------------------
+@Override
+    public Date parse(final String source) throws ParseException {
+        final Date date= parse(source, new ParsePosition(0));
+        if(date==null) {
+            // Add a note re supported date range
+            if (locale.equals(JAPANESE_IMPERIAL)) {
+                throw new ParseException(
+                        "(The " +locale + " locale does not support dates before 1868 AD)\n" +
+                                "Unparseable date: \""+source+"\" does not match "+parsePattern.pattern(), 0);
+            }
+            throw new ParseException("Unparseable date: \""+source+"\" does not match "+parsePattern.pattern(), 0);
+        }
+        return date;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.time.FastDateParser.parse(String,ParsePosition)
+------------------------------------------------------------------------------------------
+@Override
+    public Date parse(final String source) throws ParseException {
+        final Date date= parse(source, new ParsePosition(0));
+        if(date==null) {
+            // Add a note re supported date range
+            if (locale.equals(JAPANESE_IMPERIAL)) {
+                throw new ParseException(
+                        "(The " +locale + " locale does not support dates before 1868 AD)\n" +
+                                "Unparseable date: \""+source+"\" does not match "+parsePattern.pattern(), 0);
+            }
+            throw new ParseException("Unparseable date: \""+source+"\" does not match "+parsePattern.pattern(), 0);
+        }
+        return date;
+    }
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.apache.commons.lang3.time.FastDateFormat_ParserTest#testLANG_832
+Runtime: 3922098
+------------------------------------------------------------------------------------------
+java.lang.AssertionError: Parsed dates should be equal expected:<null> but was:<Fri Jan 02 21:00:00 PST 1970> at org.junit.Assert.fail(Assert.java:88) at org.junit.Assert.failNotEquals(Assert.java:834) at org.junit.Assert.assertEquals(Assert.java:118) at org.apache.commons.lang3.time.FastDateParserTest.testSdfAndFdp(FastDateParserTest.java:387) at org.apache.commons.lang3.time.FastDateParserTest.testLANG_832(FastDateParserTest.java:342) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #2
+Test: org.apache.commons.lang3.time.FastDateParserTest#testLANG_832
+Runtime: 1289162
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: Expected FDF failure

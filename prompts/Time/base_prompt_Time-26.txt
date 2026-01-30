@@ -1,0 +1,261 @@
+### BUG_REPORT
+Title: #60 .withHourOfDay() sets hour inconsistantly on DST transition.
+
+Description:
+When the hour of day is set to the ambiguous hour on the daylight to
+standard time transition in a given time zone the result is inconsistent for different time zones. Shoul the hour be set to the
+daylight hour or the standard hour for all time zones? I can't find anything
+that documents this behavior.
+My test code below returns different results for different time zones.
+/
+ Verify Joda converts the hour of day the same for regions north and
+south of the equator on the DST daylight to standard time transition.
+*/
+@Test
+public void jodaTest ()
+{
+Chronology chronUTC =
+GregorianChronology.getInstance(DateTimeZone.UTC);
+DateTime usCentralStandardInUTC = new DateTime(2008, 11, 2, 7, 0, 0,
+0, chronUTC);
+DateTime usCentralDaylightInUTC = new DateTime(2008, 11, 2, 6, 0, 0,
+0, chronUTC);
+Chronology chronUSCentral =
+GregorianChronology.getInstance(DateTimeZone.forID("US/Central"));
+Assert.assertTrue("Should be standard time",
+chronUSCentral.getZone().isStandardOffset(
+usCentralStandardInUTC.getMillis()));
+Assert.assertFalse("Should be daylight time",
+chronUSCentral.getZone().isStandardOffset(
+usCentralDaylightInUTC.getMillis()));
+DateTime usCentralStandardInUSCentral =
+usCentralStandardInUTC.toDateTime(chronUSCentral);
+DateTime usCentralDaylightInUSCentral =
+usCentralDaylightInUTC.toDateTime(chronUSCentral);
+assertEquals(1, usCentralStandardInUSCentral.getHourOfDay());
+assertEquals(usCentralStandardInUSCentral.getHourOfDay(),
+usCentralDaylightInUSCentral.getHourOfDay());
+Assert.assertTrue(usCentralStandardInUSCentral.getMillis() !=
+usCentralDaylightInUSCentral.getMillis());
+DateTime australiaNSWStandardInUTC = new DateTime(2008, 4, 5, 16, 0,
+0, 0, chronUTC);
+DateTime australiaNSWDaylightInUTC = new DateTime(2008, 4, 5, 15, 0,
+0, 0, chronUTC);
+Chronology chronAusNSW =
+GregorianChronology.getInstance(DateTimeZone.forID("Australia/NSW"));
+Assert.assertTrue("Should be standard time",
+chronAusNSW.getZone().isStandardOffset(
+australiaNSWStandardInUTC.getMillis()));
+Assert.assertFalse("Should be daylight time",
+chronAusNSW.getZone().isStandardOffset(
+australiaNSWDaylightInUTC.getMillis()));
+DateTime australiaNSWStandardInAustraliaNSW =
+australiaNSWStandardInUTC.toDateTime(chronAusNSW);
+DateTime australiaNSWDaylightInAusraliaNSW =
+australiaNSWDaylightInUTC.toDateTime(chronAusNSW);
+assertEquals(2, australiaNSWStandardInAustraliaNSW.getHourOfDay());
+assertEquals(australiaNSWStandardInAustraliaNSW.getHourOfDay(),
+australiaNSWDaylightInAusraliaNSW.getHourOfDay());
+Assert.assertTrue(australiaNSWStandardInAustraliaNSW.getMillis() !=
+australiaNSWDaylightInAusraliaNSW.getMillis());
+// Verify that setting the hour of day on the DST boundary results
+in a daylight time for
+// both time zones.
+assertEquals(usCentralDaylightInUSCentral,
+usCentralStandardInUSCentral.withHourOfDay(1));
+assertEquals(australiaNSWDaylightInAusraliaNSW,
+australiaNSWStandardInAustraliaNSW.withHourOfDay(2));
+}
+The very last assertion fails on the Australia time zone cutover.
+java.lang.AssertionError: expected:<2008-04-06T02:00:00.000+11:00> but
+was:<2008-04-06T02:00:00.000+10:00>
+
+
+### FAILING_TEST
+org.joda.time.tz.ZoneInfoProvider.getZone(String)
+org.joda.time.tz.DateTimeZoneBuilder.buildFixedZone(String,String,int,int)
+org.joda.time.DateTime.withMinuteOfHour(int)
+org.joda.time.DateTimeZone.getConvertedId(String)
+org.joda.time.DateTime.withHourOfDay(int)
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.tz.ZoneInfoProvider.getZone(String)
+------------------------------------------------------------------------------------------
+public DateTimeZone getZone(String id) {
+        if (id == null) {
+            return null;
+        }
+
+        Object obj = iZoneInfoMap.get(id);
+        if (obj == null) {
+            return null;
+        }
+
+        if (id.equals(obj)) {
+            // Load zone data for the first time.
+            return loadZoneData(id);
+        }
+
+        if (obj instanceof SoftReference<?>) {
+            @SuppressWarnings("unchecked")
+            SoftReference<DateTimeZone> ref = (SoftReference<DateTimeZone>) obj;
+            DateTimeZone tz = ref.get();
+            if (tz != null) {
+                return tz;
+            }
+            // Reference cleared; load data again.
+            return loadZoneData(id);
+        }
+
+        // If this point is reached, mapping must link to another.
+        return getZone((String)obj);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.tz.DateTimeZoneBuilder.buildFixedZone(String,String,int,int)
+------------------------------------------------------------------------------------------
+private static DateTimeZone buildFixedZone(String id, String nameKey,
+                                               int wallOffset, int standardOffset) {
+        if ("UTC".equals(id) && id.equals(nameKey) &&
+            wallOffset == 0 && standardOffset == 0) {
+            return DateTimeZone.UTC;
+        }
+        return new FixedDateTimeZone(id, nameKey, wallOffset, standardOffset);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.DateTime.withMinuteOfHour(int)
+------------------------------------------------------------------------------------------
+public DateTime withMinuteOfHour(int minute) {
+        return withMillis(getChronology().minuteOfHour().set(getMillis(), minute));
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.DateTimeZone.getConvertedId(String)
+------------------------------------------------------------------------------------------
+private static synchronized String getConvertedId(String id) {
+        Map<String, String> map = cZoneIdConversion;
+        if (map == null) {
+            // Backwards compatibility with TimeZone.
+            map = new HashMap<String, String>();
+            map.put("GMT", "UTC");
+            map.put("WET", "WET");
+            map.put("CET", "CET");
+            map.put("MET", "CET");
+            map.put("ECT", "CET");
+            map.put("EET", "EET");
+            map.put("MIT", "Pacific/Apia");
+            map.put("HST", "Pacific/Honolulu");  // JDK 1.1 compatible
+            map.put("AST", "America/Anchorage");
+            map.put("PST", "America/Los_Angeles");
+            map.put("MST", "America/Denver");  // JDK 1.1 compatible
+            map.put("PNT", "America/Phoenix");
+            map.put("CST", "America/Chicago");
+            map.put("EST", "America/New_York");  // JDK 1.1 compatible
+            map.put("IET", "America/Indiana/Indianapolis");
+            map.put("PRT", "America/Puerto_Rico");
+            map.put("CNT", "America/St_Johns");
+            map.put("AGT", "America/Argentina/Buenos_Aires");
+            map.put("BET", "America/Sao_Paulo");
+            map.put("ART", "Africa/Cairo");
+            map.put("CAT", "Africa/Harare");
+            map.put("EAT", "Africa/Addis_Ababa");
+            map.put("NET", "Asia/Yerevan");
+            map.put("PLT", "Asia/Karachi");
+            map.put("IST", "Asia/Kolkata");
+            map.put("BST", "Asia/Dhaka");
+            map.put("VST", "Asia/Ho_Chi_Minh");
+            map.put("CTT", "Asia/Shanghai");
+            map.put("JST", "Asia/Tokyo");
+            map.put("ACT", "Australia/Darwin");
+            map.put("AET", "Australia/Sydney");
+            map.put("SST", "Pacific/Guadalcanal");
+            map.put("NST", "Pacific/Auckland");
+            cZoneIdConversion = map;
+        }
+        return map.get(id);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.DateTime.withHourOfDay(int)
+------------------------------------------------------------------------------------------
+public DateTime withHourOfDay(int hour) {
+        return withMillis(getChronology().hourOfDay().set(getMillis(), hour));
+    }
+
+------------------------------------------------------------------------------------------
+
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.joda.time.TestDateTimeZoneCutover#testBug2182444_ausNSW
+Runtime: 6733296
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<2008-04-06T02:00:00.000+11:00> but was:<2008-04-06T02:00:00.000+10:00> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:86) at junit.framework.TestCase.assertEquals(TestCase.java:253) at org.joda.time.TestDateTimeZoneCutover.testBug2182444_ausNSW(TestDateTimeZoneCutover.java:1187) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #2
+Test: org.joda.time.TestDateTimeZoneCutover#testBug2182444_usCentral
+Runtime: 6314810
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<2008-11-02T01:00:00.000-06:00> but was:<2008-11-02T01:00:00.000-05:00> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:86) at junit.framework.TestCase.assertEquals(TestCase.java:253) at org.joda.time.TestDateTimeZoneCutover.testBug2182444_usCentral(TestDateTimeZoneCutover.java:1166) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #3
+Test: org.joda.time.TestDateTimeZoneCutover#testWithHourOfDayInDstChange
+Runtime: 8213193
+------------------------------------------------------------------------------------------
+junit.framework.ComparisonFailure: expected:<...10-31T02:30:10.123+0[2]:00> but was:<...10-31T02:30:10.123+0[1]:00> at junit.framework.Assert.assertEquals(Assert.java:100) at junit.framework.Assert.assertEquals(Assert.java:107) at junit.framework.TestCase.assertEquals(TestCase.java:269) at org.joda.time.TestDateTimeZoneCutover.testWithHourOfDayInDstChange(TestDateTimeZoneCutover.java:1087) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #4
+Test: org.joda.time.TestDateTimeZoneCutover#testWithMillisOfSecondInDstChange_NewYork_winter
+Runtime: 8222652
+------------------------------------------------------------------------------------------
+junit.framework.ComparisonFailure: expected:<...11-04T01:30:00.000-0[5]:00> but was:<...11-04T01:30:00.000-0[4]:00> at junit.framework.Assert.assertEquals(Assert.java:100) at junit.framework.Assert.assertEquals(Assert.java:107) at junit.framework.TestCase.assertEquals(TestCase.java:269) at org.joda.time.TestDateTimeZoneCutover.testWithMillisOfSecondInDstChange_NewYork_winter(TestDateTimeZoneCutover.java:1129) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #5
+Test: org.joda.time.TestDateTimeZoneCutover#testWithMillisOfSecondInDstChange_Paris_summer
+Runtime: 26665302
+------------------------------------------------------------------------------------------
+junit.framework.ComparisonFailure: expected:<...10-31T02:30:10.000+0[2]:00> but was:<...10-31T02:30:10.000+0[1]:00> at junit.framework.Assert.assertEquals(Assert.java:100) at junit.framework.Assert.assertEquals(Assert.java:107) at junit.framework.TestCase.assertEquals(TestCase.java:269) at org.joda.time.TestDateTimeZoneCutover.testWithMillisOfSecondInDstChange_Paris_summer(TestDateTimeZoneCutover.java:1108) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #6
+Test: org.joda.time.TestDateTimeZoneCutover#testWithMinuteOfHourInDstChange
+Runtime: 8879063
+------------------------------------------------------------------------------------------
+junit.framework.ComparisonFailure: expected:<...10-31T02:00:10.123+0[2]:00> but was:<...10-31T02:00:10.123+0[1]:00> at junit.framework.Assert.assertEquals(Assert.java:100) at junit.framework.Assert.assertEquals(Assert.java:107) at junit.framework.TestCase.assertEquals(TestCase.java:269) at org.joda.time.TestDateTimeZoneCutover.testWithMinuteOfHourInDstChange(TestDateTimeZoneCutover.java:1094) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #7
+Test: org.joda.time.TestDateTimeZoneCutover#testWithMinuteOfHourInDstChange_mockZone
+Runtime: 6879160
+------------------------------------------------------------------------------------------
+junit.framework.ComparisonFailure: expected:<...10-31T01:30:00.000+0[1:0]0> but was:<...10-31T01:30:00.000+0[0:3]0> at junit.framework.Assert.assertEquals(Assert.java:100) at junit.framework.Assert.assertEquals(Assert.java:107) at junit.framework.TestCase.assertEquals(TestCase.java:269) at org.joda.time.TestDateTimeZoneCutover.testWithMinuteOfHourInDstChange_mockZone(TestDateTimeZoneCutover.java:1073) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #8
+Test: org.joda.time.TestDateTimeZoneCutover#testWithSecondOfMinuteInDstChange
+Runtime: 9074410
+------------------------------------------------------------------------------------------
+junit.framework.ComparisonFailure: expected:<...10-31T02:30:00.123+0[2]:00> but was:<...10-31T02:30:00.123+0[1]:00> at junit.framework.Assert.assertEquals(Assert.java:100) at junit.framework.Assert.assertEquals(Assert.java:107) at junit.framework.TestCase.assertEquals(TestCase.java:269) at org.joda.time.TestDateTimeZoneCutover.testWithSecondOfMinuteInDstChange(TestDateTimeZoneCutover.java:1101) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #9
+Test: org.joda.time.TestPeriodType#testForFields4
+Runtime: 780134
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<true> but was:<false> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:174) at junit.framework.Assert.assertEquals(Assert.java:181) at junit.framework.TestCase.assertEquals(TestCase.java:341) at org.joda.time.TestPeriodType.testForFields4(TestPeriodType.java:534) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

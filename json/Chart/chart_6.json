@@ -1,0 +1,31 @@
+{
+  "project": "Chart",
+  "bug_id": 6,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.jfree.chart.util.SerialUtilities.readShape(ObjectInputStream)",
+      "score": 0.991075
+    },
+    {
+      "rank": 2,
+      "method": "org.jfree.chart.util.ShapeList.equals(Object)",
+      "score": 0.871817
+    },
+    {
+      "rank": 3,
+      "method": "org.jfree.chart.util.AbstractObjectList.size()",
+      "score": 0.753111
+    },
+    {
+      "rank": 4,
+      "method": "org.jfree.chart.util.AbstractObjectList.set(int",
+      "score": 0.636597
+    },
+    {
+      "rank": 5,
+      "method": "org.jfree.chart.util.AbstractObjectList.get(int)",
+      "score": 0.514715
+    }
+  ]
+}

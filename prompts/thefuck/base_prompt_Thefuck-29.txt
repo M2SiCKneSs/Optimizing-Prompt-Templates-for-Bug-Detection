@@ -1,0 +1,67 @@
+### TOP_METHODS (Ochiai)
+1. thefuck.utils##decorator(fn) | score=0.8164965809277261
+2. thefuck.utils##wrapper(command,settings) | score=0.8164965809277261
+3. thefuck.conf##get_settings(user_dir) | score=0.06318240236065635
+4. thefuck.conf$_DefaultRulesNames#__add__(items) | score=0.06318240236065635
+5. thefuck.conf$_DefaultRulesNames#__contains__(item) | score=0.06318240236065635
+
+
+### CODE_SNIPPETS
+
+
+
+---
+Rank: 1
+Method: thefuck.utils##decorator(fn)
+Ochiai_Score: 0.8164965809277261
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\utils.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+
+---
+Rank: 2
+Method: thefuck.utils##wrapper(command,settings)
+Ochiai_Score: 0.8164965809277261
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\utils.py
+Status: OK
+Snippet:
+    def wrapper(*args, **kwargs):
+        if not memoize.disabled:
+            key = pickle.dumps((args, kwargs))
+            if key not in memo:
+                memo[key] = fn(*args, **kwargs)
+            value = memo[key]
+        else:
+            # Memoize is disabled, call the function
+            value = fn(*args, **kwargs)
+
+        return value
+
+
+---
+Rank: 3
+Method: thefuck.conf##get_settings(user_dir)
+Ochiai_Score: 0.06318240236065635
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\conf.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+
+---
+Rank: 4
+Method: thefuck.conf$_DefaultRulesNames#__add__(items)
+Ochiai_Score: 0.06318240236065635
+Status: PARSE_ERROR
+Error: Unexpected method format (missing ##): thefuck.conf$_DefaultRulesNames#__add__(items)
+
+
+---
+Rank: 5
+Method: thefuck.conf$_DefaultRulesNames#__contains__(item)
+Ochiai_Score: 0.06318240236065635
+Status: PARSE_ERROR
+Error: Unexpected method format (missing ##): thefuck.conf$_DefaultRulesNames#__contains__(item)
+

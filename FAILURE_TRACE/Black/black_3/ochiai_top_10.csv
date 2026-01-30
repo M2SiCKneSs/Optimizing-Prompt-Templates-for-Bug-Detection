@@ -1,0 +1,11 @@
+Method,Ochiai_Score
+black$WriteBack#from_configuration(),0.09090909090909091
+black$TargetVersion#is_python2(),0.09090909090909091
+black$Mode#get_cache_key(),0.09090909090909091
+"black##supports_feature(target_versions,feature)",0.09090909090909091
+black##find_pyproject_toml(path_search_start),0.09090909090909091
+black##parse_pyproject_toml(path_config),0.09090909090909091
+"black##read_pyproject_toml(ctx,param,value)",0.09090909090909091
+"black##target_version_option_callback(c,p,v)",0.09090909090909091
+"black##main(ctx,code,line_length,target_version,check,diff,fast,pyi,py36,skip_string_normalization,quiet,verbose,include,exclude,src,config)",0.09090909090909091
+"black##path_empty(src,quiet,verbose,ctx)",0.09090909090909091

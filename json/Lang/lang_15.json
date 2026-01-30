@@ -1,0 +1,31 @@
+{
+  "project": "Lang",
+  "bug_id": 15,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.lang3.reflect.TypeUtils.determineTypeArguments(Class<?>",
+      "score": 0.995706
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.lang3.reflect.TypeUtils.getClosestParentType(Class<?>",
+      "score": 0.876858
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.lang3.reflect.TypeUtils.getTypeArguments(Type",
+      "score": 0.759755
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.lang3.reflect.TypeUtils.mapTypeVariablesToArguments(Class<T>",
+      "score": 0.631049
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.lang3.text.translate.EntityArrays.ISO8859_1_ESCAPE()",
+      "score": 0.513783
+    }
+  ]
+}

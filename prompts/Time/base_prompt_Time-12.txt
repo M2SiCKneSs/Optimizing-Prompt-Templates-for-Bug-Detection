@@ -1,0 +1,143 @@
+### BUG_REPORT
+Title: Check Calendar.ERA in LocalDate.fromCalendarFields
+
+Description:
+No description provided.
+
+
+### FAILING_TEST
+org.joda.time.LocalDate.fromCalendarFields(Calendar)
+org.joda.time.LocalDateTime.fromCalendarFields(Calendar)
+org.joda.time.LocalDateTime.isSupported(DateTimeFieldType)
+org.joda.time.format.DateTimeFormatterBuilder.appendCenturyOfEra(int,int)
+org.joda.time.format.DateTimeFormatterBuilder.appendYear(int,int)
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.LocalDate.fromCalendarFields(Calendar)
+------------------------------------------------------------------------------------------
+public static LocalDate fromCalendarFields(Calendar calendar) {
+        if (calendar == null) {
+            throw new IllegalArgumentException("The calendar must not be null");
+        }
+        int era = calendar.get(Calendar.ERA);
+        int yearOfEra = calendar.get(Calendar.YEAR);
+        return new LocalDate(
+            (era == GregorianCalendar.AD ? yearOfEra : 1 - yearOfEra),
+            calendar.get(Calendar.MONTH) + 1,
+            calendar.get(Calendar.DAY_OF_MONTH)
+        );
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.LocalDateTime.fromCalendarFields(Calendar)
+------------------------------------------------------------------------------------------
+public static LocalDateTime fromCalendarFields(Calendar calendar) {
+        if (calendar == null) {
+            throw new IllegalArgumentException("The calendar must not be null");
+        }
+        int era = calendar.get(Calendar.ERA);
+        int yearOfEra = calendar.get(Calendar.YEAR);
+        return new LocalDateTime(
+            (era == GregorianCalendar.AD ? yearOfEra : 1 - yearOfEra),
+            calendar.get(Calendar.MONTH) + 1,
+            calendar.get(Calendar.DAY_OF_MONTH),
+            calendar.get(Calendar.HOUR_OF_DAY),
+            calendar.get(Calendar.MINUTE),
+            calendar.get(Calendar.SECOND),
+            calendar.get(Calendar.MILLISECOND)
+        );
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.LocalDateTime.isSupported(DateTimeFieldType)
+------------------------------------------------------------------------------------------
+public boolean isSupported(DateTimeFieldType type) {
+        if (type == null) {
+            return false;
+        }
+        return type.getField(getChronology()).isSupported();
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.format.DateTimeFormatterBuilder.appendCenturyOfEra(int,int)
+------------------------------------------------------------------------------------------
+public DateTimeFormatterBuilder appendCenturyOfEra(int minDigits, int maxDigits) {
+        return appendSignedDecimal(DateTimeFieldType.centuryOfEra(), minDigits, maxDigits);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.format.DateTimeFormatterBuilder.appendYear(int,int)
+------------------------------------------------------------------------------------------
+public DateTimeFormatterBuilder appendYear(int minDigits, int maxDigits) {
+        return appendSignedDecimal(DateTimeFieldType.year(), minDigits, maxDigits);
+    }
+
+------------------------------------------------------------------------------------------
+
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.joda.time.TestLocalDateTime_Constructors#testFactory_fromCalendarFields_beforeYearZero1
+Runtime: 4163204
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<0000-02-03T04:05:06.007> but was:<0001-02-03T04:05:06.007> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:86) at junit.framework.TestCase.assertEquals(TestCase.java:253) at org.joda.time.TestLocalDateTime_Constructors.testFactory_fromCalendarFields_beforeYearZero1(TestLocalDateTime_Constructors.java:117) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #2
+Test: org.joda.time.TestLocalDateTime_Constructors#testFactory_fromCalendarFields_beforeYearZero3
+Runtime: 2131445
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<-0002-02-03T04:05:06.007> but was:<0003-02-03T04:05:06.007> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:86) at junit.framework.TestCase.assertEquals(TestCase.java:253) at org.joda.time.TestLocalDateTime_Constructors.testFactory_fromCalendarFields_beforeYearZero3(TestLocalDateTime_Constructors.java:125) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #3
+Test: org.joda.time.TestLocalDateTime_Constructors#testFactory_fromDateFields_beforeYearZero1
+Runtime: 2235842
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<0000-02-03T04:05:06.007> but was:<0001-02-03T04:05:06.007> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:86) at junit.framework.TestCase.assertEquals(TestCase.java:253) at org.joda.time.TestLocalDateTime_Constructors.testFactory_fromDateFields_beforeYearZero1(TestLocalDateTime_Constructors.java:155) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #4
+Test: org.joda.time.TestLocalDateTime_Constructors#testFactory_fromDateFields_beforeYearZero3
+Runtime: 2183804
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<-0002-02-03T04:05:06.007> but was:<0003-02-03T04:05:06.007> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:86) at junit.framework.TestCase.assertEquals(TestCase.java:253) at org.joda.time.TestLocalDateTime_Constructors.testFactory_fromDateFields_beforeYearZero3(TestLocalDateTime_Constructors.java:163) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #5
+Test: org.joda.time.TestLocalDate_Constructors#testFactory_fromCalendarFields_beforeYearZero1
+Runtime: 2091982
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<0000-02-03> but was:<0001-02-03> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:86) at junit.framework.TestCase.assertEquals(TestCase.java:253) at org.joda.time.TestLocalDate_Constructors.testFactory_fromCalendarFields_beforeYearZero1(TestLocalDate_Constructors.java:109) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #6
+Test: org.joda.time.TestLocalDate_Constructors#testFactory_fromCalendarFields_beforeYearZero3
+Runtime: 1893779
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<-0002-02-03> but was:<0003-02-03> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:86) at junit.framework.TestCase.assertEquals(TestCase.java:253) at org.joda.time.TestLocalDate_Constructors.testFactory_fromCalendarFields_beforeYearZero3(TestLocalDate_Constructors.java:117) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #7
+Test: org.joda.time.TestLocalDate_Constructors#testFactory_fromDateFields_beforeYearZero1
+Runtime: 1834547
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<0000-02-03> but was:<0001-02-03> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:86) at junit.framework.TestCase.assertEquals(TestCase.java:253) at org.joda.time.TestLocalDate_Constructors.testFactory_fromDateFields_beforeYearZero1(TestLocalDate_Constructors.java:147) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #8
+Test: org.joda.time.TestLocalDate_Constructors#testFactory_fromDateFields_beforeYearZero3
+Runtime: 1812086
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<-0002-02-03> but was:<0003-02-03> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:86) at junit.framework.TestCase.assertEquals(TestCase.java:253) at org.joda.time.TestLocalDate_Constructors.testFactory_fromDateFields_beforeYearZero3(TestLocalDate_Constructors.java:155) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

@@ -1,0 +1,119 @@
+### TOP_METHODS (Ochiai)
+Source CSV: C:\Users\user\Desktop\uni\mark\FAILING_TEST\Thefuck\thefuck_25_ochiai_top_10.csv
+
+1. thefuck.rules.mkdir_p##get_new_command(command,settings) | score=0.3481553119113957
+2. thefuck.rules.mkdir_p##match(command,settings) | score=0.3481553119113957
+3. thefuck.main##print_alias(entry_point) | score=0.2581988897471611
+4. thefuck.main##fix_command() | score=0.2581988897471611
+5. thefuck.main##main() | score=0.2581988897471611
+6. thefuck.main##wait_output(settings,popen) | score=0.2581988897471611
+7. thefuck.main##setup_user_dir() | score=0.2581988897471611
+8. thefuck.main##get_command(settings,args) | score=0.2581988897471611
+9. thefuck.main##run_command(old_cmd,command,settings) | score=0.2581988897471611
+10. thefuck.corrector##get_corrected_commands(command,user_dir,settings) | score=0.14907119849998599
+
+### CODE_SNIPPETS
+
+---
+Rank: 1
+Method: thefuck.rules.mkdir_p##get_new_command(command,settings)
+Ochiai_Score: 0.3481553119113957
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\rules\mkdir_p.py
+Status: OK
+Snippet:
+def get_new_command(command):
+    return re.sub('\\bmkdir (.*)', 'mkdir -p \\1', command.script)
+
+---
+Rank: 2
+Method: thefuck.rules.mkdir_p##match(command,settings)
+Ochiai_Score: 0.3481553119113957
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\rules\mkdir_p.py
+Status: OK
+Snippet:
+def match(command):
+    return ('mkdir' in command.script
+            and 'No such file or directory' in command.output)
+
+---
+Rank: 3
+Method: thefuck.main##print_alias(entry_point)
+Ochiai_Score: 0.2581988897471611
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\main.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+---
+Rank: 4
+Method: thefuck.main##fix_command()
+Ochiai_Score: 0.2581988897471611
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\main.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+---
+Rank: 5
+Method: thefuck.main##main()
+Ochiai_Score: 0.2581988897471611
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\main.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+---
+Rank: 6
+Method: thefuck.main##wait_output(settings,popen)
+Ochiai_Score: 0.2581988897471611
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\main.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+---
+Rank: 7
+Method: thefuck.main##setup_user_dir()
+Ochiai_Score: 0.2581988897471611
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\main.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+---
+Rank: 8
+Method: thefuck.main##get_command(settings,args)
+Ochiai_Score: 0.2581988897471611
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\main.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+---
+Rank: 9
+Method: thefuck.main##run_command(old_cmd,command,settings)
+Ochiai_Score: 0.2581988897471611
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\main.py
+Status: NOT_FOUND
+Snippet:
+(Could not locate function definition in resolved file.)
+
+---
+Rank: 10
+Method: thefuck.corrector##get_corrected_commands(command,user_dir,settings)
+Ochiai_Score: 0.14907119849998599
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\thefuckCODE\thefuck\corrector.py
+Status: OK
+Snippet:
+def get_corrected_commands(command):
+    """Returns generator with sorted and unique corrected commands.
+
+    :type command: thefuck.types.Command
+    :rtype: Iterable[thefuck.types.CorrectedCommand]
+
+    """
+    corrected_commands = (
+        corrected for rule in get_rules()
+        if rule.is_match(command)
+        for corrected in rule.get_corrected_commands(command))
+    return organize_commands(corrected_commands)

@@ -1,0 +1,31 @@
+{
+  "project": "Lang",
+  "bug_id": 10,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.lang3.time.FastDateParser.escapeRegex(java.lang.StringBuilder",
+      "score": 0.998704
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.lang3.time.FastDateFormat.FastDateFormat(String",
+      "score": 0.871009
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.lang3.time.FastDateParser.escapeRegex(StringBuilder",
+      "score": 0.75681
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.lang3.time.FastDateParser.FastDateParser(String",
+      "score": 0.638072
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.lang3.time.FastDateParser.equals(Object)",
+      "score": 0.513187
+    }
+  ]
+}

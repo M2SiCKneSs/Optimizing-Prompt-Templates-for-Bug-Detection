@@ -1,0 +1,17 @@
+name,outcome,runtime,stacktrace
+org.apache.commons.math.fraction.FractionFormatTest#testDenominatorFormat,PASS,35207203,
+org.apache.commons.math.fraction.FractionFormatTest#testFormat,PASS,1946094,
+org.apache.commons.math.fraction.FractionFormatTest#testFormatImproper,PASS,1082798,
+org.apache.commons.math.fraction.FractionFormatTest#testFormatImproperNegative,PASS,1245222,
+org.apache.commons.math.fraction.FractionFormatTest#testFormatNegative,PASS,1119026,
+org.apache.commons.math.fraction.FractionFormatTest#testFormatZero,PASS,1341883,
+org.apache.commons.math.fraction.FractionFormatTest#testNumeratorFormat,PASS,688971,
+org.apache.commons.math.fraction.FractionFormatTest#testParse,PASS,1143322,
+org.apache.commons.math.fraction.FractionFormatTest#testParseInteger,PASS,1026552,
+org.apache.commons.math.fraction.FractionFormatTest#testParseInvalid,PASS,1140386,
+org.apache.commons.math.fraction.FractionFormatTest#testParseInvalidDenominator,PASS,683670,
+org.apache.commons.math.fraction.FractionFormatTest#testParseNegative,PASS,1120960,
+org.apache.commons.math.fraction.FractionFormatTest#testParseProper,PASS,1165082,
+org.apache.commons.math.fraction.FractionFormatTest#testParseProperInvalidMinus,FAIL,1638679,junit.framework.AssertionFailedError: invalid minus in improper fraction. at junit.framework.Assert.fail(Assert.java:57) at junit.framework.TestCase.fail(TestCase.java:227) at org.apache.commons.math.fraction.FractionFormatTest.testParseProperInvalidMinus(FractionFormatTest.java:236) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+org.apache.commons.math.fraction.FractionFormatTest#testParseProperNegative,PASS,1043604,
+org.apache.commons.math.fraction.FractionFormatTest#testWholeFormat,PASS,596537,

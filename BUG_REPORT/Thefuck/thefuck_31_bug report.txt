@@ -1,0 +1,9 @@
+Fix the git_diff_staged rule
+The problem was:
+```
+% git add foo
+% git diff foo
+% fuck
+git diff foo --staged [enter/ctrl+c]
+fatal: bad flag '--staged' used after filename
+```

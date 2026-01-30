@@ -1,0 +1,72 @@
+### BUG_REPORT
+Title: RandomStringUtils throws confusing IAE when end &lt;= start
+
+Description:
+RandomUtils invokes Random#nextInt where n = end - start.
+If end <= start, then Random throws:
+java.lang.IllegalArgumentException: n must be positive
+This is confusing, and does not identify the source of the problem.
+
+
+### FAILING_TEST
+org.apache.commons.lang3.RandomStringUtils.random(int,int,int,boolean,boolean,char[],Random)
+org.apache.commons.lang3.RandomStringUtils.random(int,int,int,boolean,boolean,char)
+org.apache.commons.lang3.RandomStringUtils.random(int,int,int,boolean,boolean)
+org.apache.commons.lang3.RandomStringUtils.random(int,String)
+org.apache.commons.lang3.RandomStringUtils.random(int,char)
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.RandomStringUtils.random(int,int,int,boolean,boolean,char[],Random)
+------------------------------------------------------------------------------------------
+public static String random(final int count) {
+        return random(count, false, false);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.RandomStringUtils.random(int,int,int,boolean,boolean,char)
+------------------------------------------------------------------------------------------
+public static String random(final int count) {
+        return random(count, false, false);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.RandomStringUtils.random(int,int,int,boolean,boolean)
+------------------------------------------------------------------------------------------
+public static String random(final int count) {
+        return random(count, false, false);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.RandomStringUtils.random(int,String)
+------------------------------------------------------------------------------------------
+public static String random(final int count) {
+        return random(count, false, false);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.RandomStringUtils.random(int,char)
+------------------------------------------------------------------------------------------
+public static String random(final int count) {
+        return random(count, false, false);
+    }
+
+------------------------------------------------------------------------------------------
+
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.apache.commons.lang3.RandomStringUtilsTest#testLANG807
+Runtime: 1278261
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: Message (bound must be positive) must contain 'start' at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.assertTrue(Assert.java:22) at junit.framework.TestCase.assertTrue(TestCase.java:192) at org.apache.commons.lang3.RandomStringUtilsTest.testLANG807(RandomStringUtilsTest.java:139) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

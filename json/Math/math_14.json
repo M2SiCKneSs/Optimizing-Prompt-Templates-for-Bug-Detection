@@ -1,0 +1,31 @@
+{
+  "project": "Math",
+  "bug_id": 14,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.math3.optimization.fitting.CurveFitter.fit(int",
+      "score": 0.996445
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.math3.optim.nonlinear.vector.Weight.Weight(double[])",
+      "score": 0.870862
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.math3.optim.nonlinear.vector.jacobian.AbstractLeastSquaresOptimizer.squareRoot(RealMatrix)",
+      "score": 0.757048
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.math3.optim.nonlinear.vector.Weight.Weight(RealMatrix)",
+      "score": 0.6386
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.math3.fitting.PolynomialFitter.PolynomialFitter(MultivariateVectorOptimizer)",
+      "score": 0.516024
+    }
+  ]
+}

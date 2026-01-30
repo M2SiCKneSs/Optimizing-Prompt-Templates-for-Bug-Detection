@@ -1,0 +1,31 @@
+{
+  "project": "Lang",
+  "bug_id": 25,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.lang3.StringUtils.getLevenshteinDistance(CharSequence",
+      "score": 0.998891
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.lang3.text.translate.EntityArrays.<clinit>()",
+      "score": 0.876443
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.lang3.text.translate.EntityArrays.invert(String[][])",
+      "score": 0.759619
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.lang3.text.StrTokenizer.tokenize(char[]",
+      "score": 0.638999
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.lang3.text.translate.EntityArrays.HTML40_EXTENDED_UNESCAPE()",
+      "score": 0.516965
+    }
+  ]
+}

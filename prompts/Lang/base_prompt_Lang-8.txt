@@ -1,0 +1,109 @@
+### BUG_REPORT
+Title: FastDateFormat's "z" pattern does not respect timezone of Calendar instances passed to format()
+
+Description:
+The work on LANG-462 has introduced a time zone formatting bug in FastDateFormat in commons-lang3.
+The problem can be seen by this snippet:
+
+// Always prints timezone name of machine's default timezone, ignoring TZ
+// set on calendar, even though the printed time itself respects calendar's TZ.
+Calendar myCal = Calendar.getInstance(TimeZone.getTimeZone("US/Central"));
+System.out.println(FastDateFormat.getInstance("h:mma z").format(myCal));
+
+
+If you happen to be in US/Central, this will print the right thing, but just try it with US/Eastern, US/Pacific, etc.  It will print the time in the correct timezone, but the timezone name at the end (the "z" pattern) will always be the system default timezone.  This is a regression against commons-lang 2.x.
+Basically, when the "forced time zone" code was removed, the TimeZoneNameRule class stopped respecting the Calendar instance's timezone, and instead now always uses the mTimeZone of the FastDateFormat instance itself (which is only supposed to be used when formatting timezone-less objects such as Date or long).
+The removal of the forced time zone stuff is surely the right thing to do (it was a mess).  I think the fix is to change the TimeZoneNameRule inner class to not take a TimeZone instance, but rather to use the TimeZone on the Calendar instance passed into appendTo(), just like TimeZoneNumberRule does.  Presumably then for efficiency, one would use the getTimeZoneDisplay() package-static method to quickly retrieve the required timezone's display name.
+
+
+### FAILING_TEST
+org.apache.commons.lang3.time.FastDatePrinter.parsePattern()
+org.apache.commons.lang3.time.DurationFormatUtils.formatPeriod(long,long,String,boolean,TimeZone)
+org.apache.commons.lang3.time.FastDatePrinter.format(Date)
+org.apache.commons.lang3.time.FastDatePrinter.toString()
+org.apache.commons.lang3.time.FastDatePrinter.equals(Object)
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.time.FastDatePrinter.parsePattern()
+------------------------------------------------------------------------------------------
+final List<Rule> rulesList = parsePattern();
+        mRules = rulesList.toArray(new Rule[rulesList.size()]);
+
+        int len = 0;
+        for (int i=mRules.length; --i >= 0; ) {
+            len += mRules[i].estimateLength();
+        }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.time.DurationFormatUtils.formatPeriod(long,long,String,boolean,TimeZone)
+------------------------------------------------------------------------------------------
+public static String formatPeriod(final long startMillis, final long endMillis, final String format) {
+        return formatPeriod(startMillis, endMillis, format, true, TimeZone.getDefault());
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.time.FastDatePrinter.format(Date)
+------------------------------------------------------------------------------------------
+@Override
+    public StringBuffer format(final Object obj, final StringBuffer toAppendTo, final FieldPosition pos) {
+        if (obj instanceof Date) {
+            return format((Date) obj, toAppendTo);
+        } else if (obj instanceof Calendar) {
+            return format((Calendar) obj, toAppendTo);
+        } else if (obj instanceof Long) {
+            return format(((Long) obj).longValue(), toAppendTo);
+        } else {
+            throw new IllegalArgumentException("Unknown class: " +
+                (obj == null ? "<null>" : obj.getClass().getName()));
+        }
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.time.FastDatePrinter.toString()
+------------------------------------------------------------------------------------------
+@Override
+    public String toString() {
+        return "FastDatePrinter[" + mPattern + "," + mLocale + "," + mTimeZone.getID() + "]";
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.time.FastDatePrinter.equals(Object)
+------------------------------------------------------------------------------------------
+@Override
+    public boolean equals(final Object obj) {
+        if (obj instanceof FastDatePrinter == false) {
+            return false;
+        }
+        final FastDatePrinter other = (FastDatePrinter) obj;
+        return mPattern.equals(other.mPattern)
+            && mTimeZone.equals(other.mTimeZone) 
+            && mLocale.equals(other.mLocale);
+    }
+
+------------------------------------------------------------------------------------------
+
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.apache.commons.lang3.time.FastDateFormat_PrinterTest#testCalendarTimezoneRespected
+Runtime: 4790530
+------------------------------------------------------------------------------------------
+org.junit.ComparisonFailure: expected:<5:33AM [IC]T> but was:<5:33AM [PS]T> at org.junit.Assert.assertEquals(Assert.java:115) at org.junit.Assert.assertEquals(Assert.java:144) at org.apache.commons.lang3.time.FastDatePrinterTest.testCalendarTimezoneRespected(FastDatePrinterTest.java:286) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #2
+Test: org.apache.commons.lang3.time.FastDatePrinterTest#testCalendarTimezoneRespected
+Runtime: 3514833
+------------------------------------------------------------------------------------------
+org.junit.ComparisonFailure: expected:<5:33AM [IC]T> but was:<5:33AM [PS]T> at org.junit.Assert.assertEquals(Assert.java:115) at org.junit.Assert.assertEquals(Assert.java:144) at org.apache.commons.lang3.time.FastDatePrinterTest.testCalendarTimezoneRespected(FastDatePrinterTest.java:286) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

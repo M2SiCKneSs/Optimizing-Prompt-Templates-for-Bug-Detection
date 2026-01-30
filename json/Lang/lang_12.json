@@ -1,0 +1,31 @@
+{
+  "project": "Lang",
+  "bug_id": 12,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.lang3.RandomStringUtils.random(int",
+      "score": 0.993274
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.lang3.RandomStringUtils.random(int)",
+      "score": 0.871805
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.lang3.math.NumberUtils.createBigDecimal(String)",
+      "score": 0.755773
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.lang3.time.FastDatePrinter.TimeZoneNameRule.appendTo(StringBuffer",
+      "score": 0.637449
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.lang3.math.Fraction.reduce()",
+      "score": 0.516162
+    }
+  ]
+}

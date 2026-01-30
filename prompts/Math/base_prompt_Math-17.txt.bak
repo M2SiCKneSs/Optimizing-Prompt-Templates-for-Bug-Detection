@@ -1,0 +1,323 @@
+### BUG_REPORT
+Title: Dfp Dfp.multiply(int x) does not comply with the general contract FieldElement.multiply(int n)
+
+Description:
+In class org.apache.commons.math3.Dfp,  the method multiply(int n) is limited to 0 <= n <= 9999. This is not consistent with the general contract of FieldElement.multiply(int n), where there should be no limitation on the values of n.
+
+
+### FAILING_TEST
+org.apache.commons.math3.dfp.Dfp.multiply(Dfp)
+org.apache.commons.math3.dfp.Dfp.multiplyFast(int)
+org.apache.commons.math3.dfp.DfpField.computePi(Dfp,Dfp,Dfp)
+org.apache.commons.math3.dfp.Dfp.toDouble()
+org.apache.commons.math3.dfp.Dfp.Dfp(DfpField,double)
+org.apache.commons.math3.dfp.DfpField.getIEEEFlags()
+org.apache.commons.math3.dfp.Dfp.multiply(int)
+org.apache.commons.math3.dfp.Dfp.multiplyFast(int)
+org.apache.commons.math3.dfp.DfpField.newDfp(String)
+org.apache.commons.math3.dfp.DfpField.newDfp(byte,byte)
+
+### CODE_SNIPPETS
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.dfp.Dfp.multiply(Dfp)
+------------------------------------------------------------------------------------------
+final Dfp result = this.subtract(this.divide(d).rint().multiply(d));
+
+        // IEEE 854-1987 says that if the result is zero, then it carries the sign of this
+        if (result.mant[mant.length-1] == 0) {
+            result.sign = sign;
+        }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.dfp.Dfp.multiplyFast(int)
+------------------------------------------------------------------------------------------
+private Dfp multiplyFast(final int x) {
+        Dfp result = newInstance(this);
+
+        /* handle special cases */
+        if (nans != FINITE) {
+            if (isNaN()) {
+                return this;
+            }
+
+            if (nans == INFINITE && x != 0) {
+                result = newInstance(this);
+                return result;
+            }
+
+            if (nans == INFINITE && x == 0) {
+                field.setIEEEFlagsBits(DfpField.FLAG_INVALID);
+                result = newInstance(getZero());
+                result.nans = QNAN;
+                result = dotrap(DfpField.FLAG_INVALID, MULTIPLY_TRAP, newInstance(getZero()), result);
+                return result;
+            }
+        }
+
+        /* range check x */
+        if (x < 0 || x >= RADIX) {
+            field.setIEEEFlagsBits(DfpField.FLAG_INVALID);
+            result = newInstance(getZero());
+            result.nans = QNAN;
+            result = dotrap(DfpField.FLAG_INVALID, MULTIPLY_TRAP, result, result);
+            return result;
+        }
+
+        int rh = 0;
+        for (int i = 0; i < mant.length; i++) {
+            final int r = mant[i] * x + rh;
+            rh = r / RADIX;
+            result.mant[i] = r - rh * RADIX;
+        }
+
+        int lostdigit = 0;
+        if (rh != 0) {
+            lostdigit = result.mant[0];
+            result.shiftRight();
+            result.mant[mant.length-1] = rh;
+        }
+
+        if (result.mant[mant.length-1] == 0) { // if result is zero, set exp to zero
+            result.exp = 0;
+        }
+
+        final int excp = result.round(lostdigit);
+        if (excp != 0) {
+            result = dotrap(excp, MULTIPLY_TRAP, result, result);
+        }
+
+        return result;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.dfp.DfpField.computePi(Dfp,Dfp,Dfp)
+------------------------------------------------------------------------------------------
+private static Dfp computePi(final Dfp one, final Dfp two, final Dfp three) {
+
+        Dfp sqrt2   = two.sqrt();
+        Dfp yk      = sqrt2.subtract(one);
+        Dfp four    = two.add(two);
+        Dfp two2kp3 = two;
+        Dfp ak      = two.multiply(three.subtract(two.multiply(sqrt2)));
+
+        // The formula converges quartically. This means the number of correct
+        // digits is multiplied by 4 at each iteration! Five iterations are
+        // sufficient for about 160 digits, eight iterations give about
+        // 10000 digits (this has been checked) and 20 iterations more than
+        // 160 billions of digits (this has NOT been checked).
+        // So the limit here is considered sufficient for most purposes ...
+        for (int i = 1; i < 20; i++) {
+            final Dfp ykM1 = yk;
+
+            final Dfp y2         = yk.multiply(yk);
+            final Dfp oneMinusY4 = one.subtract(y2.multiply(y2));
+            final Dfp s          = oneMinusY4.sqrt().sqrt();
+            yk = one.subtract(s).divide(one.add(s));
+
+            two2kp3 = two2kp3.multiply(four);
+
+            final Dfp p = one.add(yk);
+            final Dfp p2 = p.multiply(p);
+            ak = ak.multiply(p2.multiply(p2)).subtract(two2kp3.multiply(yk).multiply(one.add(yk).add(yk.multiply(yk))));
+
+            if (yk.equals(ykM1)) {
+                break;
+            }
+        }
+
+        return one.divide(ak);
+
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.dfp.Dfp.toDouble()
+------------------------------------------------------------------------------------------
+public double toDouble() {
+
+        if (isInfinite()) {
+            if (lessThan(getZero())) {
+                return Double.NEGATIVE_INFINITY;
+            } else {
+                return Double.POSITIVE_INFINITY;
+            }
+        }
+
+        if (isNaN()) {
+            return Double.NaN;
+        }
+
+        Dfp y = this;
+        boolean negate = false;
+        int cmp0 = compare(this, getZero());
+        if (cmp0 == 0) {
+            return sign < 0 ? -0.0 : +0.0;
+        } else if (cmp0 < 0) {
+            y = negate();
+            negate = true;
+        }
+
+        /* Find the exponent, first estimate by integer log10, then adjust.
+         Should be faster than doing a natural logarithm.  */
+        int exponent = (int)(y.intLog10() * 3.32);
+        if (exponent < 0) {
+            exponent--;
+        }
+
+        Dfp tempDfp = DfpMath.pow(getTwo(), exponent);
+        while (tempDfp.lessThan(y) || tempDfp.equals(y)) {
+            tempDfp = tempDfp.multiply(2);
+            exponent++;
+        }
+        exponent--;
+
+        /* We have the exponent, now work on the mantissa */
+
+        y = y.divide(DfpMath.pow(getTwo(), exponent));
+        if (exponent > -1023) {
+            y = y.subtract(getOne());
+        }
+
+        if (exponent < -1074) {
+            return 0;
+        }
+
+        if (exponent > 1023) {
+            return negate ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
+        }
+
+
+        y = y.multiply(newInstance(4503599627370496l)).rint();
+        String str = y.toString();
+        str = str.substring(0, str.length()-1);
+        long mantissa = Long.parseLong(str);
+
+        if (mantissa == 4503599627370496L) {
+            // Handle special case where we round up to next power of two
+            mantissa = 0;
+            exponent++;
+        }
+
+        /* Its going to be subnormal, so make adjustments */
+        if (exponent <= -1023) {
+            exponent--;
+        }
+
+        while (exponent < -1023) {
+            exponent++;
+            mantissa >>>= 1;
+        }
+
+        long bits = mantissa | ((exponent + 1023L) << 52);
+        double x = Double.longBitsToDouble(bits);
+
+        if (negate) {
+            x = -x;
+        }
+
+        return x;
+
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.dfp.Dfp.Dfp(DfpField,double)
+------------------------------------------------------------------------------------------
+protected Dfp(final DfpField field) {
+        mant = new int[field.getRadixDigits()];
+        sign = 1;
+        exp = 0;
+        nans = FINITE;
+        this.field = field;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.dfp.DfpField.getIEEEFlags()
+------------------------------------------------------------------------------------------
+public int getIEEEFlags() {
+        return ieeeFlags;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.dfp.Dfp.multiply(int)
+------------------------------------------------------------------------------------------
+final Dfp result = this.subtract(this.divide(d).rint().multiply(d));
+
+        // IEEE 854-1987 says that if the result is zero, then it carries the sign of this
+        if (result.mant[mant.length-1] == 0) {
+            result.sign = sign;
+        }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.dfp.Dfp.multiplyFast(int)
+------------------------------------------------------------------------------------------
+private Dfp multiplyFast(final int x) {
+        Dfp result = newInstance(this);
+
+        /* handle special cases */
+        if (nans != FINITE) {
+            if (isNaN()) {
+                return this;
+            }
+
+            if (nans == INFINITE && x != 0) {
+                result = newInstance(this);
+                return result;
+            }
+
+            if (nans == INFINITE && x == 0) {
+                field.setIEEEFlagsBits(DfpField.FLAG_INVALID);
+                result = newInstance(getZero());
+                result.nans = QNAN;
+                result = dotrap(DfpField.FLAG_INVALID, MULTIPLY_TRAP, newInstance(getZero()), result);
+                return result;
+            }
+        }
+
+        /* range check x */
+        if (x < 0 || x >= RADIX) {
+            field.setIEEEFlagsBits(DfpField.FLAG_INVALID);
+            result = newInstance(getZero());
+            result.nans = QNAN;
+            result = dotrap(DfpField.FLAG_INVALID, MULTIPLY_TRAP, result, result);
+            return result;
+        }
+
+        int rh = 0;
+        for (int i = 0; i < mant.length; i++) {
+            final int r = mant[i] * x + rh;
+            rh = r / RADIX;
+            result.mant[i] = r - rh * RADIX;
+        }
+
+        int lostdigit = 0;
+        if (rh != 0) {
+            lostdigit = result.mant[0];
+            result.shiftRight();
+            result.mant[mant.length-1] = rh;
+        }
+
+        if (result.mant[mant.length-1] == 0) { // if result is zero, set exp to zero
+            result.exp = 0;
+        }
+
+        final int excp = result.round(lostdigit);
+        if (excp != 0) {
+            result = dotrap(excp, MULTIPLY_TRAP, result, result);
+        }
+
+        return result;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.dfp.DfpField.newDfp(String)
+------------------------------------------------------------------------------------------
+public Dfp newDfp() {
+        return new Dfp(this);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.dfp.DfpField.newDfp(byte,byte)
+------------------------------------------------------------------------------------------
+public Dfp newDfp() {
+        return new Dfp(this);
+    }

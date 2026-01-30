@@ -1,0 +1,31 @@
+{
+  "project": "Time",
+  "bug_id": 18,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.joda.time.chrono.GJChronology.toString()",
+      "score": 0.992827
+    },
+    {
+      "rank": 2,
+      "method": "org.joda.time.IllegalFieldValueException.getMessage()",
+      "score": 0.875408
+    },
+    {
+      "rank": 3,
+      "method": "org.joda.time.chrono.GJChronology.getInstance(DateTimeZone)",
+      "score": 0.750189
+    },
+    {
+      "rank": 4,
+      "method": "org.joda.time.DurationFieldType.StandardDurationFieldType.equals(Object)",
+      "score": 0.636453
+    },
+    {
+      "rank": 5,
+      "method": "org.joda.time.chrono.GJChronology.getDateTimeMillis(int",
+      "score": 0.516396
+    }
+  ]
+}

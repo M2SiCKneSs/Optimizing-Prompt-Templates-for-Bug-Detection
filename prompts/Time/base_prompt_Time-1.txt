@@ -1,0 +1,105 @@
+### BUG_REPORT
+Title: Partial.with fails with NPE
+
+Description:
+With the latest master:
+new Partial(yearOfCentury(),  1).with(weekyear(), 1);
+// NullPointerException
+// org.joda.time.Partial.with (Partial.java:447)
+Fails with yearOfCentury, year and yearOfEra. Probably because weekyear has a null range duration type.
+
+
+### FAILING_TEST
+org.joda.time.field.UnsupportedDurationField.compareTo(DurationField)
+org.joda.time.Partial.Partial(DateTimeFieldType[],int[],Chronology)
+org.joda.time.DateTimeZone.getDefaultProvider()
+org.joda.time.Partial.Partial(DateTimeFieldType[],int[])
+org.joda.time.format.DateTimeFormatterBuilder.printTo(Writer,ReadablePartial,Locale)
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.field.UnsupportedDurationField.compareTo(DurationField)
+------------------------------------------------------------------------------------------
+public int compareTo(DurationField durationField) {
+        if (durationField.isSupported()) {
+            return 1;
+        }
+        return 0;
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.Partial.Partial(DateTimeFieldType[],int[],Chronology)
+------------------------------------------------------------------------------------------
+public Partial() {
+        this((Chronology) null);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.DateTimeZone.getDefaultProvider()
+------------------------------------------------------------------------------------------
+private static Provider getDefaultProvider() {
+        Provider provider = null;
+
+        try {
+            String providerClass = System.getProperty("org.joda.time.DateTimeZone.Provider");
+            if (providerClass != null) {
+                try {
+                    provider = (Provider) Class.forName(providerClass).newInstance();
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        } catch (SecurityException ex) {
+            // ignored
+        }
+
+        if (provider == null) {
+            try {
+                provider = new ZoneInfoProvider("org/joda/time/tz/data");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        if (provider == null) {
+            provider = new UTCProvider();
+        }
+
+        return provider;
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.Partial.Partial(DateTimeFieldType[],int[])
+------------------------------------------------------------------------------------------
+public Partial() {
+        this((Chronology) null);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.format.DateTimeFormatterBuilder.printTo(Writer,ReadablePartial,Locale)
+------------------------------------------------------------------------------------------
+public void printTo(
+                StringBuffer buf, long instant, Chronology chrono,
+                int displayOffset, DateTimeZone displayZone, Locale locale) {
+            buf.append(iValue);
+        }
+
+------------------------------------------------------------------------------------------
+
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.joda.time.TestPartial_Constructors#testConstructorEx7_TypeArray_intArray
+Runtime: 1947902
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError at junit.framework.Assert.fail(Assert.java:55) at junit.framework.Assert.fail(Assert.java:64) at junit.framework.TestCase.fail(TestCase.java:235) at org.joda.time.TestPartial_Constructors.testConstructorEx7_TypeArray_intArray(TestPartial_Constructors.java:284) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

@@ -1,0 +1,112 @@
+### BUG_REPORT
+Title: SystemUtils.getJavaVersionAsFloat throws StringIndexOutOfBoundsException on Android runtime/Dalvik VM
+
+Description:
+Can be replicated in the Android emulator quite easily.
+Stack trace:
+
+
+at org.apache.commons.lang.builder.ToStringBuilder.<clinit>(ToStringBuilder.java:98)
+E/AndroidRuntime( 1681): 	... 17 more
+E/AndroidRuntime( 1681): Caused by: java.lang.ExceptionInInitializerError
+E/AndroidRuntime( 1681): 	at org.apache.commons.lang.builder.ToStringStyle$MultiLineToStringStyle.<init>(ToStringStyle.java:2276)
+E/AndroidRuntime( 1681): 	at org.apache.commons.lang.builder.ToStringStyle.<clinit>(ToStringStyle.java:94)
+E/AndroidRuntime( 1681): 	... 18 more
+E/AndroidRuntime( 1681): Caused by: java.lang.StringIndexOutOfBoundsException
+E/AndroidRuntime( 1681): 	at java.lang.String.substring(String.java:1571)
+E/AndroidRuntime( 1681): 	at org.apache.commons.lang.SystemUtils.getJavaVersionAsFloat(SystemUtils.java:1153)
+E/AndroidRuntime( 1681): 	at org.apache.commons.lang.SystemUtils.<clinit>(SystemUtils.java:818)
+
+
+### FAILING_TEST
+org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseStackTrace(Throwable)
+org.apache.commons.lang3.SystemUtils.toJavaVersionIntArray(String,int)
+org.apache.commons.lang3.StringUtils.stripAccents(String)
+org.apache.commons.lang3.exception.ExceptionUtils.printRootCauseStackTrace(Throwable,PrintStream)
+org.apache.commons.lang3.exception.ExceptionUtils.printRootCauseStackTrace(Throwable)
+org.apache.commons.lang3.SystemUtils.toJavaVersionInt(String)
+org.apache.commons.lang3.SystemUtils.getJavaVersionAsFloat()
+org.apache.commons.lang3.SystemUtils.getJavaVersionAsInt()
+org.apache.commons.lang3.SystemUtils.getJavaVersionMatches(String)
+org.apache.commons.lang3.SystemUtils.getJavaVersionTrimmed()
+
+### CODE_SNIPPETS
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseStackTrace(Throwable)
+------------------------------------------------------------------------------------------
+final String trace[] = getRootCauseStackTrace(throwable);
+        for (final String element : trace) {
+            stream.println(element);
+        }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.SystemUtils.toJavaVersionIntArray(String,int)
+------------------------------------------------------------------------------------------
+[NOT FOUND] Method/ctor 'toJavaVersionIntArray' not found in C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Lang\src\main\java\org\apache\commons\lang3\SystemUtils.java
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.StringUtils.stripAccents(String)
+------------------------------------------------------------------------------------------
+public static String stripAccents(final String input) {
+        if(input == null) {
+            return null;
+        }
+        final Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");//$NON-NLS-1$
+        final String decomposed = Normalizer.normalize(input, Normalizer.Form.NFD);
+        // Note that this doesn't correctly remove ligatures...
+        return pattern.matcher(decomposed).replaceAll("");//$NON-NLS-1$
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.exception.ExceptionUtils.printRootCauseStackTrace(Throwable,PrintStream)
+------------------------------------------------------------------------------------------
+public static void printRootCauseStackTrace(final Throwable throwable) {
+        printRootCauseStackTrace(throwable, System.err);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.exception.ExceptionUtils.printRootCauseStackTrace(Throwable)
+------------------------------------------------------------------------------------------
+public static void printRootCauseStackTrace(final Throwable throwable) {
+        printRootCauseStackTrace(throwable, System.err);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.SystemUtils.toJavaVersionInt(String)
+------------------------------------------------------------------------------------------
+[NOT FOUND] Method/ctor 'toJavaVersionInt' not found in C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Lang\src\main\java\org\apache\commons\lang3\SystemUtils.java
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.SystemUtils.getJavaVersionAsFloat()
+------------------------------------------------------------------------------------------
+[NOT FOUND] Method/ctor 'getJavaVersionAsFloat' not found in C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Lang\src\main\java\org\apache\commons\lang3\SystemUtils.java
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.SystemUtils.getJavaVersionAsInt()
+------------------------------------------------------------------------------------------
+[NOT FOUND] Method/ctor 'getJavaVersionAsInt' not found in C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Lang\src\main\java\org\apache\commons\lang3\SystemUtils.java
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.SystemUtils.getJavaVersionMatches(String)
+------------------------------------------------------------------------------------------
+public static final boolean IS_JAVA_1_1 = getJavaVersionMatches("1.1");
+
+    /**
+     * <p>
+     * Is {@code true} if this is Java version 1.2 (also 1.2.x versions).
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.SystemUtils.getJavaVersionTrimmed()
+------------------------------------------------------------------------------------------
+[NOT FOUND] Method/ctor 'getJavaVersionTrimmed' not found in C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Lang\src\main\java\org\apache\commons\lang3\SystemUtils.java
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.apache.commons.lang3.SystemUtilsTest#testJavaVersionAsInt
+Runtime: 2073304
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<0> but was:<0.0> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:86) at junit.framework.TestCase.assertEquals(TestCase.java:253) at org.apache.commons.lang3.SystemUtilsTest.testJavaVersionAsInt(SystemUtilsTest.java:210) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

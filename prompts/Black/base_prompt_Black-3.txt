@@ -1,0 +1,90 @@
+### TOP_METHODS (Ochiai)
+1. black$WriteBack#from_configuration() | score=0.09090909090909091
+2. black$TargetVersion#is_python2() | score=0.09090909090909091
+3. black$Mode#get_cache_key() | score=0.09090909090909091
+4. black##supports_feature(target_versions,feature) | score=0.09090909090909091
+5. black##find_pyproject_toml(path_search_start) | score=0.09090909090909091
+
+
+### CODE_SNIPPETS
+
+
+
+---
+Rank: 1
+Method: black$WriteBack#from_configuration()
+Ochiai_Score: 0.09090909090909091
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: class WriteBack.from_configuration
+Status: OK
+Snippet:
+    def from_configuration(
+        cls, *, check: bool, diff: bool, color: bool = False
+    ) -> "WriteBack":
+        if check and not diff:
+            return cls.CHECK
+
+        if diff and color:
+            return cls.COLOR_DIFF
+
+        return cls.DIFF if diff else cls.YES
+
+
+---
+Rank: 2
+Method: black$TargetVersion#is_python2()
+Ochiai_Score: 0.09090909090909091
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: class TargetVersion.is_python2
+Status: OK
+Snippet:
+    def is_python2(self) -> bool:
+        return self is TargetVersion.PY27
+
+
+---
+Rank: 3
+Method: black$Mode#get_cache_key()
+Ochiai_Score: 0.09090909090909091
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: class Mode.get_cache_key
+Status: OK
+Snippet:
+    def get_cache_key(self) -> str:
+        if self.target_versions:
+            version_str = ",".join(
+                str(version.value)
+                for version in sorted(self.target_versions, key=lambda v: v.value)
+            )
+        else:
+            version_str = "-"
+        parts = [
+            version_str,
+            str(self.line_length),
+            str(int(self.string_normalization)),
+            str(int(self.is_pyi)),
+        ]
+        return ".".join(parts)
+
+
+---
+Rank: 4
+Method: black##supports_feature(target_versions,feature)
+Ochiai_Score: 0.09090909090909091
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: #supports_feature
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in black.py)
+
+
+---
+Rank: 5
+Method: black##find_pyproject_toml(path_search_start)
+Ochiai_Score: 0.09090909090909091
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Black\black.py
+Resolved_Symbol: #find_pyproject_toml
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in black.py)
+

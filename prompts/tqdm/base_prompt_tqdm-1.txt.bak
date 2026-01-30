@@ -1,0 +1,116 @@
+### TOP_METHODS (Ochiai)
+Source CSV: C:\Users\user\Desktop\uni\mark\FAILING_TEST\Tqdm\tqdm_1_ochiai_top_10.csv
+Source Code File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\tqdm\_tqdm.py
+
+1. tqdm.std$tqdm#fp_write(s) | score=0.14285714285714285
+2. tqdm.std$tqdm#fp_write(s) | score=0.14285714285714285
+3. tqdm.std$tqdm#print_status(s) | score=0.14285714285714285
+4. tqdm.gui$tqdm_gui#__init__(*args,**kwargs) | score=0.1259881576697424
+5. tqdm.gui$tqdm_gui#__iter__() | score=0.1259881576697424
+6. tqdm.gui$tqdm_gui#update(n) | score=0.1259881576697424
+7. tqdm.gui$tqdm_gui#close() | score=0.1259881576697424
+8. tqdm.gui$tqdm_gui#display() | score=0.1259881576697424
+9. tqdm.cli##cast(val,typ) | score=0.1259881576697424
+10. tqdm.cli##posix_pipe(fin,fout,delim,buf_size,callback) | score=0.1259881576697424
+
+### CODE_SNIPPETS
+
+---
+Rank: 1
+Method: tqdm.std$tqdm#fp_write(s)
+Ochiai_Score: 0.14285714285714285
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\tqdm\_tqdm.py
+Resolved_Symbol: class tqdm.fp_write
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in _tqdm.py)
+
+---
+Rank: 2
+Method: tqdm.std$tqdm#fp_write(s)
+Ochiai_Score: 0.14285714285714285
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\tqdm\_tqdm.py
+Resolved_Symbol: class tqdm.fp_write
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in _tqdm.py)
+
+---
+Rank: 3
+Method: tqdm.std$tqdm#print_status(s)
+Ochiai_Score: 0.14285714285714285
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\tqdm\_tqdm.py
+Resolved_Symbol: class tqdm.print_status
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in _tqdm.py)
+
+---
+Rank: 4
+Method: tqdm.gui$tqdm_gui#__init__(*args,**kwargs)
+Ochiai_Score: 0.1259881576697424
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\tqdm\_tqdm.py
+Resolved_Symbol: class tqdm_gui.__init__
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in _tqdm.py)
+
+---
+Rank: 5
+Method: tqdm.gui$tqdm_gui#__iter__()
+Ochiai_Score: 0.1259881576697424
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\tqdm\_tqdm.py
+Resolved_Symbol: class tqdm_gui.__iter__
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in _tqdm.py)
+
+---
+Rank: 6
+Method: tqdm.gui$tqdm_gui#update(n)
+Ochiai_Score: 0.1259881576697424
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\tqdm\_tqdm.py
+Resolved_Symbol: class tqdm_gui.update
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in _tqdm.py)
+
+---
+Rank: 7
+Method: tqdm.gui$tqdm_gui#close()
+Ochiai_Score: 0.1259881576697424
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\tqdm\_tqdm.py
+Resolved_Symbol: class tqdm_gui.close
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in _tqdm.py)
+
+---
+Rank: 8
+Method: tqdm.gui$tqdm_gui#display()
+Ochiai_Score: 0.1259881576697424
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\tqdm\_tqdm.py
+Resolved_Symbol: class tqdm_gui.display
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in _tqdm.py)
+
+---
+Rank: 9
+Method: tqdm.cli##cast(val,typ)
+Ochiai_Score: 0.1259881576697424
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\tqdm\_tqdm.py
+Resolved_Symbol: class tqdm.cli.cast
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in _tqdm.py)
+
+---
+Rank: 10
+Method: tqdm.cli##posix_pipe(fin,fout,delim,buf_size,callback)
+Ochiai_Score: 0.1259881576697424
+Resolved_File: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\tqdm\_tqdm.py
+Resolved_Symbol: class tqdm.cli.posix_pipe
+Status: NOT_FOUND
+Snippet:
+(Could not locate function/method in _tqdm.py)

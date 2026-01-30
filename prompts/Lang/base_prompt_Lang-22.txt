@@ -1,0 +1,209 @@
+### BUG_REPORT
+Title: org.apache.commons.lang3.math.Fraction does not reduce (Integer.MIN_VALUE, 2^k)
+
+Description:
+The greatestCommonDivisor method in class Fraction does not find the gcd of Integer.MIN_VALUE and 2^k, and this case can be triggered by taking Integer.MIN_VALUE as the numerator. Note that the case of taking Integer.MIN_VALUE as the denominator is handled explicitly in the getReducedFraction factory method.
+FractionTest.java
+	// additional test cases
+	public void testReducedFactory_int_int() {
+		// ...
+		f = Fraction.getReducedFraction(Integer.MIN_VALUE, 2);
+		assertEquals(Integer.MIN_VALUE / 2, f.getNumerator());
+		assertEquals(1, f.getDenominator());
+
+	public void testReduce() {
+		// ...
+		f = Fraction.getFraction(Integer.MIN_VALUE, 2);
+		result = f.reduce();
+		assertEquals(Integer.MIN_VALUE / 2, result.getNumerator());
+		assertEquals(1, result.getDenominator());
+
+
+### FAILING_TEST
+org.apache.commons.lang3.math.Fraction.getFraction(int,int)
+org.apache.commons.lang3.math.Fraction.getReducedFraction(int,int)
+org.apache.commons.lang3.math.Fraction.reduce()
+org.apache.commons.lang3.math.Fraction.getFraction(int,int,int)
+org.apache.commons.lang3.math.Fraction.greatestCommonDivisor(int,int)
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.math.Fraction.getFraction(int,int)
+------------------------------------------------------------------------------------------
+public static Fraction getFraction(int numerator, int denominator) {
+        if (denominator == 0) {
+            throw new ArithmeticException("The denominator must not be zero");
+        }
+        if (denominator < 0) {
+            if (numerator==Integer.MIN_VALUE ||
+                    denominator==Integer.MIN_VALUE) {
+                throw new ArithmeticException("overflow: can't negate");
+            }
+            numerator = -numerator;
+            denominator = -denominator;
+        }
+        return new Fraction(numerator, denominator);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.math.Fraction.getReducedFraction(int,int)
+------------------------------------------------------------------------------------------
+public static Fraction getReducedFraction(int numerator, int denominator) {
+        if (denominator == 0) {
+            throw new ArithmeticException("The denominator must not be zero");
+        }
+        if (numerator==0) {
+            return ZERO; // normalize zero.
+        }
+        // allow 2^k/-2^31 as a valid fraction (where k>0)
+        if (denominator==Integer.MIN_VALUE && (numerator&1)==0) {
+            numerator/=2; denominator/=2;
+        }
+        if (denominator < 0) {
+            if (numerator==Integer.MIN_VALUE ||
+                    denominator==Integer.MIN_VALUE) {
+                throw new ArithmeticException("overflow: can't negate");
+            }
+            numerator = -numerator;
+            denominator = -denominator;
+        }
+        // simplify fraction.
+        final int gcd = greatestCommonDivisor(numerator, denominator);
+        numerator /= gcd;
+        denominator /= gcd;
+        return new Fraction(numerator, denominator);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.math.Fraction.reduce()
+------------------------------------------------------------------------------------------
+public Fraction reduce() {
+        if (numerator == 0) {
+            return equals(ZERO) ? this : ZERO;
+        }
+        final int gcd = greatestCommonDivisor(Math.abs(numerator), denominator);
+        if (gcd == 1) {
+            return this;
+        }
+        return Fraction.getFraction(numerator / gcd, denominator / gcd);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.math.Fraction.getFraction(int,int,int)
+------------------------------------------------------------------------------------------
+public static Fraction getFraction(int numerator, int denominator) {
+        if (denominator == 0) {
+            throw new ArithmeticException("The denominator must not be zero");
+        }
+        if (denominator < 0) {
+            if (numerator==Integer.MIN_VALUE ||
+                    denominator==Integer.MIN_VALUE) {
+                throw new ArithmeticException("overflow: can't negate");
+            }
+            numerator = -numerator;
+            denominator = -denominator;
+        }
+        return new Fraction(numerator, denominator);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.math.Fraction.greatestCommonDivisor(int,int)
+------------------------------------------------------------------------------------------
+final int gcd = greatestCommonDivisor(numerator, denominator);
+        numerator /= gcd;
+        denominator /= gcd;
+        return new Fraction(numerator, denominator);
+    }
+
+    /**
+     * <p>Creates a <code>Fraction</code> instance from a <code>double</code> value.</p>
+     *
+     * <p>This method uses the <a href="http://archives.math.utk.edu/articles/atuyl/confrac/">
+     *  continued fraction algorithm</a>, computing a maximum of
+     *  25 convergents and bounding the denominator by 10,000.</p>
+     *
+     * @param value  the double value to convert
+     * @return a new fraction instance that is close to the value
+     * @throws ArithmeticException if <code>|value| > Integer.MAX_VALUE</code> 
+     *  or <code>value = NaN</code>
+     * @throws ArithmeticException if the calculated denominator is <code>zero</code>
+     * @throws ArithmeticException if the the algorithm does not converge
+     */
+    public static Fraction getFraction(double value) {
+        final int sign = value < 0 ? -1 : 1;
+        value = Math.abs(value);
+        if (value  > Integer.MAX_VALUE || Double.isNaN(value)) {
+            throw new ArithmeticException
+                ("The value must not be greater than Integer.MAX_VALUE or NaN");
+        }
+        final int wholeNumber = (int) value;
+        value -= wholeNumber;
+        
+        int numer0 = 0;  // the pre-previous
+        int denom0 = 1;  // the pre-previous
+        int numer1 = 1;  // the previous
+        int denom1 = 0;  // the previous
+        int numer2 = 0;  // the current, setup in calculation
+        int denom2 = 0;  // the current, setup in calculation
+        int a1 = (int) value;
+        int a2 = 0;
+        double x1 = 1;
+        double x2 = 0;
+        double y1 = value - a1;
+        double y2 = 0;
+        double delta1, delta2 = Double.MAX_VALUE;
+        double fraction;
+        int i = 1;
+//        System.out.println("---");
+        do {
+            delta1 = delta2;
+            a2 = (int) (x1 / y1);
+            x2 = y1;
+            y2 = x1 - a2 * y1;
+            numer2 = a1 * numer1 + numer0;
+            denom2 = a1 * denom1 + denom0;
+            fraction = (double) numer2 / (double) denom2;
+            delta2 = Math.abs(value - fraction);
+//            System.out.println(numer2 + " " + denom2 + " " + fraction + " " + delta2 + " " + y1);
+            a1 = a2;
+            x1 = x2;
+            y1 = y2;
+            numer0 = numer1;
+            denom0 = denom1;
+            numer1 = numer2;
+            denom1 = denom2;
+            i++;
+//            System.out.println(">>" + delta1 +" "+ delta2+" "+(delta1 > delta2)+" "+i+" "+denom2);
+        } while (delta1 > delta2 && denom2 <= 10000 && denom2 > 0 && i < 25);
+        if (i == 25) {
+            throw new ArithmeticException("Unable to convert double to fraction");
+        }
+        return getReducedFraction((numer0 + wholeNumber * denom0) * sign, denom0);
+    }
+
+------------------------------------------------------------------------------------------
+
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.apache.commons.lang3.math.FractionTest#testReduce
+Runtime: 1768532
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<-1073741824> but was:<-2147483648> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:234) at junit.framework.Assert.assertEquals(Assert.java:241) at junit.framework.TestCase.assertEquals(TestCase.java:409) at org.apache.commons.lang3.math.FractionTest.testReduce(FractionTest.java:654) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #2
+Test: org.apache.commons.lang3.math.FractionTest#testReducedFactory_int_int
+Runtime: 1087162
+------------------------------------------------------------------------------------------
+junit.framework.AssertionFailedError: expected:<-1073741824> but was:<-2147483648> at junit.framework.Assert.fail(Assert.java:57) at junit.framework.Assert.failNotEquals(Assert.java:329) at junit.framework.Assert.assertEquals(Assert.java:78) at junit.framework.Assert.assertEquals(Assert.java:234) at junit.framework.Assert.assertEquals(Assert.java:241) at junit.framework.TestCase.assertEquals(TestCase.java:409) at org.apache.commons.lang3.math.FractionTest.testReducedFactory_int_int(FractionTest.java:336) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

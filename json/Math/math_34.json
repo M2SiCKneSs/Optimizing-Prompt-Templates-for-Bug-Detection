@@ -1,0 +1,31 @@
+{
+  "project": "Math",
+  "bug_id": 34,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.math3.fitting.CurveFitter.addObservedPoint(double",
+      "score": 0.996317
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.math3.distribution.DiscreteRealDistribution.DiscreteRealDistribution(RandomGenerator",
+      "score": 0.874675
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.math3.distribution.HypergeometricDistribution.getNumberOfSuccesses()",
+      "score": 0.753121
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.math3.exception.MathIllegalStateException.getContext()",
+      "score": 0.639506
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.math3.optimization.direct.CMAESOptimizer.FitnessFunction.repair(double[])",
+      "score": 0.519065
+    }
+  ]
+}

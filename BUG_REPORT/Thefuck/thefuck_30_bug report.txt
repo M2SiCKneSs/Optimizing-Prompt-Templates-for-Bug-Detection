@@ -1,0 +1,2 @@
+Test if the file exists in the fix_file rule
+This avoid false positives in `match`.

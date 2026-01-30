@@ -1,0 +1,136 @@
+### BUG_REPORT
+Title: CMAESOptimizer does not enforce bounds
+
+Description:
+The CMAESOptimizer can exceed the bounds passed to optimize.  Looking at the generationLoop in doOptimize(), it does a bounds check by calling isFeasible() but if checkFeasableCount is zero (the default) then isFeasible() is never even called.  Also, even with non-zero checkFeasableCount it may give up before finding an in-bounds offspring and go forward with an out-of-bounds offspring.  This is against svn revision 1387637.  I can provide an example program where the optimizer ends up with a fit outside the prescribed bounds if that would help.
+
+
+### FAILING_TEST
+org.apache.commons.math3.optimization.direct.CMAESOptimizer.CMAESOptimizer(int)
+org.apache.commons.math3.optimization.direct.CMAESOptimizer.CMAESOptimizer()
+org.apache.commons.math3.optimization.direct.CMAESOptimizer.CMAESOptimizer(int,double[])
+org.apache.commons.math3.optimization.direct.CMAESOptimizer.checkParameters()
+org.apache.commons.math3.optimization.direct.CMAESOptimizer.updateCovariance(boolean,RealMatrix,RealMatrix,int[],RealMatrix)
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.optimization.direct.CMAESOptimizer.CMAESOptimizer(int)
+------------------------------------------------------------------------------------------
+@Deprecated
+    public CMAESOptimizer() {
+        this(0);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.optimization.direct.CMAESOptimizer.CMAESOptimizer()
+------------------------------------------------------------------------------------------
+@Deprecated
+    public CMAESOptimizer() {
+        this(0);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.optimization.direct.CMAESOptimizer.CMAESOptimizer(int,double[])
+------------------------------------------------------------------------------------------
+@Deprecated
+    public CMAESOptimizer() {
+        this(0);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.optimization.direct.CMAESOptimizer.checkParameters()
+------------------------------------------------------------------------------------------
+private void checkParameters() {
+        final double[] init = getStartPoint();
+        final double[] lB = getLowerBound();
+        final double[] uB = getUpperBound();
+
+        if (inputSigma != null) {
+            if (inputSigma.length != init.length) {
+                throw new DimensionMismatchException(inputSigma.length, init.length);
+            }
+            for (int i = 0; i < init.length; i++) {
+                if (inputSigma[i] < 0) {
+                    // XXX Remove this block in 4.0 (check performed in "Sigma" class).
+                    throw new NotPositiveException(inputSigma[i]);
+                }
+                if (inputSigma[i] > uB[i] - lB[i]) {
+                    throw new OutOfRangeException(inputSigma[i], 0, uB[i] - lB[i]);
+                }
+            }
+        }
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.optimization.direct.CMAESOptimizer.updateCovariance(boolean,RealMatrix,RealMatrix,int[],RealMatrix)
+------------------------------------------------------------------------------------------
+private void updateCovariance(boolean hsig, final RealMatrix bestArx,
+                                  final RealMatrix arz, final int[] arindex,
+                                  final RealMatrix xold) {
+        double negccov = 0;
+        if (ccov1 + ccovmu > 0) {
+            final RealMatrix arpos = bestArx.subtract(repmat(xold, 1, mu))
+                .scalarMultiply(1 / sigma); // mu difference vectors
+            final RealMatrix roneu = pc.multiply(pc.transpose())
+                .scalarMultiply(ccov1); // rank one update
+            // minor correction if hsig==false
+            double oldFac = hsig ? 0 : ccov1 * cc * (2 - cc);
+            oldFac += 1 - ccov1 - ccovmu;
+            if (isActiveCMA) {
+                // Adapt covariance matrix C active CMA
+                negccov = (1 - ccovmu) * 0.25 * mueff /
+                    (Math.pow(dimension + 2, 1.5) + 2 * mueff);
+                // keep at least 0.66 in all directions, small popsize are most
+                // critical
+                final double negminresidualvariance = 0.66;
+                // where to make up for the variance loss
+                final double negalphaold = 0.5;
+                // prepare vectors, compute negative updating matrix Cneg
+                final int[] arReverseIndex = reverse(arindex);
+                RealMatrix arzneg = selectColumns(arz, MathArrays.copyOf(arReverseIndex, mu));
+                RealMatrix arnorms = sqrt(sumRows(square(arzneg)));
+                final int[] idxnorms = sortedIndices(arnorms.getRow(0));
+                final RealMatrix arnormsSorted = selectColumns(arnorms, idxnorms);
+                final int[] idxReverse = reverse(idxnorms);
+                final RealMatrix arnormsReverse = selectColumns(arnorms, idxReverse);
+                arnorms = divide(arnormsReverse, arnormsSorted);
+                final int[] idxInv = inverse(idxnorms);
+                final RealMatrix arnormsInv = selectColumns(arnorms, idxInv);
+                // check and set learning rate negccov
+                final double negcovMax = (1 - negminresidualvariance) /
+                    square(arnormsInv).multiply(weights).getEntry(0, 0);
+                if (negccov > negcovMax) {
+                    negccov = negcovMax;
+                }
+                arzneg = times(arzneg, repmat(arnormsInv, dimension, 1));
+                final RealMatrix artmp = BD.multiply(arzneg);
+                final RealMatrix Cneg = artmp.multiply(diag(weights)).multiply(artmp.transpose());
+                oldFac += negalphaold * negccov;
+                C = C.scalarMultiply(oldFac)
+                    .add(roneu) // regard old matrix
+                    .add(arpos.scalarMultiply( // plus rank one update
+                                              ccovmu + (1 - negalphaold) * negccov) // plus rank mu update
+                         .multiply(times(repmat(weights, 1, dimension),
+                                         arpos.transpose())))
+                    .subtract(Cneg.scalarMultiply(negccov));
+            } else {
+                // Adapt covariance matrix C - nonactive
+                C = C.scalarMultiply(oldFac) // regard old matrix
+                    .add(roneu) // plus rank one update
+                    .add(arpos.scalarMultiply(ccovmu) // plus rank mu update
+                         .multiply(times(repmat(weights, 1, dimension),
+                                         arpos.transpose())));
+            }
+        }
+        updateBD(negccov);
+    }
+
+------------------------------------------------------------------------------------------
+

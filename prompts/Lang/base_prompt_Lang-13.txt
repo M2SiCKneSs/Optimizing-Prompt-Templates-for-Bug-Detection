@@ -1,0 +1,246 @@
+### BUG_REPORT
+Title: SerializationUtils throws ClassNotFoundException when cloning primitive classes
+
+Description:
+If a serializable object contains a reference to a primitive class, e.g. int.class or int[].class, the SerializationUtils throw a ClassNotFoundException when trying to clone that object.
+
+import org.apache.commons.lang3.SerializationUtils;
+import org.junit.Test;
+
+
+public class SerializationUtilsTest {
+
+	
+	@Test
+	public void primitiveTypeClassSerialization(){
+		Class<?> primitiveType = int.class;
+		
+		Class<?> clone = SerializationUtils.clone(primitiveType);
+		assertEquals(primitiveType, clone);
+	}
+}
+
+
+The problem was already reported as a java bug http://bugs.sun.com/view_bug.do?bug_id=4171142 and ObjectInputStream is fixed since java version 1.4.
+The SerializationUtils problem arises because the SerializationUtils internally use the ClassLoaderAwareObjectInputStream that overrides the ObjectInputStream's
+resoleClass method without delegating to the super method in case of a ClassNotFoundException.
+I understand the intention of the ClassLoaderAwareObjectInputStream, but this implementation should also implement a fallback to the original implementation.
+For example:
+
+        protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
+            String name = desc.getName();
+            try {
+                return Class.forName(name, false, classLoader);
+            } catch (ClassNotFoundException ex) {
+            	try {
+            	     return Class.forName(name, false, Thread.currentThread().getContextClassLoader());
+            	} catch (Exception e) {
+		     return super.resolveClass(desc);
+		}
+            }
+        }
+
+
+Here is the code in ObjectInputStream that fixed the java bug.
+
+    protected Class<?> resolveClass(ObjectStreamClass desc)
+	throws IOException, ClassNotFoundException
+    {
+	String name = desc.getName();
+	try {
+	    return Class.forName(name, false, latestUserDefinedLoader());
+	} catch (ClassNotFoundException ex) {
+	    Class cl = (Class) primClasses.get(name);
+	    if (cl != null) {
+		return cl;
+	    } else {
+		throw ex;
+	    }
+	}
+    }
+
+
+### FAILING_TEST
+org.apache.commons.lang3.SerializationUtils.clone(T)
+org.apache.commons.lang3.ClassUtils.convertClassNamesToClasses(List<String>)
+org.apache.commons.lang3.SerializationUtils.deserialize(InputStream)
+org.apache.commons.lang3.SerializationUtils.serialize(Serializable,OutputStream)
+org.apache.commons.lang3.SerializationUtils.serialize(Serializable)
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.SerializationUtils.clone(T)
+------------------------------------------------------------------------------------------
+public static <T extends Serializable> T clone(final T object) {
+        if (object == null) {
+            return null;
+        }
+        final byte[] objectData = serialize(object);
+        final ByteArrayInputStream bais = new ByteArrayInputStream(objectData);
+
+        ClassLoaderAwareObjectInputStream in = null;
+        try {
+            // stream closed in the finally
+            in = new ClassLoaderAwareObjectInputStream(bais, object.getClass().getClassLoader());
+            /*
+             * when we serialize and deserialize an object,
+             * it is reasonable to assume the deserialized object
+             * is of the same type as the original serialized object
+             */
+            @SuppressWarnings("unchecked") // see above
+            final
+            T readObject = (T) in.readObject();
+            return readObject;
+
+        } catch (final ClassNotFoundException ex) {
+            throw new SerializationException("ClassNotFoundException while reading cloned object data", ex);
+        } catch (final IOException ex) {
+            throw new SerializationException("IOException while reading cloned object data", ex);
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (final IOException ex) {
+                throw new SerializationException("IOException on closing cloned object data InputStream.", ex);
+            }
+        }
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.ClassUtils.convertClassNamesToClasses(List<String>)
+------------------------------------------------------------------------------------------
+public static List<Class<?>> convertClassNamesToClasses(final List<String> classNames) {
+        if (classNames == null) {
+            return null;
+        }
+        final List<Class<?>> classes = new ArrayList<Class<?>>(classNames.size());
+        for (final String className : classNames) {
+            try {
+                classes.add(Class.forName(className));
+            } catch (final Exception ex) {
+                classes.add(null);
+            }
+        }
+        return classes;
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.SerializationUtils.deserialize(InputStream)
+------------------------------------------------------------------------------------------
+public static <T> T deserialize(final InputStream inputStream) {
+        if (inputStream == null) {
+            throw new IllegalArgumentException("The InputStream must not be null");
+        }
+        ObjectInputStream in = null;
+        try {
+            // stream closed in the finally
+            in = new ObjectInputStream(inputStream);
+            @SuppressWarnings("unchecked") // may fail with CCE if serialised form is incorrect
+            final T obj = (T) in.readObject();
+            return obj;
+
+        } catch (final ClassCastException ex) {
+            throw new SerializationException(ex);
+        } catch (final ClassNotFoundException ex) {
+            throw new SerializationException(ex);
+        } catch (final IOException ex) {
+            throw new SerializationException(ex);
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (final IOException ex) { // NOPMD
+                // ignore close exception
+            }
+        }
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.SerializationUtils.serialize(Serializable,OutputStream)
+------------------------------------------------------------------------------------------
+final byte[] objectData = serialize(object);
+        final ByteArrayInputStream bais = new ByteArrayInputStream(objectData);
+
+        ClassLoaderAwareObjectInputStream in = null;
+        try {
+            // stream closed in the finally
+            in = new ClassLoaderAwareObjectInputStream(bais, object.getClass().getClassLoader());
+            /*
+             * when we serialize and deserialize an object,
+             * it is reasonable to assume the deserialized object
+             * is of the same type as the original serialized object
+             */
+            @SuppressWarnings("unchecked") // see above
+            final
+            T readObject = (T) in.readObject();
+            return readObject;
+
+        } catch (final ClassNotFoundException ex) {
+            throw new SerializationException("ClassNotFoundException while reading cloned object data", ex);
+        } catch (final IOException ex) {
+            throw new SerializationException("IOException while reading cloned object data", ex);
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (final IOException ex) {
+                throw new SerializationException("IOException on closing cloned object data InputStream.", ex);
+            }
+        }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.lang3.SerializationUtils.serialize(Serializable)
+------------------------------------------------------------------------------------------
+final byte[] objectData = serialize(object);
+        final ByteArrayInputStream bais = new ByteArrayInputStream(objectData);
+
+        ClassLoaderAwareObjectInputStream in = null;
+        try {
+            // stream closed in the finally
+            in = new ClassLoaderAwareObjectInputStream(bais, object.getClass().getClassLoader());
+            /*
+             * when we serialize and deserialize an object,
+             * it is reasonable to assume the deserialized object
+             * is of the same type as the original serialized object
+             */
+            @SuppressWarnings("unchecked") // see above
+            final
+            T readObject = (T) in.readObject();
+            return readObject;
+
+        } catch (final ClassNotFoundException ex) {
+            throw new SerializationException("ClassNotFoundException while reading cloned object data", ex);
+        } catch (final IOException ex) {
+            throw new SerializationException("IOException while reading cloned object data", ex);
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (final IOException ex) {
+                throw new SerializationException("IOException on closing cloned object data InputStream.", ex);
+            }
+        }
+
+------------------------------------------------------------------------------------------
+
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.apache.commons.lang3.SerializationUtilsTest#testPrimitiveTypeClassSerialization
+Runtime: 1301925
+------------------------------------------------------------------------------------------
+org.apache.commons.lang3.SerializationException: ClassNotFoundException while reading cloned object data at org.apache.commons.lang3.SerializationUtils.clone(SerializationUtils.java:99) at org.apache.commons.lang3.SerializationUtilsTest.testPrimitiveTypeClassSerialization(SerializationUtilsTest.java:373) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834) Caused by: java.lang.ClassNotFoundException: byte at java.base/java.net.URLClassLoader.findClass(URLClassLoader.java:476) at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:588) at com.gzoltar.internal.core.util.IsolatingClassLoader.loadClass(IsolatingClassLoader.java:60) at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:521) at java.base/java.lang.Class.forName0(Native Method) at java.base/java.lang.Class.forName(Class.java:398) at org.apache.commons.lang3.SerializationUtils$ClassLoaderAwareObjectInputStream.resolveClass(SerializationUtils.java:268) at java.base/java.io.ObjectInputStream.readNonProxyDesc(ObjectInputStream.java:2025) at java.base/java.io.ObjectInputStream.readClassDesc(ObjectInputStream.java:1892) at java.base/java.io.ObjectInputStream.readClass(ObjectInputStream.java:1855) at java.base/java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1680) at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:500) at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:458) at org.apache.commons.lang3.SerializationUtils.clone(SerializationUtils.java:95) ... 20 more

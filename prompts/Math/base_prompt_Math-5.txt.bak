@@ -1,0 +1,234 @@
+### BUG_REPORT
+Title: Complex.ZERO.reciprocal() returns NaN but should return INF.
+
+Description:
+Complex.ZERO.reciprocal() returns NaN but should return INF.
+Class: org.apache.commons.math3.complex.Complex;
+Method: reciprocal()
+@version $Id: Complex.java 1416643 2012-12-03 19:37:14Z tn $
+
+
+### FAILING_TEST
+org.apache.commons.math3.complex.Complex.equals(Object)
+org.apache.commons.math3.complex.Complex.reciprocal()
+org.apache.commons.math3.complex.Complex.sqrt()
+org.apache.commons.math3.complex.Complex.tan()
+org.apache.commons.math3.complex.Complex.add(Complex)
+org.apache.commons.math3.complex.Complex.toString()
+org.apache.commons.math3.complex.Complex.reciprocal()
+org.apache.commons.math3.complex.Complex.equals(Object)
+org.apache.commons.math3.complex.Complex.Complex(double,double)
+org.apache.commons.math3.exception.MathIllegalArgumentException.MathIllegalArgumentException(Localizable,Object)
+
+### CODE_SNIPPETS
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.complex.Complex.equals(Object)
+------------------------------------------------------------------------------------------
+@Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other instanceof Complex){
+            Complex c = (Complex)other;
+            if (c.isNaN) {
+                return isNaN;
+            } else {
+                return (real == c.real) && (imaginary == c.imaginary);
+            }
+        }
+        return false;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.complex.Complex.reciprocal()
+------------------------------------------------------------------------------------------
+public Complex reciprocal() {
+        if (isNaN) {
+            return NaN;
+        }
+
+        if (real == 0.0 && imaginary == 0.0) {
+            return INF;
+        }
+
+        if (isInfinite) {
+            return ZERO;
+        }
+
+        if (FastMath.abs(real) < FastMath.abs(imaginary)) {
+            double q = real / imaginary;
+            double scale = 1. / (real * q + imaginary);
+            return createComplex(scale * q, -scale);
+        } else {
+            double q = imaginary / real;
+            double scale = 1. / (imaginary * q + real);
+            return createComplex(scale, -scale * q);
+        }
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.complex.Complex.sqrt()
+------------------------------------------------------------------------------------------
+public Complex sqrt() {
+        if (isNaN) {
+            return NaN;
+        }
+
+        if (real == 0.0 && imaginary == 0.0) {
+            return createComplex(0.0, 0.0);
+        }
+
+        double t = FastMath.sqrt((FastMath.abs(real) + abs()) / 2.0);
+        if (real >= 0.0) {
+            return createComplex(t, imaginary / (2.0 * t));
+        } else {
+            return createComplex(FastMath.abs(imaginary) / (2.0 * t),
+                                 FastMath.copySign(1d, imaginary) * t);
+        }
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.complex.Complex.tan()
+------------------------------------------------------------------------------------------
+public Complex tan() {
+        if (isNaN || Double.isInfinite(real)) {
+            return NaN;
+        }
+        if (imaginary > 20.0) {
+            return createComplex(0.0, 1.0);
+        }
+        if (imaginary < -20.0) {
+            return createComplex(0.0, -1.0);
+        }
+
+        double real2 = 2.0 * real;
+        double imaginary2 = 2.0 * imaginary;
+        double d = FastMath.cos(real2) + FastMath.cosh(imaginary2);
+
+        return createComplex(FastMath.sin(real2) / d,
+                             FastMath.sinh(imaginary2) / d);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.complex.Complex.add(Complex)
+------------------------------------------------------------------------------------------
+public Complex add(Complex addend) throws NullArgumentException {
+        MathUtils.checkNotNull(addend);
+        if (isNaN || addend.isNaN) {
+            return NaN;
+        }
+
+        return createComplex(real + addend.getReal(),
+                             imaginary + addend.getImaginary());
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.complex.Complex.toString()
+------------------------------------------------------------------------------------------
+@Override
+    public String toString() {
+        return "(" + real + ", " + imaginary + ")";
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.complex.Complex.reciprocal()
+------------------------------------------------------------------------------------------
+public Complex reciprocal() {
+        if (isNaN) {
+            return NaN;
+        }
+
+        if (real == 0.0 && imaginary == 0.0) {
+            return INF;
+        }
+
+        if (isInfinite) {
+            return ZERO;
+        }
+
+        if (FastMath.abs(real) < FastMath.abs(imaginary)) {
+            double q = real / imaginary;
+            double scale = 1. / (real * q + imaginary);
+            return createComplex(scale * q, -scale);
+        } else {
+            double q = imaginary / real;
+            double scale = 1. / (imaginary * q + real);
+            return createComplex(scale, -scale * q);
+        }
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.complex.Complex.equals(Object)
+------------------------------------------------------------------------------------------
+@Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other instanceof Complex){
+            Complex c = (Complex)other;
+            if (c.isNaN) {
+                return isNaN;
+            } else {
+                return (real == c.real) && (imaginary == c.imaginary);
+            }
+        }
+        return false;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.complex.Complex.Complex(double,double)
+------------------------------------------------------------------------------------------
+public static final Complex I = new Complex(0.0, 1.0);
+    // CHECKSTYLE: stop ConstantName
+    /** A complex number representing "NaN + NaNi" */
+    public static final Complex NaN = new Complex(Double.NaN, Double.NaN);
+    // CHECKSTYLE: resume ConstantName
+    /** A complex number representing "+INF + INFi" */
+    public static final Complex INF = new Complex(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+    /** A complex number representing "1.0 + 0.0i" */
+    public static final Complex ONE = new Complex(1.0, 0.0);
+    /** A complex number representing "0.0 + 0.0i" */
+    public static final Complex ZERO = new Complex(0.0, 0.0);
+
+    /** Serializable version identifier */
+    private static final long serialVersionUID = -6195664516687396620L;
+
+    /** The imaginary part. */
+    private final double imaginary;
+    /** The real part. */
+    private final double real;
+    /** Record whether this complex number is equal to NaN. */
+    private final transient boolean isNaN;
+    /** Record whether this complex number is infinite. */
+    private final transient boolean isInfinite;
+
+    /**
+     * Create a complex number given only the real part.
+     *
+     * @param real Real part.
+     */
+    public Complex(double real) {
+        this(real, 0.0);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.exception.MathIllegalArgumentException.MathIllegalArgumentException(Localizable,Object)
+------------------------------------------------------------------------------------------
+public MathIllegalArgumentException(Localizable pattern,
+                                        Object ... args) {
+        context = new ExceptionContext(this);
+        context.addMessage(pattern, args);
+    }
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.apache.commons.math3.complex.ComplexTest#testReciprocalZero
+Runtime: 789150
+------------------------------------------------------------------------------------------
+java.lang.AssertionError: expected:<(NaN

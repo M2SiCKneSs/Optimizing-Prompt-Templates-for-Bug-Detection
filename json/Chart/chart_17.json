@@ -1,0 +1,31 @@
+{
+  "project": "Chart",
+  "bug_id": 17,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.jfree.data.time.TimeSeries.clone()",
+      "score": 0.997332
+    },
+    {
+      "rank": 2,
+      "method": "org.jfree.data.time.TimeSeries.createCopy(int",
+      "score": 0.873386
+    },
+    {
+      "rank": 3,
+      "method": "org.jfree.data.time.Year.getSerialIndex()",
+      "score": 0.75034
+    },
+    {
+      "rank": 4,
+      "method": "org.jfree.data.time.TimeSeries.TimeSeries(Comparable)",
+      "score": 0.630002
+    },
+    {
+      "rank": 5,
+      "method": "org.jfree.data.time.RegularTimePeriod.getMiddleMillisecond()",
+      "score": 0.510871
+    }
+  ]
+}

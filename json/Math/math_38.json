@@ -1,0 +1,31 @@
+{
+  "project": "Math",
+  "bug_id": 38,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.math3.geometry.euclidean.threed.Plane.wholeSpace()",
+      "score": 0.992838
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.math3.util.MathArrays.checkOrder(double[]",
+      "score": 0.877646
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.math3.optimization.direct.PowellOptimizer.newPointAndDirection(double[]",
+      "score": 0.755362
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.math3.optimization.univariate.UnivariateMultiStartOptimizer.UnivariateMultiStartOptimizer(BaseUnivariateOptimizer<FUNC>",
+      "score": 0.637728
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.math3.optimization.direct.CMAESOptimizer.CMAESOptimizer(int",
+      "score": 0.516879
+    }
+  ]
+}

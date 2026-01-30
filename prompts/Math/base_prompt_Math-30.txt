@@ -1,0 +1,104 @@
+### BUG_REPORT
+Title: Mann-Whitney U Test Suffers From Integer Overflow With Large Data Sets
+
+Description:
+When performing a Mann-Whitney U Test on large data sets (the attached test uses two 1500 element sets), intermediate integer values used in calculateAsymptoticPValue can overflow, leading to invalid results, such as p-values of NaN, or incorrect calculations.
+Attached is a patch, including a test, and a fix, which modifies the affected code to use doubles
+
+
+### FAILING_TEST
+org.apache.commons.math3.stat.inference.MannWhitneyUTest.mannWhitneyUTest(double[],double[])
+org.apache.commons.math3.special.Gamma.regularizedGammaP(double,double,double,int)
+org.apache.commons.math3.stat.inference.MannWhitneyUTest.mannWhitneyU(double[],double[])
+org.apache.commons.math3.stat.inference.TestUtils.chiSquareTestDataSetsComparison(long[],long[])
+org.apache.commons.math3.stat.inference.MannWhitneyUTest.MannWhitneyUTest()
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.stat.inference.MannWhitneyUTest.mannWhitneyUTest(double[],double[])
+------------------------------------------------------------------------------------------
+public double mannWhitneyUTest(final double[] x, final double[] y)
+        throws NullArgumentException, NoDataException,
+        ConvergenceException, MaxCountExceededException {
+
+        ensureDataConformance(x, y);
+
+        final double Umax = mannWhitneyU(x, y);
+
+        /*
+         * It can be shown that U1 + U2 = n1 * n2
+         */
+        final double Umin = x.length * y.length - Umax;
+
+        return calculateAsymptoticPValue(Umin, x.length, y.length);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.special.Gamma.regularizedGammaP(double,double,double,int)
+------------------------------------------------------------------------------------------
+public static double regularizedGammaP(double a, double x) {
+        return regularizedGammaP(a, x, DEFAULT_EPSILON, Integer.MAX_VALUE);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.stat.inference.MannWhitneyUTest.mannWhitneyU(double[],double[])
+------------------------------------------------------------------------------------------
+public double mannWhitneyU(final double[] x, final double[] y)
+        throws NullArgumentException, NoDataException {
+
+        ensureDataConformance(x, y);
+
+        final double[] z = concatenateSamples(x, y);
+        final double[] ranks = naturalRanking.rank(z);
+
+        double sumRankX = 0;
+
+        /*
+         * The ranks for x is in the first x.length entries in ranks because x
+         * is in the first x.length entries in z
+         */
+        for (int i = 0; i < x.length; ++i) {
+            sumRankX += ranks[i];
+        }
+
+        /*
+         * U1 = R1 - (n1 * (n1 + 1)) / 2 where R1 is sum of ranks for sample 1,
+         * e.g. x, n1 is the number of observations in sample 1.
+         */
+        final double U1 = sumRankX - (x.length * (x.length + 1)) / 2;
+
+        /*
+         * It can be shown that U1 + U2 = n1 * n2
+         */
+        final double U2 = x.length * y.length - U1;
+
+        return FastMath.max(U1, U2);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.stat.inference.TestUtils.chiSquareTestDataSetsComparison(long[],long[])
+------------------------------------------------------------------------------------------
+public static double chiSquareTestDataSetsComparison(final long[] observed1,
+                                                         final long[] observed2)
+        throws DimensionMismatchException, NotPositiveException, ZeroException,
+        MaxCountExceededException {
+        return CHI_SQUARE_TEST.chiSquareTestDataSetsComparison(observed1, observed2);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.stat.inference.MannWhitneyUTest.MannWhitneyUTest()
+------------------------------------------------------------------------------------------
+public MannWhitneyUTest() {
+        naturalRanking = new NaturalRanking(NaNStrategy.FIXED,
+                TiesStrategy.AVERAGE);
+    }
+
+------------------------------------------------------------------------------------------
+

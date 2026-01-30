@@ -1,0 +1,204 @@
+### BUG_REPORT
+Title: Partial.with fails with NPE
+
+Description:
+With the latest master:
+new Partial(yearOfCentury(),  1).with(weekyear(), 1);
+// NullPointerException
+// org.joda.time.Partial.with (Partial.java:447)
+Fails with yearOfCentury, year and yearOfEra. Probably because weekyear has a null range duration type.
+
+
+### FAILING_TEST
+org.joda.time.DateTimeZone.getDefaultProvider()
+org.joda.time.field.UnsupportedDurationField.compareTo(DurationField)
+org.joda.time.Partial.Partial(DateTimeFieldType,int,Chronology)
+org.joda.time.DateTimeZone.getDefaultNameProvider()
+org.joda.time.format.DateTimeFormatterBuilder.printTo(Writer,ReadablePartial,Locale)
+org.joda.time.field.UnsupportedDurationField.compareTo(DurationField)
+org.joda.time.Partial.Partial(DateTimeFieldType,int)
+org.joda.time.Partial.Partial(DateTimeFieldType,int,Chronology)
+org.joda.time.Partial.with(DateTimeFieldType,int)
+org.joda.time.DateTimeFieldType.StandardDateTimeFieldType.getRangeDurationType()
+
+### CODE_SNIPPETS
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.DateTimeZone.getDefaultProvider()
+------------------------------------------------------------------------------------------
+private static Provider getDefaultProvider() {
+        Provider provider = null;
+
+        try {
+            String providerClass = System.getProperty("org.joda.time.DateTimeZone.Provider");
+            if (providerClass != null) {
+                try {
+                    provider = (Provider) Class.forName(providerClass).newInstance();
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        } catch (SecurityException ex) {
+            // ignored
+        }
+
+        if (provider == null) {
+            try {
+                provider = new ZoneInfoProvider("org/joda/time/tz/data");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        if (provider == null) {
+            provider = new UTCProvider();
+        }
+
+        return provider;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.field.UnsupportedDurationField.compareTo(DurationField)
+------------------------------------------------------------------------------------------
+public int compareTo(DurationField durationField) {
+        if (durationField.isSupported()) {
+            return 1;
+        }
+        return 0;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.Partial.Partial(DateTimeFieldType,int,Chronology)
+------------------------------------------------------------------------------------------
+public Partial() {
+        this((Chronology) null);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.DateTimeZone.getDefaultNameProvider()
+------------------------------------------------------------------------------------------
+private static NameProvider getDefaultNameProvider() {
+        NameProvider nameProvider = null;
+        try {
+            String providerClass = System.getProperty("org.joda.time.DateTimeZone.NameProvider");
+            if (providerClass != null) {
+                try {
+                    nameProvider = (NameProvider) Class.forName(providerClass).newInstance();
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        } catch (SecurityException ex) {
+            // ignore
+        }
+
+        if (nameProvider == null) {
+            nameProvider = new DefaultNameProvider();
+        }
+
+        return nameProvider;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.format.DateTimeFormatterBuilder.printTo(Writer,ReadablePartial,Locale)
+------------------------------------------------------------------------------------------
+public void printTo(
+                StringBuffer buf, long instant, Chronology chrono,
+                int displayOffset, DateTimeZone displayZone, Locale locale) {
+            buf.append(iValue);
+        }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.field.UnsupportedDurationField.compareTo(DurationField)
+------------------------------------------------------------------------------------------
+public int compareTo(DurationField durationField) {
+        if (durationField.isSupported()) {
+            return 1;
+        }
+        return 0;
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.Partial.Partial(DateTimeFieldType,int)
+------------------------------------------------------------------------------------------
+public Partial() {
+        this((Chronology) null);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.Partial.Partial(DateTimeFieldType,int,Chronology)
+------------------------------------------------------------------------------------------
+public Partial() {
+        this((Chronology) null);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.Partial.with(DateTimeFieldType,int)
+------------------------------------------------------------------------------------------
+public Partial with(DateTimeFieldType fieldType, int value) {
+        if (fieldType == null) {
+            throw new IllegalArgumentException("The field type must not be null");
+        }
+        int index = indexOf(fieldType);
+        if (index == -1) {
+            DateTimeFieldType[] newTypes = new DateTimeFieldType[iTypes.length + 1];
+            int[] newValues = new int[newTypes.length];
+            
+            // find correct insertion point to keep largest-smallest order
+            int i = 0;
+            DurationField unitField = fieldType.getDurationType().getField(iChronology);
+            if (unitField.isSupported()) {
+                for (; i < iTypes.length; i++) {
+                    DateTimeFieldType loopType = iTypes[i];
+                    DurationField loopUnitField = loopType.getDurationType().getField(iChronology);
+                    if (loopUnitField.isSupported()) {
+                        int compare = unitField.compareTo(loopUnitField);
+                        if (compare > 0) {
+                            break;
+                        } else if (compare == 0) {
+                            if (fieldType.getRangeDurationType() == null) {
+                                break;
+                            }
+                            DurationField rangeField = fieldType.getRangeDurationType().getField(iChronology);
+                            DurationField loopRangeField = loopType.getRangeDurationType().getField(iChronology);
+                            if (rangeField.compareTo(loopRangeField) > 0) {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            System.arraycopy(iTypes, 0, newTypes, 0, i);
+            System.arraycopy(iValues, 0, newValues, 0, i);
+            newTypes[i] = fieldType;
+            newValues[i] = value;
+            System.arraycopy(iTypes, i, newTypes, i + 1, newTypes.length - i - 1);
+            System.arraycopy(iValues, i, newValues, i + 1, newValues.length - i - 1);
+            // use public constructor to ensure full validation
+            // this isn't overly efficient, but is safe
+            Partial newPartial = new Partial(newTypes, newValues, iChronology);
+            iChronology.validate(newPartial, newValues);
+            return newPartial;
+        }
+        if (value == getValue(index)) {
+            return this;
+        }
+        int[] newValues = getValues();
+        newValues = getField(index).set(this, index, newValues, value);
+        return new Partial(this, newValues);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.DateTimeFieldType.StandardDateTimeFieldType.getRangeDurationType()
+------------------------------------------------------------------------------------------
+[NOT FOUND] Source file not found: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Time\src\main\java\org\joda\time\DateTimeFieldType\StandardDateTimeFieldType.java
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.joda.time.TestPartial_Basics#testWith_baseAndArgHaveNoRange
+Runtime: 1231449
+------------------------------------------------------------------------------------------
+java.lang.IllegalArgumentException: Types array must not contain duplicate: era and year at org.joda.time.Partial.<init>(Partial.java:225) at org.joda.time.Partial.with(Partial.java:466) at org.joda.time.TestPartial_Basics.testWith_baseAndArgHaveNoRange(TestPartial_Basics.java:469) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

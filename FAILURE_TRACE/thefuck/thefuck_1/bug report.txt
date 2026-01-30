@@ -1,0 +1,4 @@
+Allow multiple returns from git_checkout (#1022)
+* Allow multiple returns from git_checkout
+
+* Remove multiple returns

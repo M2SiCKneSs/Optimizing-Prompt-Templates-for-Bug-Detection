@@ -1,0 +1,31 @@
+{
+  "project": "Math",
+  "bug_id": 43,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.math3.analysis.integration.gauss.GaussIntegratorFactory.legendreHighPrecision(int",
+      "score": 0.995775
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.math3.linear.Array2DRowRealMatrix.preMultiply(double[])",
+      "score": 0.876821
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.math.stat.descriptive.SummaryStatistics.addValue(double)",
+      "score": 0.751549
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.math3.optimization.direct.CMAESOptimizer.updateBD(double)",
+      "score": 0.633433
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.math3.distribution.HypergeometricDistribution.getNumericalMean()",
+      "score": 0.516175
+    }
+  ]
+}

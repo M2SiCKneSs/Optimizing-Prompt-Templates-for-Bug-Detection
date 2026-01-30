@@ -1,0 +1,31 @@
+{
+  "project": "Math",
+  "bug_id": 27,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.math3.fraction.Fraction.multiply(int)",
+      "score": 0.998652
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.math3.fraction.Fraction.Fraction(double",
+      "score": 0.876174
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.math3.fraction.Fraction.percentageValue()",
+      "score": 0.757923
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.math3.fraction.Fraction.Fraction(int",
+      "score": 0.636901
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.math3.distribution.KolmogorovSmirnovDistribution.createH(double)",
+      "score": 0.51864
+    }
+  ]
+}

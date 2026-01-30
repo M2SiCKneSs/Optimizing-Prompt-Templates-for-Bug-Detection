@@ -1,0 +1,161 @@
+### BUG_REPORT
+Title: DateTimeZone.forOffsetHoursMinutes cannot handle negative offset &lt; 1 hour
+
+Description:
+DateTimeZone.forOffsetHoursMinutes(h,m) cannot handle negative offset < 1 hour like -0:30 due to argument range checking. I used forOffsetMillis() instead.
+This should probably be mentioned in the documentation or negative minutes be accepted.
+
+
+### FAILING_TEST
+org.joda.time.DateTimeZone.forID(String)
+org.joda.time.DateTimeZone.fixedOffsetZone(String,int)
+org.joda.time.DateTimeZone.getDefaultProvider()
+org.joda.time.DateTimeZone.forOffsetMillis(int)
+org.joda.time.DateTimeZone.forOffsetHoursMinutes(int,int)
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.joda.time.DateTimeZone.forID(String)
+------------------------------------------------------------------------------------------
+@FromString
+    public static DateTimeZone forID(String id) {
+        if (id == null) {
+            return getDefault();
+        }
+        if (id.equals("UTC")) {
+            return DateTimeZone.UTC;
+        }
+        DateTimeZone zone = cProvider.getZone(id);
+        if (zone != null) {
+            return zone;
+        }
+        if (id.startsWith("+") || id.startsWith("-")) {
+            int offset = parseOffset(id);
+            if (offset == 0L) {
+                return DateTimeZone.UTC;
+            } else {
+                id = printOffset(offset);
+                return fixedOffsetZone(id, offset);
+            }
+        }
+        throw new IllegalArgumentException("The datetime zone id '" + id + "' is not recognised");
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.DateTimeZone.fixedOffsetZone(String,int)
+------------------------------------------------------------------------------------------
+private static synchronized DateTimeZone fixedOffsetZone(String id, int offset) {
+        if (offset == 0) {
+            return DateTimeZone.UTC;
+        }
+        if (iFixedOffsetCache == null) {
+            iFixedOffsetCache = new HashMap<String, SoftReference<DateTimeZone>>();
+        }
+        DateTimeZone zone;
+        Reference<DateTimeZone> ref = iFixedOffsetCache.get(id);
+        if (ref != null) {
+            zone = ref.get();
+            if (zone != null) {
+                return zone;
+            }
+        }
+        zone = new FixedDateTimeZone(id, null, offset, offset);
+        iFixedOffsetCache.put(id, new SoftReference<DateTimeZone>(zone));
+        return zone;
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.DateTimeZone.getDefaultProvider()
+------------------------------------------------------------------------------------------
+private static Provider getDefaultProvider() {
+        Provider provider = null;
+
+        try {
+            String providerClass = System.getProperty("org.joda.time.DateTimeZone.Provider");
+            if (providerClass != null) {
+                try {
+                    provider = (Provider) Class.forName(providerClass).newInstance();
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        } catch (SecurityException ex) {
+            // ignored
+        }
+
+        if (provider == null) {
+            try {
+                provider = new ZoneInfoProvider("org/joda/time/tz/data");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        if (provider == null) {
+            provider = new UTCProvider();
+        }
+
+        return provider;
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.DateTimeZone.forOffsetMillis(int)
+------------------------------------------------------------------------------------------
+public static DateTimeZone forOffsetMillis(int millisOffset) {
+        if (millisOffset < -MAX_MILLIS || millisOffset > MAX_MILLIS) {
+            throw new IllegalArgumentException("Millis out of range: " + millisOffset);
+        }
+        String id = printOffset(millisOffset);
+        return fixedOffsetZone(id, millisOffset);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.joda.time.DateTimeZone.forOffsetHoursMinutes(int,int)
+------------------------------------------------------------------------------------------
+public static DateTimeZone forOffsetHoursMinutes(int hoursOffset, int minutesOffset) throws IllegalArgumentException {
+        if (hoursOffset == 0 && minutesOffset == 0) {
+            return DateTimeZone.UTC;
+        }
+        if (hoursOffset < -23 || hoursOffset > 23) {
+            throw new IllegalArgumentException("Hours out of range: " + hoursOffset);
+        }
+        if (minutesOffset < -59 || minutesOffset > 59) {
+            throw new IllegalArgumentException("Minutes out of range: " + minutesOffset);
+        }
+        if (hoursOffset > 0 && minutesOffset < 0) {
+            throw new IllegalArgumentException("Positive hours must not have negative minutes: " + minutesOffset);
+        }
+        int offset = 0;
+        try {
+            int hoursInMinutes = hoursOffset * 60;
+            if (hoursInMinutes < 0) {
+                minutesOffset = hoursInMinutes - Math.abs(minutesOffset);
+            } else {
+                minutesOffset = hoursInMinutes + minutesOffset;
+            }
+            offset = FieldUtils.safeMultiply(minutesOffset, DateTimeConstants.MILLIS_PER_MINUTE);
+        } catch (ArithmeticException ex) {
+            throw new IllegalArgumentException("Offset is too large");
+        }
+        return forOffsetMillis(offset);
+    }
+
+------------------------------------------------------------------------------------------
+
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.joda.time.TestDateTimeZone#testForOffsetHoursMinutes_int_int
+Runtime: 2853096
+------------------------------------------------------------------------------------------
+java.lang.IllegalArgumentException: Minutes out of range: -15 at org.joda.time.DateTimeZone.forOffsetHoursMinutes(DateTimeZone.java:280) at org.joda.time.TestDateTimeZone.testForOffsetHoursMinutes_int_int(TestDateTimeZone.java:316) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at junit.framework.TestCase.runTest(TestCase.java:176) at junit.framework.TestCase.runBare(TestCase.java:141) at junit.framework.TestResult$1.protect(TestResult.java:122) at junit.framework.TestResult.runProtected(TestResult.java:142) at junit.framework.TestResult.run(TestResult.java:125) at junit.framework.TestCase.run(TestCase.java:129) at junit.framework.TestSuite.runTest(TestSuite.java:252) at junit.framework.TestSuite.run(TestSuite.java:247) at org.junit.internal.runners.JUnit38ClassRunner.run(JUnit38ClassRunner.java:86) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)

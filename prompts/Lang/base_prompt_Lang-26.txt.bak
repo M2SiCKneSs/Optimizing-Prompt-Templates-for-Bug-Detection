@@ -1,0 +1,122 @@
+### BUG_REPORT
+Title: FastDateFormat.format() outputs incorrect week of year because locale isn't respected
+
+Description:
+FastDateFormat apparently doesn't respect the locale it was sent on creation when outputting week in year (e.g. "ww") in format(). It seems to use the settings of the system locale for firstDayOfWeek and minimalDaysInFirstWeek, which (depending on the year) may result in the incorrect week number being output.
+Here is a simple test program to demonstrate the problem by comparing with SimpleDateFormat, which gets the week number right:
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.text.SimpleDateFormat;
+
+import org.apache.commons.lang.time.FastDateFormat;
+
+public class FastDateFormatWeekBugDemo {
+    public static void main(String[] args) {
+        Locale.setDefault(new Locale("en", "US"));
+        Locale locale = new Locale("sv", "SE");
+
+        Calendar cal = Calendar.getInstance(); // setting locale here doesn't change outcome
+        cal.set(2010, 0, 1, 12, 0, 0);
+        Date d = cal.getTime();
+        System.out.println("Target date: " + d);
+
+        FastDateFormat fdf = FastDateFormat.getInstance("EEEE', week 'ww", locale);
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE', week 'ww", locale);
+        System.out.println("FastDateFormat:   " + fdf.format(d)); // will output "FastDateFormat:   fredag, week 01"
+        System.out.println("SimpleDateFormat: " + sdf.format(d)); // will output "SimpleDateFormat: fredag, week 53"
+    }
+}
+
+
+If sv/SE is passed to Locale.setDefault() instead of en/US, both FastDateFormat and SimpleDateFormat output the correct week number.
+
+
+### FAILING_TEST
+org.apache.commons.lang3.time.FastDateFormat.getTimeInstance(int,TimeZone,Locale)
+org.apache.commons.lang3.time.FastDateFormat.parsePattern()
+org.apache.commons.lang3.time.FastDateFormat.getDateTimeInstance(int,int,TimeZone,Locale)
+org.apache.commons.lang3.time.FastDateFormat.format(Date)
+org.apache.commons.lang3.time.FastDateFormat.getInstance(String,TimeZone,Locale)
+org.apache.commons.lang3.time.FastDateFormat.TextField.appendTo(StringBuffer,Calendar)
+org.apache.commons.lang3.time.FastDateFormat.StringLiteral.appendTo(StringBuffer,Calendar)
+org.apache.commons.lang3.time.FastDateFormat.format(Date)
+org.apache.commons.lang3.time.FastDateFormat.getInstance(String,Locale)
+org.apache.commons.lang3.time.FastDateFormat.TwoDigitNumberField.appendTo(StringBuffer,Calendar)
+
+### CODE_SNIPPETS
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.time.FastDateFormat.getTimeInstance(int,TimeZone,Locale)
+------------------------------------------------------------------------------------------
+public static FastDateFormat getTimeInstance(final int style) {
+        return cache.getTimeInstance(style, null, null);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.time.FastDateFormat.parsePattern()
+------------------------------------------------------------------------------------------
+[NOT FOUND] Method/ctor 'parsePattern' not found in C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Lang\src\main\java\org\apache\commons\lang3\time\FastDateFormat.java
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.time.FastDateFormat.getDateTimeInstance(int,int,TimeZone,Locale)
+------------------------------------------------------------------------------------------
+public static FastDateFormat getDateTimeInstance(final int dateStyle, final int timeStyle) {
+        return cache.getDateTimeInstance(dateStyle, timeStyle, null, null);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.time.FastDateFormat.format(Date)
+------------------------------------------------------------------------------------------
+@Override
+    public StringBuffer format(final Object obj, final StringBuffer toAppendTo, final FieldPosition pos) {
+        return printer.format(obj, toAppendTo, pos);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.time.FastDateFormat.getInstance(String,TimeZone,Locale)
+------------------------------------------------------------------------------------------
+public static FastDateFormat getInstance() {
+        return cache.getInstance();
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.time.FastDateFormat.TextField.appendTo(StringBuffer,Calendar)
+------------------------------------------------------------------------------------------
+[NOT FOUND] Source file not found: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Lang\src\main\java\org\apache\commons\lang3\time\FastDateFormat\TextField.java
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.time.FastDateFormat.StringLiteral.appendTo(StringBuffer,Calendar)
+------------------------------------------------------------------------------------------
+[NOT FOUND] Source file not found: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Lang\src\main\java\org\apache\commons\lang3\time\FastDateFormat\StringLiteral.java
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.time.FastDateFormat.format(Date)
+------------------------------------------------------------------------------------------
+@Override
+    public StringBuffer format(final Object obj, final StringBuffer toAppendTo, final FieldPosition pos) {
+        return printer.format(obj, toAppendTo, pos);
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.time.FastDateFormat.getInstance(String,Locale)
+------------------------------------------------------------------------------------------
+public static FastDateFormat getInstance() {
+        return cache.getInstance();
+    }
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.lang3.time.FastDateFormat.TwoDigitNumberField.appendTo(StringBuffer,Calendar)
+------------------------------------------------------------------------------------------
+[NOT FOUND] Source file not found: C:\Users\user\Desktop\uni\mark\CODE_SNIPPETS\Lang\src\main\java\org\apache\commons\lang3\time\FastDateFormat\TwoDigitNumberField.java
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.apache.commons.lang3.time.FastDateFormatTest#testLang645
+Runtime: 2875070
+------------------------------------------------------------------------------------------
+junit.framework.ComparisonFailure: expected:<fredag

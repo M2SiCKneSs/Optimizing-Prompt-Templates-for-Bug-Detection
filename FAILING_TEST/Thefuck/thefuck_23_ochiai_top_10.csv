@@ -1,0 +1,11 @@
+Method,Ochiai_Score
+thefuck.utils##_get_mtime(name),0.07198157507486945
+"thefuck.utils##_cache(fn,*args,**kwargs)",0.07198157507486945
+thefuck.conf$_DefaultRulesNames#__add__(items),0.06868028197434452
+thefuck.conf##get_settings(user_dir),0.06868028197434452
+thefuck.conf$_DefaultRulesNames#__contains__(item),0.06868028197434452
+thefuck.conf##initialize_settings_file(user_dir),0.06868028197434452
+thefuck.conf$_DefaultRulesNames#__eq__(other),0.06868028197434452
+thefuck.conf##_settings_from_file(user_dir),0.06868028197434452
+thefuck.conf##_rules_from_env(val),0.06868028197434452
+thefuck.conf##_priority_from_env(val),0.06868028197434452

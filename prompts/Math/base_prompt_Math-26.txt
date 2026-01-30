@@ -1,0 +1,135 @@
+### BUG_REPORT
+Title: Fraction(double, int) constructor strange behaviour
+
+Description:
+The Fraction constructor Fraction(double, int) takes a double value and a int maximal denominator, and approximates a fraction. When the double value is a large, negative number with many digits in the fractional part, and the maximal denominator is a big, positive integer (in the 100'000s), two distinct bugs can manifest:
+1: the constructor returns a positive Fraction. Calling Fraction(-33655.1677817278, 371880) returns the fraction 410517235/243036, which both has the wrong sign, and is far away from the absolute value of the given value
+2: the constructor does not manage to reduce the Fraction properly. Calling Fraction(-43979.60679604749, 366081) returns the fraction -1651878166/256677, which should have* been reduced to -24654898/3831.
+I have, as of yet, not found a solution. The constructor looks like this:
+public Fraction(double value, int maxDenominator)
+        throws FractionConversionException
+    {
+       this(value, 0, maxDenominator, 100);
+    }
+
+Increasing the 100 value (max iterations) does not fix the problem for all cases. Changing the 0-value (the epsilon, maximum allowed error) to something small does not work either, as this breaks the tests in FractionTest. 
+The problem is not neccissarily that the algorithm is unable to approximate a fraction correctly. A solution where a FractionConversionException had been thrown in each of these examples would probably be the best solution if an improvement on the approximation algorithm turns out to be hard to find.
+This bug has been found when trying to explore the idea of axiom-based testing (http://bldl.ii.uib.no/testing.html). Attached is a java test class FractionTestByAxiom (junit, goes into org.apache.commons.math3.fraction) which shows these bugs through a simplified approach to this kind of testing, and a text file describing some of the value/maxDenominator combinations which causes one of these failures.
+
+It is never specified in the documentation that the Fraction class guarantees that completely reduced rational numbers are constructed, but a comment inside the equals method claims that "since fractions are always in lowest terms, numerators and can be compared directly for equality", so it seems like this is the intention.
+
+
+### FAILING_TEST
+org.apache.commons.math3.fraction.BigFraction.equals(Object)
+org.apache.commons.math3.fraction.Fraction.Fraction(double,double,int,int)
+org.apache.commons.math3.fraction.FractionConversionException.FractionConversionException(double,long,long)
+org.apache.commons.math3.exception.ConvergenceException.ConvergenceException(Localizable,Object)
+org.apache.commons.math3.fraction.BigFraction.subtract(BigFraction)
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.fraction.BigFraction.equals(Object)
+------------------------------------------------------------------------------------------
+if (BigInteger.ZERO.equals(den)) {
+            throw new ZeroException(LocalizedFormats.ZERO_DENOMINATOR);
+        }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.fraction.Fraction.Fraction(double,double,int,int)
+------------------------------------------------------------------------------------------
+public static final Fraction TWO = new Fraction(2, 1);
+
+    /** A fraction representing "1". */
+    public static final Fraction ONE = new Fraction(1, 1);
+
+    /** A fraction representing "0". */
+    public static final Fraction ZERO = new Fraction(0, 1);
+
+    /** A fraction representing "4/5". */
+    public static final Fraction FOUR_FIFTHS = new Fraction(4, 5);
+
+    /** A fraction representing "1/5". */
+    public static final Fraction ONE_FIFTH = new Fraction(1, 5);
+
+    /** A fraction representing "1/2". */
+    public static final Fraction ONE_HALF = new Fraction(1, 2);
+
+    /** A fraction representing "1/4". */
+    public static final Fraction ONE_QUARTER = new Fraction(1, 4);
+
+    /** A fraction representing "1/3". */
+    public static final Fraction ONE_THIRD = new Fraction(1, 3);
+
+    /** A fraction representing "3/5". */
+    public static final Fraction THREE_FIFTHS = new Fraction(3, 5);
+
+    /** A fraction representing "3/4". */
+    public static final Fraction THREE_QUARTERS = new Fraction(3, 4);
+
+    /** A fraction representing "2/5". */
+    public static final Fraction TWO_FIFTHS = new Fraction(2, 5);
+
+    /** A fraction representing "2/4". */
+    public static final Fraction TWO_QUARTERS = new Fraction(2, 4);
+
+    /** A fraction representing "2/3". */
+    public static final Fraction TWO_THIRDS = new Fraction(2, 3);
+
+    /** A fraction representing "-1 / 1". */
+    public static final Fraction MINUS_ONE = new Fraction(-1, 1);
+
+    /** Serializable version identifier */
+    private static final long serialVersionUID = 3698073679419233275L;
+
+    /** The default epsilon used for convergence. */
+    private static final double DEFAULT_EPSILON = 1e-5;
+
+    /** The denominator. */
+    private final int denominator;
+
+    /** The numerator. */
+    private final int numerator;
+
+    /**
+     * Create a fraction given the double value.
+     * @param value the double value to convert to a fraction.
+     * @throws FractionConversionException if the continued fraction failed to
+     *         converge.
+     */
+    public Fraction(double value) throws FractionConversionException {
+        this(value, DEFAULT_EPSILON, 100);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.fraction.FractionConversionException.FractionConversionException(double,long,long)
+------------------------------------------------------------------------------------------
+public FractionConversionException(double value, int maxIterations) {
+        super(LocalizedFormats.FAILED_FRACTION_CONVERSION, value, maxIterations);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.exception.ConvergenceException.ConvergenceException(Localizable,Object)
+------------------------------------------------------------------------------------------
+public ConvergenceException() {
+        this(LocalizedFormats.CONVERGENCE_FAILED);
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.fraction.BigFraction.subtract(BigFraction)
+------------------------------------------------------------------------------------------
+public BigFraction subtract(final BigInteger bg) {
+        if (bg == null) {
+            throw new NullArgumentException();
+        }
+        return new BigFraction(numerator.subtract(denominator.multiply(bg)), denominator);
+    }
+
+------------------------------------------------------------------------------------------
+

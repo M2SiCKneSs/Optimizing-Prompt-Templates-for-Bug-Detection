@@ -1,0 +1,11 @@
+Method,Ochiai_Score
+black$Ok#__init__(value),0.08804509063256238
+black$Ok#ok(),0.08804509063256238
+black$Err#__init__(e),0.08804509063256238
+black$Err#err(),0.08804509063256238
+black$WriteBack#from_configuration(),0.08804509063256238
+black$TargetVersion#is_python2(),0.08804509063256238
+black$Mode#get_cache_key(),0.08804509063256238
+"black##supports_feature(target_versions,feature)",0.08804509063256238
+black##find_pyproject_toml(path_search_start),0.08804509063256238
+black##parse_pyproject_toml(path_config),0.08804509063256238

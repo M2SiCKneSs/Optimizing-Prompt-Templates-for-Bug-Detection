@@ -1,0 +1,2 @@
+Fix the open rule
+It was simply wrong with `xdg-`, `gnome-` and `kde-open`.

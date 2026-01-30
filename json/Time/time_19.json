@@ -1,0 +1,31 @@
+{
+  "project": "Time",
+  "bug_id": 19,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.joda.time.base.AbstractDateTime.toString(String",
+      "score": 0.997332
+    },
+    {
+      "rank": 2,
+      "method": "org.joda.time.base.AbstractDateTime.toCalendar(Locale)",
+      "score": 0.873386
+    },
+    {
+      "rank": 3,
+      "method": "org.joda.time.tz.DateTimeZoneBuilder.PrecalculatedZone.create(String",
+      "score": 0.75034
+    },
+    {
+      "rank": 4,
+      "method": "org.joda.time.base.AbstractInstant.toString()",
+      "score": 0.630002
+    },
+    {
+      "rank": 5,
+      "method": "org.joda.time.format.ISODateTimeFormat.tTime()",
+      "score": 0.510871
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "project": "Lang",
+  "bug_id": 32,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.lang3.builder.HashCodeBuilder.isRegistered(Object)",
+      "score": 0.993708
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.lang3.text.translate.CharSequenceTranslator.translate(CharSequence",
+      "score": 0.878348
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.lang3.StringEscapeUtils.unescapeCsv(String)",
+      "score": 0.754507
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.lang3.time.DateUtils.parseDateWithLeniency(String",
+      "score": 0.630913
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.lang3.StringUtils.splitByWholeSeparatorWorker(String",
+      "score": 0.515319
+    }
+  ]
+}

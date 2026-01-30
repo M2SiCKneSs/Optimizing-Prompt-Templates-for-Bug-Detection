@@ -1,0 +1,31 @@
+{
+  "project": "Time",
+  "bug_id": 1,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.joda.time.chrono.GJChronology.assemble(Fields)",
+      "score": 0.992388
+    },
+    {
+      "rank": 2,
+      "method": "org.joda.time.Partial.toString(String",
+      "score": 0.876343
+    },
+    {
+      "rank": 3,
+      "method": "org.joda.time.chrono.GJEraDateTimeField.getMinimumValue()",
+      "score": 0.754891
+    },
+    {
+      "rank": 4,
+      "method": "org.joda.time.chrono.GJEraDateTimeField.getMaximumValue()",
+      "score": 0.631016
+    },
+    {
+      "rank": 5,
+      "method": "org.joda.time.DateTimeZone.getDefaultProvider()",
+      "score": 0.51011
+    }
+  ]
+}

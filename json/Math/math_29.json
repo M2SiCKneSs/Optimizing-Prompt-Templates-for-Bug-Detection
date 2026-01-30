@@ -1,0 +1,31 @@
+{
+  "project": "Math",
+  "bug_id": 29,
+  "ranking_top5": [
+    {
+      "rank": 1,
+      "method": "org.apache.commons.math3.linear.OpenMapRealVector.ebeMultiply(RealVector)",
+      "score": 0.994316
+    },
+    {
+      "rank": 2,
+      "method": "org.apache.commons.math3.linear.OpenMapRealVector.OpenMapRealVector(OpenMapRealVector)",
+      "score": 0.872084
+    },
+    {
+      "rank": 3,
+      "method": "org.apache.commons.math3.linear.OpenMapRealVector.getEntry(int)",
+      "score": 0.754045
+    },
+    {
+      "rank": 4,
+      "method": "org.apache.commons.math3.linear.OpenMapRealVector.ebeDivide(RealVector)",
+      "score": 0.636105
+    },
+    {
+      "rank": 5,
+      "method": "org.apache.commons.math3.linear.OpenMapRealVector.append(OpenMapRealVector)",
+      "score": 0.515499
+    }
+  ]
+}

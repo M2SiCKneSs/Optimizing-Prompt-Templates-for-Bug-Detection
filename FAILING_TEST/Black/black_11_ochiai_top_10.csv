@@ -1,0 +1,11 @@
+Method,Ochiai_Score
+black##append_to_line(leaf),0.20851441405707477
+"black##rhs(line,py36)",0.2
+black##get_imports_from_children(children),0.14002800840280097
+black$WriteBack#from_configuration(),0.105999788000636
+"black##reformat_one(src,line_length,fast,write_back,mode,report)",0.105999788000636
+black$FileMode#from_configuration(),0.105999788000636
+"black##read_pyproject_toml(ctx,param,value)",0.105999788000636
+"black##main(ctx,line_length,check,diff,fast,pyi,py36,skip_string_normalization,skip_numeric_underscore_normalization,quiet,verbose,include,exclude,src,config)",0.105999788000636
+"black##format_stdin_to_stdout(line_length,fast,write_back,mode)",0.105999788000636
+"black##format_file_in_place(src,line_length,fast,write_back,mode,lock)",0.105999788000636

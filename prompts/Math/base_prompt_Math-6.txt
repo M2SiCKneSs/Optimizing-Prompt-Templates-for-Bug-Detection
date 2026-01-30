@@ -1,0 +1,1147 @@
+### BUG_REPORT
+Title: LevenbergMarquardtOptimizer reports 0 iterations
+
+Description:
+The method LevenbergMarquardtOptimizer.getIterations() does not report the correct number of iterations; It always returns 0. A quick look at the code shows that only SimplexOptimizer calls BaseOptimizer.incrementEvaluationsCount()
+I've put a test case below. Notice how the evaluations count is correctly incremented, but the iterations count is not.
+
+    @Test
+    public void testGetIterations() {
+        // setup
+        LevenbergMarquardtOptimizer otim = new LevenbergMarquardtOptimizer();
+
+        // action
+        otim.optimize(new MaxEval(100), new Target(new double[] { 1 }),
+                new Weight(new double[] { 1 }), new InitialGuess(
+                        new double[] { 3 }), new ModelFunction(
+                        new MultivariateVectorFunction() {
+                            @Override
+                            public double[] value(double[] point)
+                                    throws IllegalArgumentException {
+                                return new double[] { FastMath.pow(point[0], 4) };
+                            }
+                        }), new ModelFunctionJacobian(
+                        new MultivariateMatrixFunction() {
+                            @Override
+                            public double[][] value(double[] point)
+                                    throws IllegalArgumentException {
+                                return new double[][] { { 0.25 * FastMath.pow(
+                                        point[0], 3) } };
+                            }
+                        }));
+
+        // verify
+        assertThat(otim.getEvaluations(), greaterThan(1));
+        assertThat(otim.getIterations(), greaterThan(1));
+    }
+
+
+### FAILING_TEST
+org.apache.commons.math3.optim.BaseOptimizer.getIterations()
+org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizer.doOptimize()
+org.apache.commons.math3.linear.TriDiagonalTransformer.transform()
+org.apache.commons.math3.linear.RealVector.unmodifiableRealVector(RealVector)
+org.apache.commons.math3.optim.nonlinear.vector.jacobian.LevenbergMarquardtOptimizer.doOptimize()
+
+
+### CODE_SNIPPETS
+
+
+------------------------------------------------------------------------------------------
+Function: org.apache.commons.math3.optim.BaseOptimizer.getIterations()
+------------------------------------------------------------------------------------------
+public int getIterations() {
+        return iterations.getCount();
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizer.doOptimize()
+------------------------------------------------------------------------------------------
+@Override
+    protected PointValuePair doOptimize() {
+         // -------------------- Initialization --------------------------------
+        isMinimize = getGoalType().equals(GoalType.MINIMIZE);
+        final FitnessFunction fitfun = new FitnessFunction();
+        final double[] guess = getStartPoint();
+        // number of objective variables/problem dimension
+        dimension = guess.length;
+        initializeCMA(guess);
+        iterations = 0;
+        double bestValue = fitfun.value(guess);
+        push(fitnessHistory, bestValue);
+        PointValuePair optimum
+            = new PointValuePair(getStartPoint(),
+                                 isMinimize ? bestValue : -bestValue);
+        PointValuePair lastResult = null;
+
+        // -------------------- Generation Loop --------------------------------
+
+        generationLoop:
+        for (iterations = 1; iterations <= maxIterations; iterations++) {
+            incrementIterationCount();
+
+            // Generate and evaluate lambda offspring
+            final RealMatrix arz = randn1(dimension, lambda);
+            final RealMatrix arx = zeros(dimension, lambda);
+            final double[] fitness = new double[lambda];
+            // generate random offspring
+            for (int k = 0; k < lambda; k++) {
+                RealMatrix arxk = null;
+                for (int i = 0; i < checkFeasableCount + 1; i++) {
+                    if (diagonalOnly <= 0) {
+                        arxk = xmean.add(BD.multiply(arz.getColumnMatrix(k))
+                                         .scalarMultiply(sigma)); // m + sig * Normal(0,C)
+                    } else {
+                        arxk = xmean.add(times(diagD,arz.getColumnMatrix(k))
+                                         .scalarMultiply(sigma));
+                    }
+                    if (i >= checkFeasableCount ||
+                        fitfun.isFeasible(arxk.getColumn(0))) {
+                        break;
+                    }
+                    // regenerate random arguments for row
+                    arz.setColumn(k, randn(dimension));
+                }
+                copyColumn(arxk, 0, arx, k);
+                try {
+                    fitness[k] = fitfun.value(arx.getColumn(k)); // compute fitness
+                } catch (TooManyEvaluationsException e) {
+                    break generationLoop;
+                }
+            }
+            // Sort by fitness and compute weighted mean into xmean
+            final int[] arindex = sortedIndices(fitness);
+            // Calculate new xmean, this is selection and recombination
+            final RealMatrix xold = xmean; // for speed up of Eq. (2) and (3)
+            final RealMatrix bestArx = selectColumns(arx, MathArrays.copyOf(arindex, mu));
+            xmean = bestArx.multiply(weights);
+            final RealMatrix bestArz = selectColumns(arz, MathArrays.copyOf(arindex, mu));
+            final RealMatrix zmean = bestArz.multiply(weights);
+            final boolean hsig = updateEvolutionPaths(zmean, xold);
+            if (diagonalOnly <= 0) {
+                updateCovariance(hsig, bestArx, arz, arindex, xold);
+            } else {
+                updateCovarianceDiagonalOnly(hsig, bestArz);
+            }
+            // Adapt step size sigma - Eq. (5)
+            sigma *= Math.exp(Math.min(1, (normps/chiN - 1) * cs / damps));
+            final double bestFitness = fitness[arindex[0]];
+            final double worstFitness = fitness[arindex[arindex.length - 1]];
+            if (bestValue > bestFitness) {
+                bestValue = bestFitness;
+                lastResult = optimum;
+                optimum = new PointValuePair(fitfun.repair(bestArx.getColumn(0)),
+                                             isMinimize ? bestFitness : -bestFitness);
+                if (getConvergenceChecker() != null && lastResult != null &&
+                    getConvergenceChecker().converged(iterations, optimum, lastResult)) {
+                    break generationLoop;
+                }
+            }
+            // handle termination criteria
+            // Break, if fitness is good enough
+            if (stopFitness != 0 && bestFitness < (isMinimize ? stopFitness : -stopFitness)) {
+                break generationLoop;
+            }
+            final double[] sqrtDiagC = sqrt(diagC).getColumn(0);
+            final double[] pcCol = pc.getColumn(0);
+            for (int i = 0; i < dimension; i++) {
+                if (sigma * Math.max(Math.abs(pcCol[i]), sqrtDiagC[i]) > stopTolX) {
+                    break;
+                }
+                if (i >= dimension - 1) {
+                    break generationLoop;
+                }
+            }
+            for (int i = 0; i < dimension; i++) {
+                if (sigma * sqrtDiagC[i] > stopTolUpX) {
+                    break generationLoop;
+                }
+            }
+            final double historyBest = min(fitnessHistory);
+            final double historyWorst = max(fitnessHistory);
+            if (iterations > 2 &&
+                Math.max(historyWorst, worstFitness) -
+                Math.min(historyBest, bestFitness) < stopTolFun) {
+                break generationLoop;
+            }
+            if (iterations > fitnessHistory.length &&
+                historyWorst - historyBest < stopTolHistFun) {
+                break generationLoop;
+            }
+            // condition number of the covariance matrix exceeds 1e14
+            if (max(diagD) / min(diagD) > 1e7) {
+                break generationLoop;
+            }
+            // user defined termination
+            if (getConvergenceChecker() != null) {
+                final PointValuePair current
+                    = new PointValuePair(bestArx.getColumn(0),
+                                         isMinimize ? bestFitness : -bestFitness);
+                if (lastResult != null &&
+                    getConvergenceChecker().converged(iterations, current, lastResult)) {
+                    break generationLoop;
+                    }
+                lastResult = current;
+            }
+            // Adjust step size in case of equal function values (flat fitness)
+            if (bestValue == fitness[arindex[(int)(0.1+lambda/4.)]]) {
+                sigma = sigma * Math.exp(0.2 + cs / damps);
+            }
+            if (iterations > 2 && Math.max(historyWorst, bestFitness) -
+                Math.min(historyBest, bestFitness) == 0) {
+                sigma = sigma * Math.exp(0.2 + cs / damps);
+            }
+            // store best in history
+            push(fitnessHistory,bestFitness);
+            fitfun.setValueRange(worstFitness-bestFitness);
+            if (generateStatistics) {
+                statisticsSigmaHistory.add(sigma);
+                statisticsFitnessHistory.add(bestFitness);
+                statisticsMeanHistory.add(xmean.transpose());
+                statisticsDHistory.add(diagD.transpose().scalarMultiply(1E5));
+            }
+        }
+        return optimum;
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.linear.TriDiagonalTransformer.transform()
+------------------------------------------------------------------------------------------
+private void transform() {
+        final int m = householderVectors.length;
+        final double[] z = new double[m];
+        for (int k = 0; k < m - 1; k++) {
+
+            //zero-out a row and a column simultaneously
+            final double[] hK = householderVectors[k];
+            main[k] = hK[k];
+            double xNormSqr = 0;
+            for (int j = k + 1; j < m; ++j) {
+                final double c = hK[j];
+                xNormSqr += c * c;
+            }
+            final double a = (hK[k + 1] > 0) ? -FastMath.sqrt(xNormSqr) : FastMath.sqrt(xNormSqr);
+            secondary[k] = a;
+            if (a != 0.0) {
+                // apply Householder transform from left and right simultaneously
+
+                hK[k + 1] -= a;
+                final double beta = -1 / (a * hK[k + 1]);
+
+                // compute a = beta A v, where v is the Householder vector
+                // this loop is written in such a way
+                //   1) only the upper triangular part of the matrix is accessed
+                //   2) access is cache-friendly for a matrix stored in rows
+                Arrays.fill(z, k + 1, m, 0);
+                for (int i = k + 1; i < m; ++i) {
+                    final double[] hI = householderVectors[i];
+                    final double hKI = hK[i];
+                    double zI = hI[i] * hKI;
+                    for (int j = i + 1; j < m; ++j) {
+                        final double hIJ = hI[j];
+                        zI   += hIJ * hK[j];
+                        z[j] += hIJ * hKI;
+                    }
+                    z[i] = beta * (z[i] + zI);
+                }
+
+                // compute gamma = beta vT z / 2
+                double gamma = 0;
+                for (int i = k + 1; i < m; ++i) {
+                    gamma += z[i] * hK[i];
+                }
+                gamma *= beta / 2;
+
+                // compute z = z - gamma v
+                for (int i = k + 1; i < m; ++i) {
+                    z[i] -= gamma * hK[i];
+                }
+
+                // update matrix: A = A - v zT - z vT
+                // only the upper triangular part of the matrix is updated
+                for (int i = k + 1; i < m; ++i) {
+                    final double[] hI = householderVectors[i];
+                    for (int j = i; j < m; ++j) {
+                        hI[j] -= hK[i] * z[j] + z[i] * hK[j];
+                    }
+                }
+            }
+        }
+        main[m - 1] = householderVectors[m - 1][m - 1];
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.linear.RealVector.unmodifiableRealVector(RealVector)
+------------------------------------------------------------------------------------------
+public static RealVector unmodifiableRealVector(final RealVector v) {
+        /**
+         * This anonymous class is an implementation of {@link RealVector}
+         * with read-only access.
+         * It wraps any {@link RealVector}, and exposes all methods which
+         * do not modify it. Invoking methods which should normally result
+         * in the modification of the calling {@link RealVector} results in
+         * a {@link MathUnsupportedOperationException}. It should be noted
+         * that {@link UnmodifiableVector} is <em>not</em> immutable.
+         */
+        return new RealVector() {
+            /**
+             * {@inheritDoc}
+             *
+             * @throws MathUnsupportedOperationException in all circumstances.
+             */
+            @Override
+            public RealVector mapToSelf(UnivariateFunction function)
+                throws MathUnsupportedOperationException {
+                throw new MathUnsupportedOperationException();
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public RealVector map(UnivariateFunction function) {
+                return v.map(function);
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public Iterator<Entry> iterator() {
+                final Iterator<Entry> i = v.iterator();
+                return new Iterator<Entry>() {
+                    /** The current entry. */
+                    private final UnmodifiableEntry e = new UnmodifiableEntry();
+
+                    /** {@inheritDoc} */
+                    public boolean hasNext() {
+                        return i.hasNext();
+                    }
+
+                    /** {@inheritDoc} */
+                    public Entry next() {
+                        e.setIndex(i.next().getIndex());
+                        return e;
+                    }
+
+                    /**
+                     * {@inheritDoc}
+                     *
+                     * @throws MathUnsupportedOperationException in all
+                     * circumstances.
+                     */
+                    public void remove() throws MathUnsupportedOperationException {
+                        throw new MathUnsupportedOperationException();
+                    }
+                };
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public Iterator<Entry> sparseIterator() {
+                final Iterator<Entry> i = v.sparseIterator();
+
+                return new Iterator<Entry>() {
+                    /** The current entry. */
+                    private final UnmodifiableEntry e = new UnmodifiableEntry();
+
+                    /** {@inheritDoc} */
+                    public boolean hasNext() {
+                        return i.hasNext();
+                    }
+
+                    /** {@inheritDoc} */
+                    public Entry next() {
+                        e.setIndex(i.next().getIndex());
+                        return e;
+                    }
+
+                    /**
+                     * {@inheritDoc}
+                     *
+                     * @throws MathUnsupportedOperationException in all
+                     * circumstances.
+                     */
+                    public void remove()
+                        throws MathUnsupportedOperationException {
+                        throw new MathUnsupportedOperationException();
+                    }
+                };
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public RealVector copy() {
+                return v.copy();
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public RealVector add(RealVector w)
+                throws DimensionMismatchException {
+                return v.add(w);
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public RealVector subtract(RealVector w)
+                throws DimensionMismatchException {
+                return v.subtract(w);
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public RealVector mapAdd(double d) {
+                return v.mapAdd(d);
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @throws MathUnsupportedOperationException in all
+             * circumstances.
+             */
+            @Override
+            public RealVector mapAddToSelf(double d)
+                throws MathUnsupportedOperationException {
+                throw new MathUnsupportedOperationException();
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public RealVector mapSubtract(double d) {
+                return v.mapSubtract(d);
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @throws MathUnsupportedOperationException in all
+             * circumstances.
+             */
+            @Override
+            public RealVector mapSubtractToSelf(double d)
+                throws MathUnsupportedOperationException {
+                throw new MathUnsupportedOperationException();
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public RealVector mapMultiply(double d) {
+                return v.mapMultiply(d);
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @throws MathUnsupportedOperationException in all
+             * circumstances.
+             */
+            @Override
+            public RealVector mapMultiplyToSelf(double d)
+                throws MathUnsupportedOperationException {
+                throw new MathUnsupportedOperationException();
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public RealVector mapDivide(double d) {
+                return v.mapDivide(d);
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @throws MathUnsupportedOperationException in all
+             * circumstances.
+             */
+            @Override
+            public RealVector mapDivideToSelf(double d)
+                throws MathUnsupportedOperationException {
+                throw new MathUnsupportedOperationException();
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public RealVector ebeMultiply(RealVector w)
+                throws DimensionMismatchException {
+                return v.ebeMultiply(w);
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public RealVector ebeDivide(RealVector w)
+                throws DimensionMismatchException {
+                return v.ebeDivide(w);
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public double dotProduct(RealVector w)
+                throws DimensionMismatchException {
+                return v.dotProduct(w);
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public double cosine(RealVector w)
+                throws DimensionMismatchException, MathArithmeticException {
+                return v.cosine(w);
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public double getNorm() {
+                return v.getNorm();
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public double getL1Norm() {
+                return v.getL1Norm();
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public double getLInfNorm() {
+                return v.getLInfNorm();
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public double getDistance(RealVector w)
+                throws DimensionMismatchException {
+                return v.getDistance(w);
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public double getL1Distance(RealVector w)
+                throws DimensionMismatchException {
+                return v.getL1Distance(w);
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public double getLInfDistance(RealVector w)
+                throws DimensionMismatchException {
+                return v.getLInfDistance(w);
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public RealVector unitVector() throws MathArithmeticException {
+                return v.unitVector();
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @throws MathUnsupportedOperationException in all
+             * circumstances.
+             */
+            @Override
+            public void unitize() throws MathUnsupportedOperationException {
+                throw new MathUnsupportedOperationException();
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public RealMatrix outerProduct(RealVector w) {
+                return v.outerProduct(w);
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public double getEntry(int index) throws OutOfRangeException {
+                return v.getEntry(index);
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @throws MathUnsupportedOperationException in all
+             * circumstances.
+             */
+            @Override
+            public void setEntry(int index, double value)
+                throws MathUnsupportedOperationException {
+                throw new MathUnsupportedOperationException();
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @throws MathUnsupportedOperationException in all
+             * circumstances.
+             */
+            @Override
+            public void addToEntry(int index, double value)
+                throws MathUnsupportedOperationException {
+                throw new MathUnsupportedOperationException();
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public int getDimension() {
+                return v.getDimension();
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public RealVector append(RealVector w) {
+                return v.append(w);
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public RealVector append(double d) {
+                return v.append(d);
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public RealVector getSubVector(int index, int n)
+                throws OutOfRangeException, NotPositiveException {
+                return v.getSubVector(index, n);
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @throws MathUnsupportedOperationException in all
+             * circumstances.
+             */
+            @Override
+            public void setSubVector(int index, RealVector w)
+                throws MathUnsupportedOperationException {
+                throw new MathUnsupportedOperationException();
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @throws MathUnsupportedOperationException in all
+             * circumstances.
+             */
+            @Override
+            public void set(double value)
+                throws MathUnsupportedOperationException {
+                throw new MathUnsupportedOperationException();
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public double[] toArray() {
+                return v.toArray();
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public boolean isNaN() {
+                return v.isNaN();
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public boolean isInfinite() {
+                return v.isInfinite();
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public RealVector combine(double a, double b, RealVector y)
+                throws DimensionMismatchException {
+                return v.combine(a, b, y);
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @throws MathUnsupportedOperationException in all
+             * circumstances.
+             */
+            @Override
+            public RealVector combineToSelf(double a, double b, RealVector y)
+                throws MathUnsupportedOperationException {
+                throw new MathUnsupportedOperationException();
+            }
+
+            /** An entry in the vector. */
+            class UnmodifiableEntry extends Entry {
+                /** {@inheritDoc} */
+                @Override
+                public double getValue() {
+                    return v.getEntry(getIndex());
+                }
+
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @throws MathUnsupportedOperationException in all
+                 * circumstances.
+                 */
+                @Override
+                public void setValue(double value)
+                    throws MathUnsupportedOperationException {
+                    throw new MathUnsupportedOperationException();
+                }
+            }
+        };
+    }
+
+------------------------------------------------------------------------------------------
+
+Function: org.apache.commons.math3.optim.nonlinear.vector.jacobian.LevenbergMarquardtOptimizer.doOptimize()
+------------------------------------------------------------------------------------------
+@Override
+    protected PointVectorValuePair doOptimize() {
+        checkParameters();
+
+        final int nR = getTarget().length; // Number of observed data.
+        final double[] currentPoint = getStartPoint();
+        final int nC = currentPoint.length; // Number of parameters.
+
+        // arrays shared with the other private methods
+        solvedCols  = FastMath.min(nR, nC);
+        diagR       = new double[nC];
+        jacNorm     = new double[nC];
+        beta        = new double[nC];
+        permutation = new int[nC];
+        lmDir       = new double[nC];
+
+        // local point
+        double   delta   = 0;
+        double   xNorm   = 0;
+        double[] diag    = new double[nC];
+        double[] oldX    = new double[nC];
+        double[] oldRes  = new double[nR];
+        double[] oldObj  = new double[nR];
+        double[] qtf     = new double[nR];
+        double[] work1   = new double[nC];
+        double[] work2   = new double[nC];
+        double[] work3   = new double[nC];
+
+        final RealMatrix weightMatrixSqrt = getWeightSquareRoot();
+
+        // Evaluate the function at the starting point and calculate its norm.
+        double[] currentObjective = computeObjectiveValue(currentPoint);
+        double[] currentResiduals = computeResiduals(currentObjective);
+        PointVectorValuePair current = new PointVectorValuePair(currentPoint, currentObjective);
+        double currentCost = computeCost(currentResiduals);
+
+        // Outer loop.
+        lmPar = 0;
+        boolean firstIteration = true;
+        final ConvergenceChecker<PointVectorValuePair> checker = getConvergenceChecker();
+        while (true) {
+            incrementIterationCount();
+
+            final PointVectorValuePair previous = current;
+
+            // QR decomposition of the jacobian matrix
+            qrDecomposition(computeWeightedJacobian(currentPoint));
+
+            weightedResidual = weightMatrixSqrt.operate(currentResiduals);
+            for (int i = 0; i < nR; i++) {
+                qtf[i] = weightedResidual[i];
+            }
+
+            // compute Qt.res
+            qTy(qtf);
+
+            // now we don't need Q anymore,
+            // so let jacobian contain the R matrix with its diagonal elements
+            for (int k = 0; k < solvedCols; ++k) {
+                int pk = permutation[k];
+                weightedJacobian[k][pk] = diagR[pk];
+            }
+
+            if (firstIteration) {
+                // scale the point according to the norms of the columns
+                // of the initial jacobian
+                xNorm = 0;
+                for (int k = 0; k < nC; ++k) {
+                    double dk = jacNorm[k];
+                    if (dk == 0) {
+                        dk = 1.0;
+                    }
+                    double xk = dk * currentPoint[k];
+                    xNorm  += xk * xk;
+                    diag[k] = dk;
+                }
+                xNorm = FastMath.sqrt(xNorm);
+
+                // initialize the step bound delta
+                delta = (xNorm == 0) ? initialStepBoundFactor : (initialStepBoundFactor * xNorm);
+            }
+
+            // check orthogonality between function vector and jacobian columns
+            double maxCosine = 0;
+            if (currentCost != 0) {
+                for (int j = 0; j < solvedCols; ++j) {
+                    int    pj = permutation[j];
+                    double s  = jacNorm[pj];
+                    if (s != 0) {
+                        double sum = 0;
+                        for (int i = 0; i <= j; ++i) {
+                            sum += weightedJacobian[i][pj] * qtf[i];
+                        }
+                        maxCosine = FastMath.max(maxCosine, FastMath.abs(sum) / (s * currentCost));
+                    }
+                }
+            }
+            if (maxCosine <= orthoTolerance) {
+                // Convergence has been reached.
+                setCost(currentCost);
+                return current;
+            }
+
+            // rescale if necessary
+            for (int j = 0; j < nC; ++j) {
+                diag[j] = FastMath.max(diag[j], jacNorm[j]);
+            }
+
+            // Inner loop.
+            for (double ratio = 0; ratio < 1.0e-4;) {
+
+                // save the state
+                for (int j = 0; j < solvedCols; ++j) {
+                    int pj = permutation[j];
+                    oldX[pj] = currentPoint[pj];
+                }
+                final double previousCost = currentCost;
+                double[] tmpVec = weightedResidual;
+                weightedResidual = oldRes;
+                oldRes    = tmpVec;
+                tmpVec    = currentObjective;
+                currentObjective = oldObj;
+                oldObj    = tmpVec;
+
+                // determine the Levenberg-Marquardt parameter
+                determineLMParameter(qtf, delta, diag, work1, work2, work3);
+
+                // compute the new point and the norm of the evolution direction
+                double lmNorm = 0;
+                for (int j = 0; j < solvedCols; ++j) {
+                    int pj = permutation[j];
+                    lmDir[pj] = -lmDir[pj];
+                    currentPoint[pj] = oldX[pj] + lmDir[pj];
+                    double s = diag[pj] * lmDir[pj];
+                    lmNorm  += s * s;
+                }
+                lmNorm = FastMath.sqrt(lmNorm);
+                // on the first iteration, adjust the initial step bound.
+                if (firstIteration) {
+                    delta = FastMath.min(delta, lmNorm);
+                }
+
+                // Evaluate the function at x + p and calculate its norm.
+                currentObjective = computeObjectiveValue(currentPoint);
+                currentResiduals = computeResiduals(currentObjective);
+                current = new PointVectorValuePair(currentPoint, currentObjective);
+                currentCost = computeCost(currentResiduals);
+
+                // compute the scaled actual reduction
+                double actRed = -1.0;
+                if (0.1 * currentCost < previousCost) {
+                    double r = currentCost / previousCost;
+                    actRed = 1.0 - r * r;
+                }
+
+                // compute the scaled predicted reduction
+                // and the scaled directional derivative
+                for (int j = 0; j < solvedCols; ++j) {
+                    int pj = permutation[j];
+                    double dirJ = lmDir[pj];
+                    work1[j] = 0;
+                    for (int i = 0; i <= j; ++i) {
+                        work1[i] += weightedJacobian[i][pj] * dirJ;
+                    }
+                }
+                double coeff1 = 0;
+                for (int j = 0; j < solvedCols; ++j) {
+                    coeff1 += work1[j] * work1[j];
+                }
+                double pc2 = previousCost * previousCost;
+                coeff1 = coeff1 / pc2;
+                double coeff2 = lmPar * lmNorm * lmNorm / pc2;
+                double preRed = coeff1 + 2 * coeff2;
+                double dirDer = -(coeff1 + coeff2);
+
+                // ratio of the actual to the predicted reduction
+                ratio = (preRed == 0) ? 0 : (actRed / preRed);
+
+                // update the step bound
+                if (ratio <= 0.25) {
+                    double tmp =
+                        (actRed < 0) ? (0.5 * dirDer / (dirDer + 0.5 * actRed)) : 0.5;
+                        if ((0.1 * currentCost >= previousCost) || (tmp < 0.1)) {
+                            tmp = 0.1;
+                        }
+                        delta = tmp * FastMath.min(delta, 10.0 * lmNorm);
+                        lmPar /= tmp;
+                } else if ((lmPar == 0) || (ratio >= 0.75)) {
+                    delta = 2 * lmNorm;
+                    lmPar *= 0.5;
+                }
+
+                // test for successful iteration.
+                if (ratio >= 1.0e-4) {
+                    // successful iteration, update the norm
+                    firstIteration = false;
+                    xNorm = 0;
+                    for (int k = 0; k < nC; ++k) {
+                        double xK = diag[k] * currentPoint[k];
+                        xNorm += xK * xK;
+                    }
+                    xNorm = FastMath.sqrt(xNorm);
+
+                    // tests for convergence.
+                    if (checker != null && checker.converged(getIterations(), previous, current)) {
+                        setCost(currentCost);
+                        return current;
+                    }
+                } else {
+                    // failed iteration, reset the previous values
+                    currentCost = previousCost;
+                    for (int j = 0; j < solvedCols; ++j) {
+                        int pj = permutation[j];
+                        currentPoint[pj] = oldX[pj];
+                    }
+                    tmpVec    = weightedResidual;
+                    weightedResidual = oldRes;
+                    oldRes    = tmpVec;
+                    tmpVec    = currentObjective;
+                    currentObjective = oldObj;
+                    oldObj    = tmpVec;
+                    // Reset "current" to previous values.
+                    current = new PointVectorValuePair(currentPoint, currentObjective);
+                }
+
+                // Default convergence criteria.
+                if ((FastMath.abs(actRed) <= costRelativeTolerance &&
+                     preRed <= costRelativeTolerance &&
+                     ratio <= 2.0) ||
+                    delta <= parRelativeTolerance * xNorm) {
+                    setCost(currentCost);
+                    return current;
+                }
+
+                // tests for termination and stringent tolerances
+                if (FastMath.abs(actRed) <= TWO_EPS &&
+                    preRed <= TWO_EPS &&
+                    ratio <= 2.0) {
+                    throw new ConvergenceException(LocalizedFormats.TOO_SMALL_COST_RELATIVE_TOLERANCE,
+                                                   costRelativeTolerance);
+                } else if (delta <= TWO_EPS * xNorm) {
+                    throw new ConvergenceException(LocalizedFormats.TOO_SMALL_PARAMETERS_RELATIVE_TOLERANCE,
+                                                   parRelativeTolerance);
+                } else if (maxCosine <= TWO_EPS) {
+                    throw new ConvergenceException(LocalizedFormats.TOO_SMALL_ORTHOGONALITY_TOLERANCE,
+                                                   orthoTolerance);
+                }
+            }
+        }
+    }
+
+------------------------------------------------------------------------------------------
+
+
+
+### FAILURE_TRACE
+
+------------------------------------------------------------------------------------------
+Fail #1
+Test: org.apache.commons.math3.optim.nonlinear.scalar.gradient.NonLinearConjugateGradientOptimizerTest#testTrivial
+Runtime: 5925663
+------------------------------------------------------------------------------------------
+java.lang.AssertionError at org.junit.Assert.fail(Assert.java:86) at org.junit.Assert.assertTrue(Assert.java:41) at org.junit.Assert.assertTrue(Assert.java:52) at org.apache.commons.math3.optim.nonlinear.scalar.gradient.NonLinearConjugateGradientOptimizerTest.testTrivial(NonLinearConjugateGradientOptimizerTest.java:141) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #2
+Test: org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest#testAckley
+Runtime: 83040891
+------------------------------------------------------------------------------------------
+java.lang.AssertionError at org.junit.Assert.fail(Assert.java:86) at org.junit.Assert.assertTrue(Assert.java:41) at org.junit.Assert.assertTrue(Assert.java:52) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.doTest(CMAESOptimizerTest.java:514) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.testAckley(CMAESOptimizerTest.java:318) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.apache.commons.math3.RetryRunner$1.evaluate(RetryRunner.java:60) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #3
+Test: org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest#testCigTab
+Runtime: 83229455
+------------------------------------------------------------------------------------------
+java.lang.AssertionError at org.junit.Assert.fail(Assert.java:86) at org.junit.Assert.assertTrue(Assert.java:41) at org.junit.Assert.assertTrue(Assert.java:52) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.doTest(CMAESOptimizerTest.java:514) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.testCigTab(CMAESOptimizerTest.java:243) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.apache.commons.math3.RetryRunner$1.evaluate(RetryRunner.java:60) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #4
+Test: org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest#testCigar
+Runtime: 97649478
+------------------------------------------------------------------------------------------
+java.lang.AssertionError at org.junit.Assert.fail(Assert.java:86) at org.junit.Assert.assertTrue(Assert.java:41) at org.junit.Assert.assertTrue(Assert.java:52) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.doTest(CMAESOptimizerTest.java:514) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.testCigar(CMAESOptimizerTest.java:198) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.apache.commons.math3.RetryRunner$1.evaluate(RetryRunner.java:60) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #5
+Test: org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest#testCigarWithBoundaries
+Runtime: 90544303
+------------------------------------------------------------------------------------------
+java.lang.AssertionError at org.junit.Assert.fail(Assert.java:86) at org.junit.Assert.assertTrue(Assert.java:41) at org.junit.Assert.assertTrue(Assert.java:52) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.doTest(CMAESOptimizerTest.java:514) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.testCigarWithBoundaries(CMAESOptimizerTest.java:213) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.apache.commons.math3.RetryRunner$1.evaluate(RetryRunner.java:60) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #6
+Test: org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest#testConstrainedRosen
+Runtime: 103114208
+------------------------------------------------------------------------------------------
+java.lang.AssertionError at org.junit.Assert.fail(Assert.java:86) at org.junit.Assert.assertTrue(Assert.java:41) at org.junit.Assert.assertTrue(Assert.java:52) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.doTest(CMAESOptimizerTest.java:514) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.testConstrainedRosen(CMAESOptimizerTest.java:348) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.apache.commons.math3.RetryRunner$1.evaluate(RetryRunner.java:60) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #7
+Test: org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest#testDiagonalRosen
+Runtime: 268983761
+------------------------------------------------------------------------------------------
+java.lang.AssertionError at org.junit.Assert.fail(Assert.java:86) at org.junit.Assert.assertTrue(Assert.java:41) at org.junit.Assert.assertTrue(Assert.java:52) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.doTest(CMAESOptimizerTest.java:514) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.testDiagonalRosen(CMAESOptimizerTest.java:363) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.apache.commons.math3.RetryRunner$1.evaluate(RetryRunner.java:60) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #8
+Test: org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest#testDiffPow
+Runtime: 77905500
+------------------------------------------------------------------------------------------
+java.lang.AssertionError at org.junit.Assert.fail(Assert.java:86) at org.junit.Assert.assertTrue(Assert.java:41) at org.junit.Assert.assertTrue(Assert.java:52) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.doTest(CMAESOptimizerTest.java:514) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.testDiffPow(CMAESOptimizerTest.java:288) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.apache.commons.math3.RetryRunner$1.evaluate(RetryRunner.java:60) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #9
+Test: org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest#testElliRotated
+Runtime: 107831896
+------------------------------------------------------------------------------------------
+java.lang.AssertionError at org.junit.Assert.fail(Assert.java:86) at org.junit.Assert.assertTrue(Assert.java:41) at org.junit.Assert.assertTrue(Assert.java:52) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.doTest(CMAESOptimizerTest.java:514) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.testElliRotated(CMAESOptimizerTest.java:183) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.apache.commons.math3.RetryRunner$1.evaluate(RetryRunner.java:60) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #10
+Test: org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest#testEllipse
+Runtime: 96914170
+------------------------------------------------------------------------------------------
+java.lang.AssertionError at org.junit.Assert.fail(Assert.java:86) at org.junit.Assert.assertTrue(Assert.java:41) at org.junit.Assert.assertTrue(Assert.java:52) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.doTest(CMAESOptimizerTest.java:514) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.testEllipse(CMAESOptimizerTest.java:168) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.apache.commons.math3.RetryRunner$1.evaluate(RetryRunner.java:60) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #11
+Test: org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest#testMaximize
+Runtime: 215585304
+------------------------------------------------------------------------------------------
+java.lang.AssertionError at org.junit.Assert.fail(Assert.java:86) at org.junit.Assert.assertTrue(Assert.java:41) at org.junit.Assert.assertTrue(Assert.java:52) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.doTest(CMAESOptimizerTest.java:514) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.testMaximize(CMAESOptimizerTest.java:148) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.apache.commons.math3.RetryRunner$1.evaluate(RetryRunner.java:67) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #12
+Test: org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest#testRastrigin
+Runtime: 331512152
+------------------------------------------------------------------------------------------
+java.lang.AssertionError at org.junit.Assert.fail(Assert.java:86) at org.junit.Assert.assertTrue(Assert.java:41) at org.junit.Assert.assertTrue(Assert.java:52) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.doTest(CMAESOptimizerTest.java:514) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.testRastrigin(CMAESOptimizerTest.java:333) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.apache.commons.math3.RetryRunner$1.evaluate(RetryRunner.java:60) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #13
+Test: org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest#testRosen
+Runtime: 187306969
+------------------------------------------------------------------------------------------
+java.lang.AssertionError at org.junit.Assert.fail(Assert.java:86) at org.junit.Assert.assertTrue(Assert.java:41) at org.junit.Assert.assertTrue(Assert.java:52) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.doTest(CMAESOptimizerTest.java:514) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.testRosen(CMAESOptimizerTest.java:132) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.apache.commons.math3.RetryRunner$1.evaluate(RetryRunner.java:67) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #14
+Test: org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest#testSphere
+Runtime: 54818190
+------------------------------------------------------------------------------------------
+java.lang.AssertionError at org.junit.Assert.fail(Assert.java:86) at org.junit.Assert.assertTrue(Assert.java:41) at org.junit.Assert.assertTrue(Assert.java:52) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.doTest(CMAESOptimizerTest.java:514) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.testSphere(CMAESOptimizerTest.java:258) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.apache.commons.math3.RetryRunner$1.evaluate(RetryRunner.java:60) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #15
+Test: org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest#testSsDiffPow
+Runtime: 126493175
+------------------------------------------------------------------------------------------
+java.lang.AssertionError at org.junit.Assert.fail(Assert.java:86) at org.junit.Assert.assertTrue(Assert.java:41) at org.junit.Assert.assertTrue(Assert.java:52) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.doTest(CMAESOptimizerTest.java:514) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.testSsDiffPow(CMAESOptimizerTest.java:303) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.apache.commons.math3.RetryRunner$1.evaluate(RetryRunner.java:60) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #16
+Test: org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest#testTablet
+Runtime: 82808004
+------------------------------------------------------------------------------------------
+java.lang.AssertionError at org.junit.Assert.fail(Assert.java:86) at org.junit.Assert.assertTrue(Assert.java:41) at org.junit.Assert.assertTrue(Assert.java:52) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.doTest(CMAESOptimizerTest.java:514) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.testTablet(CMAESOptimizerTest.java:273) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.apache.commons.math3.RetryRunner$1.evaluate(RetryRunner.java:60) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #17
+Test: org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest#testTwoAxes
+Runtime: 132862530
+------------------------------------------------------------------------------------------
+java.lang.AssertionError at org.junit.Assert.fail(Assert.java:86) at org.junit.Assert.assertTrue(Assert.java:41) at org.junit.Assert.assertTrue(Assert.java:52) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.doTest(CMAESOptimizerTest.java:514) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizerTest.testTwoAxes(CMAESOptimizerTest.java:228) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.apache.commons.math3.RetryRunner$1.evaluate(RetryRunner.java:60) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #18
+Test: org.apache.commons.math3.optim.nonlinear.scalar.noderiv.PowellOptimizerTest#testSumSinc
+Runtime: 3943507
+------------------------------------------------------------------------------------------
+java.lang.AssertionError at org.junit.Assert.fail(Assert.java:86) at org.junit.Assert.assertTrue(Assert.java:41) at org.junit.Assert.assertTrue(Assert.java:52) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.PowellOptimizerTest.doTest(PowellOptimizerTest.java:266) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.PowellOptimizerTest.testSumSinc(PowellOptimizerTest.java:75) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #19
+Test: org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizerMultiDirectionalTest#testMaximize1
+Runtime: 4345811
+------------------------------------------------------------------------------------------
+java.lang.AssertionError at org.junit.Assert.fail(Assert.java:86) at org.junit.Assert.assertTrue(Assert.java:41) at org.junit.Assert.assertTrue(Assert.java:52) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizerMultiDirectionalTest.testMaximize1(SimplexOptimizerMultiDirectionalTest.java:108) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #20
+Test: org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizerMultiDirectionalTest#testMaximize2
+Runtime: 3912418
+------------------------------------------------------------------------------------------
+java.lang.AssertionError at org.junit.Assert.fail(Assert.java:86) at org.junit.Assert.assertTrue(Assert.java:41) at org.junit.Assert.assertTrue(Assert.java:52) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizerMultiDirectionalTest.testMaximize2(SimplexOptimizerMultiDirectionalTest.java:129) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #21
+Test: org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizerMultiDirectionalTest#testMinimize1
+Runtime: 3324215
+------------------------------------------------------------------------------------------
+java.lang.AssertionError at org.junit.Assert.fail(Assert.java:86) at org.junit.Assert.assertTrue(Assert.java:41) at org.junit.Assert.assertTrue(Assert.java:52) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizerMultiDirectionalTest.testMinimize1(SimplexOptimizerMultiDirectionalTest.java:66) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #22
+Test: org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizerMultiDirectionalTest#testMinimize2
+Runtime: 3398403
+------------------------------------------------------------------------------------------
+java.lang.AssertionError at org.junit.Assert.fail(Assert.java:86) at org.junit.Assert.assertTrue(Assert.java:41) at org.junit.Assert.assertTrue(Assert.java:52) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizerMultiDirectionalTest.testMinimize2(SimplexOptimizerMultiDirectionalTest.java:87) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #23
+Test: org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizerNelderMeadTest#testMaximize1
+Runtime: 2747532
+------------------------------------------------------------------------------------------
+java.lang.AssertionError at org.junit.Assert.fail(Assert.java:86) at org.junit.Assert.assertTrue(Assert.java:41) at org.junit.Assert.assertTrue(Assert.java:52) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizerNelderMeadTest.testMaximize1(SimplexOptimizerNelderMeadTest.java:113) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #24
+Test: org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizerNelderMeadTest#testMaximize2
+Runtime: 2530306
+------------------------------------------------------------------------------------------
+java.lang.AssertionError at org.junit.Assert.fail(Assert.java:86) at org.junit.Assert.assertTrue(Assert.java:41) at org.junit.Assert.assertTrue(Assert.java:52) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizerNelderMeadTest.testMaximize2(SimplexOptimizerNelderMeadTest.java:134) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #25
+Test: org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizerNelderMeadTest#testMinimize1
+Runtime: 2617229
+------------------------------------------------------------------------------------------
+java.lang.AssertionError at org.junit.Assert.fail(Assert.java:86) at org.junit.Assert.assertTrue(Assert.java:41) at org.junit.Assert.assertTrue(Assert.java:52) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizerNelderMeadTest.testMinimize1(SimplexOptimizerNelderMeadTest.java:71) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #26
+Test: org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizerNelderMeadTest#testMinimize2
+Runtime: 2580390
+------------------------------------------------------------------------------------------
+java.lang.AssertionError at org.junit.Assert.fail(Assert.java:86) at org.junit.Assert.assertTrue(Assert.java:41) at org.junit.Assert.assertTrue(Assert.java:52) at org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizerNelderMeadTest.testMinimize2(SimplexOptimizerNelderMeadTest.java:92) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #27
+Test: org.apache.commons.math3.optim.nonlinear.vector.jacobian.GaussNewtonOptimizerTest#testGetIterations
+Runtime: 6437554
+------------------------------------------------------------------------------------------
+java.lang.AssertionError at org.junit.Assert.fail(Assert.java:86) at org.junit.Assert.assertTrue(Assert.java:41) at org.junit.Assert.assertTrue(Assert.java:52) at org.apache.commons.math3.optim.nonlinear.vector.jacobian.AbstractLeastSquaresOptimizerAbstractTest.testGetIterations(AbstractLeastSquaresOptimizerAbstractTest.java:131) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
+
+------------------------------------------------------------------------------------------
+Fail #28
+Test: org.apache.commons.math3.optim.nonlinear.vector.jacobian.LevenbergMarquardtOptimizerTest#testGetIterations
+Runtime: 5771625
+------------------------------------------------------------------------------------------
+java.lang.AssertionError at org.junit.Assert.fail(Assert.java:86) at org.junit.Assert.assertTrue(Assert.java:41) at org.junit.Assert.assertTrue(Assert.java:52) at org.apache.commons.math3.optim.nonlinear.vector.jacobian.AbstractLeastSquaresOptimizerAbstractTest.testGetIterations(AbstractLeastSquaresOptimizerAbstractTest.java:131) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:566) at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) at org.junit.runners.ParentRunner.run(ParentRunner.java:363) at org.junit.runner.JUnitCore.run(JUnitCore.java:137) at org.junit.runner.JUnitCore.run(JUnitCore.java:115) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:57) at com.gzoltar.internal.core.test.junit.JUnitTestTask.call(JUnitTestTask.java:25) at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) at java.base/java.lang.Thread.run(Thread.java:834)
