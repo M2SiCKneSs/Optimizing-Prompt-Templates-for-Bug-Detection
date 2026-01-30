@@ -64,87 +64,6 @@ This research explores train-free, LLM-based fault localization using locally se
     └── python/
 ```
 
-## 🛠️ Installation
-
-### Prerequisites
-
-- Python 3.8+
-- [Ollama](https://ollama.ai/) (for local LLM serving)
-- Git
-
-### Setup
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/M2SiCKneSs/Optimizing-Prompt-Templates-for-Bug-Detection.git
-   cd Optimizing-Prompt-Templates-for-Bug-Detection
-   ```
-
-2. **Install dependencies**
-   ```bash
-   pip install requests
-   ```
-
-3. **Install and setup Ollama**
-   ```bash
-   # Install Ollama from https://ollama.ai/
-   
-   # Pull required models
-   ollama pull qwen3:8b
-   ollama pull deepseek-coder:6.7b
-   ```
-
-4. **Verify Ollama is running**
-   ```bash
-   ollama ps
-   ollama list
-   ```
-
-5. **Configure paths**
-   
-   Edit `code/Experiment_code/config.py` to set your data directory:
-   ```python
-   BASE_DIR = r"C:\path\to\your\data"
-   ```
-
-## 🚀 Quick Start
-
-### Option 1: Using the Modular CLI (Recommended)
-
-```bash
-cd code/Experiment_code
-
-# Run experiment with Template 1 (Trace-aware)
-python main.py run --model deepseek-coder:6.7b --template 1 --mode zero_shot
-
-# Run experiment with Template 2 (Trace + Expected Behavior)
-python main.py run --model qwen3:8b --template 2 --mode self_consistency
-
-# Evaluate results
-python main.py evaluate --model deepseek-coder:6.7b --template 1 --mode zero_shot \
-    --ground-truth ../../Ground_truth/ground_truth.json --benchmark python -o results.txt
-```
-
-### Option 2: Build Base Prompts First
-
-If you need to generate base prompts from raw data:
-
-```bash
-cd code
-
-# Run complete pipeline (3 steps)
-python base_propmt_pipeline.py
-
-# Or run each step manually:
-python build_all_base_prompts_bug_report.py
-python enrich_base_prompts_with_tests_and_snippets.py --top_n 10
-python append_failure_trace_to_all_base_prompts.py
-```
-
-## 📖 Detailed Usage
-
-### Experiment Pipeline Architecture
-
 The modular pipeline consists of five core components:
 
 | File | Description |
@@ -155,129 +74,6 @@ The modular pipeline consists of five core components:
 | **engine.py** | Ollama client, zero-shot/self-consistency inference (Algorithm 1) |
 | **evaluation.py** | Top-K hits, precision, recall, F1, accuracy computation |
 
-### Running Experiments
-
-#### Command Structure
-
-```bash
-python main.py run --model <MODEL> --template <1|2|3> --mode <zero_shot|self_consistency> [OPTIONS]
-```
-
-#### Command-Line Arguments
-
-| Argument | Type | Default | Description |
-|----------|------|---------|-------------|
-| `--model` | str | required | Ollama model (e.g., `qwen3:8b`, `deepseek-coder:6.7b`) |
-| `--template` | int | required | 1=Trace-aware, 2=Trace+Expected, 3=FlexFL-style |
-| `--mode` | str | required | `zero_shot` or `self_consistency` |
-| `--max-iters` | int | 10 | Max iterations for zero-shot (convergence limit) |
-| `--runs` | int | 5 | Number of runs for self-consistency |
-| `--top-k` | int | 10 | Number of methods to rank |
-| `--timeout` | int | 1800 | Timeout per LLM request (seconds) |
-| `--max-tokens` | int | 1024 | Maximum tokens to generate |
-| `--temp-zero` | float | 0.2 | Temperature for zero-shot mode |
-| `--temp-sc` | float | 0.7 | Temperature for self-consistency |
-| `--project` | list | all | Filter by project(s), e.g., `--project black thefuck` |
-| `--bug-id` | list | all | Filter by bug ID(s), e.g., `--bug-id 1 2 3` |
-
-#### Examples
-
-**Template 1 (Trace-aware) with Zero-shot:**
-```bash
-python main.py run --model deepseek-coder:6.7b --template 1 --mode zero_shot
-```
-
-**Template 2 (Trace + Expected Behavior) with Self-consistency:**
-```bash
-python main.py run --model qwen3:8b --template 2 --mode self_consistency --runs 7
-```
-
-**Template 3 (FlexFL baseline):**
-```bash
-python main.py run --model deepseek-coder:6.7b --template 3 --mode zero_shot
-```
-
-**Filter specific projects and bugs:**
-```bash
-python main.py run --model qwen3:8b --template 1 --mode zero_shot \
-    --project black thefuck --bug-id 1 2 3
-```
-
-### Evaluating Results
-
-#### Command Structure
-
-```bash
-python main.py evaluate --model <MODEL> --template <1|2|3> --mode <MODE> \
-    --ground-truth <PATH> --benchmark <python|java> [OPTIONS]
-```
-
-#### Ground Truth Format
-
-Create `ground_truth.json`:
-
-```json
-{
-  "black": {
-    "1": ["black.main", "black.format_file"],
-    "2": ["black.decode_bytes"]
-  },
-  "thefuck": {
-    "1": ["thefuck.corrector.fix_command"]
-  }
-}
-```
-
-Or use existing text files (converted automatically):
-```
-1 : tqdm.contrib.__init__##tenumerate(iterable,start,total,tqdm_class,**tqdm_kwargs)
-2 : tqdm.std$tqdm#print_status(s)
-```
-
-#### Evaluation Examples
-
-**Python (BugsInPy) format:**
-```bash
-python main.py evaluate --model deepseek-coder:6.7b --template 1 --mode zero_shot \
-    --ground-truth ground_truth.json --benchmark python -o python_results.txt
-```
-
-**Java (Defects4J) format:**
-```bash
-python main.py evaluate --model qwen3:8b --template 2 --mode self_consistency \
-    --ground-truth ground_truth.json --benchmark java -o java_results.txt
-```
-
-### Listing Available Data
-
-```bash
-# List all available base prompts
-python main.py list prompts
-
-# List completed experiment runs
-python main.py list experiments
-```
-
-### Output Structure
-
-Experiments generate organized outputs:
-
-```
-outputs/
-└── <model_name>/
-    └── <template_name>/
-        └── <mode>/
-            └── <Project>/
-                └── <Project>-<bug_id>/
-                    ├── iter_01_raw.txt           # Zero-shot iteration outputs
-                    ├── iter_02_raw.txt
-                    ├── ...
-                    ├── run_01_raw.txt            # Self-consistency run outputs
-                    ├── run_02_raw.txt
-                    ├── ...
-                    ├── final_<timestamp>.json    # Final ranking
-                    └── expected_behavior_<timestamp>.txt  # Template 2 only
-```
 
 ## 🔬 Methodology
 
@@ -289,24 +85,7 @@ outputs/
 | **2** | Trace + Expected Behavior | Extracts expected behavior from test, compares with observed failure |
 | **3** | FlexFL-style | Agent-style baseline inspired by FlexFL's localization refinement |
 
-### Inference Strategies (PDF Section 4.3.1)
 
-| Mode | Description | Key Features |
-|------|-------------|--------------|
-| **zero_shot** | Iterative refinement | • Max 10 iterations<br>• Converges when ranking stabilizes<br>• Temperature: 0.2 |
-| **self_consistency** | Independent multi-run aggregation | • 5-7 independent runs<br>• Aggregated by frequency + avg rank<br>• Temperature: 0.7 |
-
-### Algorithmic Workflow (Algorithm 1)
-
-```
-1. Initialize diagnosis list L₀
-2. For i = 0 to max_iterations:
-   a. Construct prompt with current list Lᵢ
-   b. Query LLM → Response
-   c. Parse and rank → Lᵢ₊₁
-   d. If Lᵢ₊₁ == Lᵢ: break (converged)
-3. Return final list
-```
 
 ## 📊 Results
 
@@ -361,49 +140,7 @@ outputs/
 | Self-Cons. vs. Zero-Shot | Overall | 0.0421 | ✅ Yes |
 | Template 2 vs. FlexFL | Python | 0.0845 | ❌ No |
 
-## 🔧 Troubleshooting
 
-### Common Issues
-
-**1. Ollama Connection Errors**
-```bash
-# Ensure Ollama is running
-ollama ps
-
-# Restart Ollama
-# Windows: Restart from system tray
-# Linux/Mac: killall ollama && ollama serve
-```
-
-**2. Timeout Errors**
-```bash
-# Increase timeout and reduce token limit
-python main.py run --model qwen3:8b --template 1 --mode zero_shot \
-    --timeout 3600 --max-tokens 600
-```
-
-**3. Model Not Found**
-```bash
-# Pull the required model
-ollama pull qwen3:8b
-ollama pull deepseek-coder:6.7b
-
-# List available models
-ollama list
-```
-
-**4. Ground Truth Format Errors**
-- Ensure JSON is valid: `python -m json.tool ground_truth.json`
-- Check bug IDs match between ground truth and prompts
-- Verify method signatures are normalized
-
-**5. No Prompts Found**
-```bash
-# Check BASE_DIR in config.py points to correct location
-# Run the base prompt pipeline first:
-cd code
-python base_propmt_pipeline.py
-```
 
 ## 📚 Documentation
 
@@ -415,44 +152,17 @@ Each major directory contains detailed documentation:
 - **[Ground_truth/README.md](Ground_truth/README.md)** - Ground truth specifications
 - **[Res/README.md](Res/README.md)** - Results interpretation
 
-## 🔬 Reproducing Paper Results
-
-To reproduce the exact results from our paper:
-
-```bash
-# 1. Ensure base prompts exist
-cd code
-python base_propmt_pipeline.py
-
-# 2. Run all configurations
-cd Experiment_code
-
-# Java experiments with Qwen3:8B
-python main.py run --model qwen3:8b --template 1 --mode zero_shot --max-iters 10
-python main.py run --model qwen3:8b --template 1 --mode self_consistency --runs 7
-python main.py run --model qwen3:8b --template 2 --mode zero_shot --max-iters 10
-python main.py run --model qwen3:8b --template 2 --mode self_consistency --runs 7
-
-# Java experiments with DeepSeek:6.7B
-python main.py run --model deepseek-coder:6.7b --template 1 --mode zero_shot
-python main.py run --model deepseek-coder:6.7b --template 2 --mode self_consistency
-
-# 3. Evaluate all results
-python main.py evaluate --model qwen3:8b --template 2 --mode self_consistency \
-    --ground-truth ../../Ground_truth/ground_truth.json \
-    --benchmark python -o ../../Res/python/python_results.txt
-```
 
 ## 📄 Citation
 
 If you use this code or data in your research, please cite our paper:
 
 ```bibtex
-@inproceedings{goldfarb2025optimizing,
+@inproceedings{2026optimizing,
   title={Optimizing Prompt Templates for Bug Detection},
   author={Goldfarb, Michael and Lisiansky, Maxim and Kremer, Roy and Paz, Osher},
   booktitle={Research Methods in Information Systems},
-  year={2025},
+  year={2026},
   institution={Ben-Gurion University of the Negev}
 }
 ```
@@ -466,16 +176,14 @@ If you use this code or data in your research, please cite our paper:
 
 *Ben-Gurion University of the Negev, Beer-Sheva, Israel*
 
-## 📜 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## 🙏 Tools & Repos
 
-## 🙏 Acknowledgments
-
-- Defects4J team for the Java bug benchmark
-- BugsInPy team for the Python bug benchmark
-- Ollama for local LLM serving infrastructure
-- FlexFL authors for baseline inspiration
+- Defects4J - https://github.com/rjust/defects4j
+- BugsInPy - https://github.com/soarsmu/BugsInPy
+- Ollama - https://docs.ollama.com/
+- Gzoltar - https://gzoltar.com/
+- FlexFL- https://dl.acm.org/doi/10.1109/TSE.2025.3553363
 
 ---
 
